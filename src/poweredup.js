@@ -1,4 +1,3 @@
-
 const poweredUP = new window.PoweredUP.PoweredUP();
 
 const usePoweredup = () => {

@@ -1,0 +1,9 @@
+.hidden {
+    display: none !important;
+}
+
+.motor-control {
+    background-color: lightgray;
+    padding: 10px;
+    width: 65px;
+}

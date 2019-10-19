@@ -1,44 +1,22 @@
-import React from "react";
-import {Hub} from "node-poweredup";
-import {Card, Descriptions, Button, Progress} from "antd";
-import usePoweredup from "../poweredup";
+import React, {useEffect, useState} from "react";
+import {Descriptions, Button, Progress, Icon} from "antd";
 import * as Consts from "node-poweredup/dist/node/consts";
 import {DeviceType, HubType} from "node-poweredup/dist/node/consts";
+import {HubHolder} from "../HubHolder";
+import {MotorControlProps} from "./MotorControl";
 
 export interface HubDetailsProps {
-    hub: Hub | undefined
+    hubHolder: HubHolder,
+    addMotorControlProps(motorControlProps: MotorControlProps) : void;
 }
 
-const HubDetails  = (props : HubDetailsProps) => {
-    const poweredUP = usePoweredup();
+interface MotorDetailsProps {
+    port: string
+    hubHolder: HubHolder;
+    addMotorControlProps(motorControlProps: MotorControlProps) : void;
+}
 
-    function disconnect(hub : Hub | undefined) {
-        if (hub) {
-            poweredUP.getConnectedHubByUUID(hub.uuid).disconnect()
-                .then(() => console.log("Disconnected"))
-                .catch((err : any) => console.log(err.message));
-        }
-    }
-
-    function hubType(hubType : Consts.HubType) : string {
-        switch (hubType) {
-            case HubType.UNKNOWN:
-                return "UNKNOWN";
-            case HubType.WEDO2_SMART_HUB:
-                return "WEDO2_SMART_HUB";
-            case HubType.BOOST_MOVE_HUB:
-                return "BOOST_MOVE_HUB";
-            case HubType.POWERED_UP_HUB:
-                return "POWERED_UP_HUB";
-            case HubType.POWERED_UP_REMOTE:
-                return "POWERED_UP_REMOTE";
-            case HubType.DUPLO_TRAIN_HUB:
-                return "DUPLO_TRAIN_HUB";
-            case HubType.CONTROL_PLUS_HUB:
-                return "CONTROL_PLUS_HUB";
-        }
-    }
-
+const MotorDetails = (props: MotorDetailsProps) => {
     function portDeviceType(type : Consts.DeviceType) : string {
         switch (type) {
             case DeviceType.UNKNOWN:
@@ -80,20 +58,83 @@ const HubDetails  = (props : HubDetailsProps) => {
         }
     }
 
-    if (!props.hub) {
-        return <Card title="Select a hub on the left" bordered={false}>
-        </Card>;
+    return <div>
+        {portDeviceType(props.hubHolder.hub.getPortDeviceType(props.port))}
+        <Button
+            size="small"
+            icon="double-right"
+            style={{float: "right"}}
+            onClick={() => props.addMotorControlProps({motorPort: props.port, hubUuid: props.hubHolder.uuid()})}
+        />
+    </div>
+};
+
+interface TiltIndicatorProps {
+    tilt: number;
+}
+const TiltIndicator = ({tilt}: TiltIndicatorProps) => (
+    <span>{tilt} <Icon type="vertical-align-middle" rotate={tilt} style={{fontSize: "20px", float: "right"}} /></span>
+);
+
+const HubDetails = (props : HubDetailsProps) => {
+    const [tiltX, setTiltX] = useState(0);
+    const [tiltY, setTiltY] = useState(0);
+
+    useEffect(() => {
+        function tiltListener(port: string, x: number, y: number) {
+            setTiltX(x);
+            setTiltY(y);
+        }
+
+        props.hubHolder.hub.on("tilt", tiltListener);
+        return () => {
+            props.hubHolder.hub.removeListener("tilt", tiltListener);
+        };
+    });
+
+    function disconnect(hubHolder : HubHolder) {
+        hubHolder.hub.disconnect()
+            .then(() => console.log("Disconnected"))
+            .catch((err : any) => console.log(err.message));
     }
 
-    return <Card title={props.hub!.name} bordered={false}>
-        <Descriptions title="Hub Info" layout={"horizontal"} bordered  column={1}>
-            <Descriptions.Item label="UUID">{ props.hub!.uuid }</Descriptions.Item>
-            <Descriptions.Item label="Name">{ props.hub!.name }</Descriptions.Item>
-            <Descriptions.Item label="Type">{ hubType(props.hub!.getHubType()) }</Descriptions.Item>
-            <Descriptions.Item label="Port A">{ portDeviceType(props.hub!.getPortDeviceType("A")) }</Descriptions.Item>
-            <Descriptions.Item label="Port B">{ portDeviceType(props.hub!.getPortDeviceType("B")) }</Descriptions.Item>
-            <Descriptions.Item label="Port C">{ portDeviceType(props.hub!.getPortDeviceType("C")) }</Descriptions.Item>
-            <Descriptions.Item label="Port D">{ portDeviceType(props.hub!.getPortDeviceType("D")) }</Descriptions.Item>
+    function hubType(hubType : Consts.HubType) : string {
+        switch (hubType) {
+            case HubType.UNKNOWN:
+                return "UNKNOWN";
+            case HubType.WEDO2_SMART_HUB:
+                return "WEDO2_SMART_HUB";
+            case HubType.BOOST_MOVE_HUB:
+                return "BOOST_MOVE_HUB";
+            case HubType.POWERED_UP_HUB:
+                return "POWERED_UP_HUB";
+            case HubType.POWERED_UP_REMOTE:
+                return "POWERED_UP_REMOTE";
+            case HubType.DUPLO_TRAIN_HUB:
+                return "DUPLO_TRAIN_HUB";
+            case HubType.CONTROL_PLUS_HUB:
+                return "CONTROL_PLUS_HUB";
+        }
+    }
+
+    return <div>
+        <Descriptions layout={"horizontal"} bordered  column={1} size="small">
+            <Descriptions.Item label="UUID">{ props.hubHolder.uuid() }</Descriptions.Item>
+            <Descriptions.Item label="Type">{ hubType(props.hubHolder.hub.getHubType()) }</Descriptions.Item>
+            <Descriptions.Item label="Tilt X"><TiltIndicator tilt={tiltX}/></Descriptions.Item>
+            <Descriptions.Item label="Tilt Y"><TiltIndicator tilt={tiltY}/></Descriptions.Item>
+            <Descriptions.Item label="Port A">
+                <MotorDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="A"/>
+            </Descriptions.Item>
+            <Descriptions.Item label="Port B">
+                <MotorDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="B"/>
+            </Descriptions.Item>
+            <Descriptions.Item label="Port C">
+                <MotorDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="C"/>
+            </Descriptions.Item>
+            <Descriptions.Item label="Port D">
+                <MotorDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="D"/>
+            </Descriptions.Item>
             <Descriptions.Item label="Battery level">
                 <Progress
                     strokeColor={{
@@ -102,12 +143,13 @@ const HubDetails  = (props : HubDetailsProps) => {
                     }}
                     strokeLinecap="square"
                     status="normal"
-                    percent={props.hub!.batteryLevel}
+                    percent={props.hubHolder.hub.batteryLevel}
                 />
             </Descriptions.Item>
         </Descriptions>
-        <Button onClick={() => disconnect(props.hub)}>Disconnect</Button>
-    </Card>
+        <br/>
+        <Button onClick={() => disconnect(props.hubHolder)}>Disconnect</Button>
+    </div>
 };
 
 export default HubDetails;

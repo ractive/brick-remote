@@ -38,7 +38,10 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/noble": "^0.0.39",
+    "noble": "latest"
+  },
   "peerDependencies": {},
   "optionalDependencies": {}
 }
