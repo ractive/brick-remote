@@ -5,5 +5,20 @@
 .motor-control {
     background-color: lightgray;
     padding: 10px;
-    width: 65px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.motor-control > div {
+    margin-bottom: 10px;
+}
+
+.smallForm {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.smallForm > div {
+    margin-bottom: 10px;
 }

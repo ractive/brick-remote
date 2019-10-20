@@ -1,4 +1,4 @@
-import {Collapse} from "antd";
+import {Card} from "antd";
 import React, {useContext} from "react";
 import {hubByUuid, HubsContext} from "../HubsContext";
 import MotorControl, {IMotorControlProps} from "./MotorControl";
@@ -18,7 +18,7 @@ const RemoteControl = (props: IRemoteControlProps) => {
         return result;
     }
 
-    return <Collapse defaultActiveKey={props.motorControlProps.map((m) => m.hubUuid)}>
+    return <div>
         {
             Array.from(props.motorControlProps
                 .reduce(
@@ -26,7 +26,7 @@ const RemoteControl = (props: IRemoteControlProps) => {
                     new Map<string, IMotorControlProps[]>(),
                 )
                 .entries()).map(([hubUuid, motorControlProps]) =>
-                    <Collapse.Panel header={hubByUuid(hubs, hubUuid).name} key={hubUuid}>
+                    <Card title={hubByUuid(hubs, hubUuid).name} key={hubUuid}>
                         {
                             motorControlProps
                                 .sort((a, b) => a.motorPort.localeCompare(b.motorPort))
@@ -38,10 +38,10 @@ const RemoteControl = (props: IRemoteControlProps) => {
                                     </div>,
                             )
                         }
-                    </Collapse.Panel>,
+                    </Card>,
             )
         }
-    </Collapse>;
+    </div>;
 };
 
 export default RemoteControl;
