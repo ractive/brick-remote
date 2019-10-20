@@ -1,4 +1,4 @@
-import {Button, Descriptions, Icon, Progress} from "antd";
+import {Button, Descriptions, Icon, Progress, Tooltip} from "antd";
 import * as Consts from "node-poweredup/dist/node/consts";
 import {DeviceType, HubType} from "node-poweredup/dist/node/consts";
 import React, {useEffect, useState} from "react";
@@ -60,12 +60,14 @@ const MotorDetails = (props: IMotorDetailsProps) => {
 
     return <div>
         {portDeviceType(props.hubHolder.hub.getPortDeviceType(props.port))}
-        <Button
-            size="small"
-            icon="double-right"
-            style={{float: "right"}}
-            onClick={() => props.addMotorControlProps({motorPort: props.port, hubUuid: props.hubHolder.uuid()})}
-        />
+        <Tooltip title="Add a control for this port to the &quot;Hub Controls&quot; panel on the right.">
+            <Button
+                size="small"
+                icon="double-right"
+                style={{float: "right"}}
+                onClick={() => props.addMotorControlProps({motorPort: props.port, hubUuid: props.hubHolder.uuid()})}
+            />
+        </Tooltip>
     </div>;
 };
 
