@@ -40,7 +40,8 @@
   },
   "devDependencies": {
     "@types/noble": "^0.0.39",
-    "noble": "latest"
+    "noble": "latest",
+    "tslint": "^5.20.0"
   },
   "peerDependencies": {},
   "optionalDependencies": {}

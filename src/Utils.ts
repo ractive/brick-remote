@@ -1,5 +1,5 @@
-const display = (visible : boolean) => {
-    return visible ? '' : 'hidden';
-}
+const display = (visible: boolean) => {
+    return visible ? "" : "hidden";
+};
 
-export { display }
+export { display };

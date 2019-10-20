@@ -1,15 +1,15 @@
-import React, {useContext} from "react";
-import MotorControl, {MotorControlProps} from "./MotorControl";
 import {Collapse} from "antd";
-import {HubsContext, hubByUuid} from "../HubsContext";
+import React, {useContext} from "react";
+import {hubByUuid, HubsContext} from "../HubsContext";
+import MotorControl, {IMotorControlProps} from "./MotorControl";
 
-export interface RemoteControlProps {
-   motorControlProps: MotorControlProps[];
+export interface IRemoteControlProps {
+   motorControlProps: IMotorControlProps[];
 }
 
-const RemoteControl = (props : RemoteControlProps) => {
+const RemoteControl = (props: IRemoteControlProps) => {
     const hubs = useContext(HubsContext);
-    function groupBy<K, V>(result: Map<K, V[]>, element: V, keyExtractor : (v: V) => K) : Map<K, V[]> {
+    function groupBy<K, V>(result: Map<K, V[]>, element: V, keyExtractor: (v: V) => K): Map<K, V[]> {
         if (!result.get(keyExtractor(element))) {
             result.set(keyExtractor(element), []);
         }
@@ -18,30 +18,30 @@ const RemoteControl = (props : RemoteControlProps) => {
         return result;
     }
 
-    return <Collapse defaultActiveKey={props.motorControlProps.map(m => m.hubUuid)}>
+    return <Collapse defaultActiveKey={props.motorControlProps.map((m) => m.hubUuid)}>
         {
             Array.from(props.motorControlProps
                 .reduce(
-                    (result, element) => groupBy(result, element, element => element.hubUuid),
-                    new Map<string, MotorControlProps[]>()
+                    (result, element) => groupBy(result, element, (e) => e.hubUuid),
+                    new Map<string, IMotorControlProps[]>(),
                 )
                 .entries()).map(([hubUuid, motorControlProps]) =>
                     <Collapse.Panel header={hubByUuid(hubs, hubUuid).name} key={hubUuid}>
                         {
                             motorControlProps
                                 .sort((a, b) => a.motorPort.localeCompare(b.motorPort))
-                                .map(motorControlProps =>
-                                    <div key={motorControlProps.hubUuid + "_" + motorControlProps.motorPort}
+                                .map((motorControl) =>
+                                    <div key={motorControl.hubUuid + "_" + motorControl.motorPort}
                                          style={{display: "inline-block", padding: "5px"}}>
-                                        <MotorControl hubUuid={motorControlProps.hubUuid}
-                                                      motorPort={motorControlProps.motorPort}/>
-                                    </div>
+                                        <MotorControl hubUuid={motorControl.hubUuid}
+                                                      motorPort={motorControl.motorPort}/>
+                                    </div>,
                             )
                         }
-                    </Collapse.Panel>
+                    </Collapse.Panel>,
             )
         }
-    </Collapse>
+    </Collapse>;
 };
 
 export default RemoteControl;

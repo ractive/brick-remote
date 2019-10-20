@@ -1,23 +1,24 @@
-import React, {useEffect, useReducer, useState, MouseEvent, KeyboardEvent} from 'react';
-import './App.css';
-import {Button, Layout, Spin, Card, Tooltip, Popover, Input} from 'antd';
-import usePoweredup from "./poweredup";
+import {Button, Card, Input, Layout, Popover, Spin, Tooltip} from "antd";
 import {Hub} from "node-poweredup";
+import React, {KeyboardEvent, MouseEvent, useEffect, useReducer, useState} from "react";
+import "./App.css";
 import HubDetails from "./components/HubDetails";
-import {MotorControlProps} from "./components/MotorControl";
-import {HubHolder} from "./HubHolder";
+import {IMotorControlProps} from "./components/MotorControl";
 import RemoteControl from "./components/RemoteControl";
+import {HubHolder} from "./HubHolder";
+import { HubsContext } from "./HubsContext";
+import usePoweredup from "./poweredup";
 import {display} from "./Utils";
-import { HubsContext } from './HubsContext';
 
 const { Header, Content, Sider } = Layout;
 
 const App: React.FC = () => {
-    interface HubRenameForm {
-        hubName: string
-        handleNameChange(newName: string) : void;
+    interface IHubRenameForm {
+        hubName: string;
+        handleNameChange(newName: string): void;
     }
-    const HubRenamePopover = ({hubName, handleNameChange} : HubRenameForm) => {
+
+    const HubRenamePopover = ({hubName, handleNameChange}: IHubRenameForm) => {
         const [name, setName] = useState(hubName);
         const [visible, setVisible] = useState(false);
 
@@ -41,48 +42,54 @@ const App: React.FC = () => {
         return <Tooltip title="Rename hub">
             <Popover placement="bottomRight" title="Rename hub"  trigger="click" visible={visible} content={
                 <div>
-                    <Input type="text" value={name} onChange={e => setName(e.target.value)} autoFocus={true} onPressEnter={handlePressEnter}/>
+                    <Input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        autoFocus={true}
+                        onPressEnter={handlePressEnter}
+                    />
                     <Button icon="check" onClick={handleSubmit} />
                     <Button icon="close" onClick={handleCancel} />
                 </div>
             }>
                 <Button icon="edit" onClick={() => setVisible(!visible)} />
             </Popover>
-        </Tooltip>
+        </Tooltip>;
     };
 
     enum ActionType {
         CONNECT,
         DISCONNECT,
-        RENAME
+        RENAME,
     }
 
-    interface Action {
-        type: ActionType
+    interface IAction {
+        type: ActionType;
         payload: {
             hub: Hub,
-            name?: string
-        }
+            name?: string,
+        };
     }
 
-    const reducer = (hubHolders: HubHolder[], action: Action) : HubHolder[] => {
+    const reducer = (hubHolders: HubHolder[], action: IAction): HubHolder[] => {
         const hub = action.payload.hub;
         switch (action.type) {
             case ActionType.CONNECT:
-                if (!hubHolders.find(hubHolder => hubHolder.uuid() === hub.uuid)) {
+                if (!hubHolders.find((hubHolder) => hubHolder.uuid() === hub.uuid)) {
                     return [...hubHolders, new HubHolder(hub)];
                 }
                 break;
             case ActionType.DISCONNECT:
-                return hubHolders.filter(hubHolder => hubHolder.uuid() !== hub.uuid);
+                return hubHolders.filter((hubHolder) => hubHolder.uuid() !== hub.uuid);
             case ActionType.RENAME:
-                const i = hubHolders.findIndex(hubHolder => hubHolder.uuid() === hub.uuid);
+                const i = hubHolders.findIndex((hubHolder) => hubHolder.uuid() === hub.uuid);
                 if (i >= 0 && action.payload.name) {
                     return [
                         ...hubHolders.slice(0, i),
                         new HubHolder(hubHolders[i].hub, action.payload.name),
-                        ...hubHolders.slice(i + 1)
-                    ]
+                        ...hubHolders.slice(i + 1),
+                    ];
                 }
                 break;
         }
@@ -93,7 +100,7 @@ const App: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
     const poweredUP = usePoweredup();
     const [hubs, dispatch] = useReducer(reducer, new Array<HubHolder>());
-    const [motorControlProps, setMotorControlProps] = useState(new Array<MotorControlProps>());
+    const [motorControlProps, setMotorControlProps] = useState(new Array<IMotorControlProps>());
     const [scanning, setScanning] = useState(false);
 
     useEffect(() => {
@@ -102,7 +109,7 @@ const App: React.FC = () => {
             console.log("Connect...");
             await hub.connect(); // Connect to hub
             console.log("Connected");
-            dispatch({type: ActionType.CONNECT, payload: {hub: hub}});
+            dispatch({type: ActionType.CONNECT, payload: {hub}});
 
             hub.on("attach", (port, device) => {
                 console.log(`Device attached to port ${port} (Device ID: ${device})`) ;
@@ -140,7 +147,7 @@ const App: React.FC = () => {
 
             hub.on("disconnect", () => {
                 console.log("disconnect event received...");
-                dispatch({type: ActionType.DISCONNECT, payload: {hub: hub}});
+                dispatch({type: ActionType.DISCONNECT, payload: {hub}});
                 console.log("disconnect action dispatched!");
             });
         });
@@ -153,19 +160,19 @@ const App: React.FC = () => {
         // dispatch({type: ActionType.CONNECT, payload: {hub: new Hub(new WebBLEDevice({}))}});
     }
 
-    function addMotorControlProps(newMotorCotrolProps: MotorControlProps) : void {
-        setMotorControlProps([...motorControlProps, newMotorCotrolProps])
+    function addMotorControlProps(newMotorCotrolProps: IMotorControlProps): void {
+        setMotorControlProps([...motorControlProps, newMotorCotrolProps]);
     }
 
-    function setHubName(hubHolder: HubHolder, name: string) : void {
-        dispatch({type: ActionType.RENAME, payload : { hub: hubHolder.hub, name: name }})
+    function setHubName(hubHolder: HubHolder, name: string): void {
+        dispatch({type: ActionType.RENAME, payload : { hub: hubHolder.hub, name }});
     }
 
     return (
         <HubsContext.Provider value={hubs}>
-            <Layout style={{ minHeight: '100vh' }}>
-                <Sider width={"25%"} collapsible collapsed={collapsed} onCollapse={() =>setCollapsed(!collapsed)}  >
-                    <div style={{"padding": "15px"}} className={display(!collapsed)}>
+            <Layout style={{ minHeight: "100vh" }}>
+                <Sider width={"25%"} collapsible collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)}  >
+                    <div style={{padding: "15px"}} className={display(!collapsed)}>
                         <Spin spinning={scanning}>
                             <Button type="primary" onClick={scan} icon="search" block>
                                 Scan for hubs
@@ -174,9 +181,12 @@ const App: React.FC = () => {
                         <br/>
                         <br/>
                             {
-                                hubs.map(hub =>
+                                hubs.map((hub) =>
                                     <Card title={hub.name} key={hub.uuid()} extra={
-                                            <HubRenamePopover hubName={hub.name} handleNameChange={(name) => setHubName(hub, name)} />
+                                            <HubRenamePopover
+                                                hubName={hub.name}
+                                                handleNameChange={(name) => setHubName(hub, name)}
+                                            />
                                         }>
                                         <HubDetails hubHolder={hub} addMotorControlProps={addMotorControlProps} />
                                     </Card>)
@@ -184,8 +194,8 @@ const App: React.FC = () => {
                     </div>
                 </Sider>
                 <Layout>
-                    <Header style={{ background: '#fff', padding: "0px 10px"}}><h1>Hub controls</h1></Header>
-                    <Content style={{ margin: '10px' }}>
+                    <Header style={{ background: "#fff", padding: "0px 10px"}}><h1>Hub controls</h1></Header>
+                    <Content style={{ margin: "10px" }}>
                         <RemoteControl motorControlProps={motorControlProps}/>
                     </Content>
                 </Layout>

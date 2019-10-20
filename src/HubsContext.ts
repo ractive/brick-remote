@@ -3,9 +3,9 @@ import {HubHolder} from "./HubHolder";
 
 export const HubsContext = createContext(new Array<HubHolder>());
 export const hubByUuid = (hubs: HubHolder[], uuid: string) => {
-    const hub = hubs.find(h => h.uuid() === uuid);
+    const hub = hubs.find((h) => h.uuid() === uuid);
     if (!hub) {
-        throw new Error("No hub found with uuid " + uuid)
+        throw new Error("No hub found with uuid " + uuid);
     }
 
     return hub;

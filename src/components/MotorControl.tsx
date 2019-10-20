@@ -1,28 +1,30 @@
-import React, {useEffect, useState} from "react";
-import {Slider, Switch, Icon, Button, Tooltip} from "antd";
+import {Button, Icon, Slider, Switch, Tooltip} from "antd";
 import { SliderValue } from "antd/lib/slider";
+import React, {useEffect, useState} from "react";
 import usePoweredup from "../poweredup";
-import { HubHolder } from "../HubHolder";
 
-export interface MotorControlProps {
+export interface IMotorControlProps {
     hubUuid: string;
     motorPort: string;
 }
 
-const MotorControl = (props: MotorControlProps) => {
+const MotorControl = (props: IMotorControlProps) => {
     const poweredUP = usePoweredup();
     const [motorSpeed, setMotorSpeed] = useState(0);
     const [inverted, setInverted] = useState(false);
-    useEffect(() => driveMotor(), [motorSpeed, inverted])
+    useEffect(() => {
+            function driveMotor() {
+                console.log("driveMotor", motorSpeed, inverted);
+                const hub = poweredUP.getConnectedHubByUUID(decodeURIComponent(props.hubUuid));
+                hub.setMotorSpeed(props.motorPort, inverted ? -motorSpeed : motorSpeed)
+                    .catch((err: any) => console.log("Error while setting motorSpeed", err));
+            }
 
-    function driveMotor() {
-        console.log("driveMotor", motorSpeed, inverted);
-        const hub = poweredUP.getConnectedHubByUUID(decodeURIComponent(props.hubUuid));
-        hub.setMotorSpeed(props.motorPort, inverted ? -motorSpeed : motorSpeed);
-    }
+            driveMotor();
+        }, [motorSpeed, inverted, props.motorPort, props.hubUuid, poweredUP]);
 
     function onChangeMotorSpeed(value: SliderValue) {
-        let speed = value instanceof Array ? value[0] : value;
+        const speed = value instanceof Array ? value[0] : value;
         setMotorSpeed(speed);
     }
 
@@ -57,7 +59,7 @@ const MotorControl = (props: MotorControlProps) => {
         <Tooltip title="Stop the motor">
             <Button icon="stop" onClick={() => setMotorSpeed(0)}  />
         </Tooltip>
-    </div>
+    </div>;
 };
 
 export default MotorControl;

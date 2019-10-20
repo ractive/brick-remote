@@ -1,8 +1,8 @@
 import {Hub} from "node-poweredup";
 
 export class HubHolder {
-    hub: Hub;
-    name: string;
+    public hub: Hub;
+    public name: string;
 
     constructor(hub: Hub, name?: string) {
         this.hub = hub;
@@ -13,7 +13,7 @@ export class HubHolder {
         }
     }
 
-    uuid() : string {
+    public uuid(): string {
         return this.hub!.uuid;
     }
 }

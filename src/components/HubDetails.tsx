@@ -1,23 +1,23 @@
-import React, {useEffect, useState} from "react";
-import {Descriptions, Button, Progress, Icon} from "antd";
+import {Button, Descriptions, Icon, Progress} from "antd";
 import * as Consts from "node-poweredup/dist/node/consts";
 import {DeviceType, HubType} from "node-poweredup/dist/node/consts";
+import React, {useEffect, useState} from "react";
 import {HubHolder} from "../HubHolder";
-import {MotorControlProps} from "./MotorControl";
+import {IMotorControlProps} from "./MotorControl";
 
-export interface HubDetailsProps {
-    hubHolder: HubHolder,
-    addMotorControlProps(motorControlProps: MotorControlProps) : void;
-}
-
-interface MotorDetailsProps {
-    port: string
+export interface IHubDetailsProps {
     hubHolder: HubHolder;
-    addMotorControlProps(motorControlProps: MotorControlProps) : void;
+    addMotorControlProps(motorControlProps: IMotorControlProps): void;
 }
 
-const MotorDetails = (props: MotorDetailsProps) => {
-    function portDeviceType(type : Consts.DeviceType) : string {
+interface IMotorDetailsProps {
+    port: string;
+    hubHolder: HubHolder;
+    addMotorControlProps(motorControlProps: IMotorControlProps): void;
+}
+
+const MotorDetails = (props: IMotorDetailsProps) => {
+    function portDeviceType(type: Consts.DeviceType): string {
         switch (type) {
             case DeviceType.UNKNOWN:
                 return "UNKNOWN";
@@ -66,17 +66,17 @@ const MotorDetails = (props: MotorDetailsProps) => {
             style={{float: "right"}}
             onClick={() => props.addMotorControlProps({motorPort: props.port, hubUuid: props.hubHolder.uuid()})}
         />
-    </div>
+    </div>;
 };
 
-interface TiltIndicatorProps {
+interface ITiltIndicatorProps {
     tilt: number;
 }
-const TiltIndicator = ({tilt}: TiltIndicatorProps) => (
+const TiltIndicator = ({tilt}: ITiltIndicatorProps) => (
     <span>{tilt} <Icon type="vertical-align-middle" rotate={tilt} style={{fontSize: "20px", float: "right"}} /></span>
 );
 
-const HubDetails = (props : HubDetailsProps) => {
+const HubDetails = (props: IHubDetailsProps) => {
     const [tiltX, setTiltX] = useState(0);
     const [tiltY, setTiltY] = useState(0);
 
@@ -92,14 +92,14 @@ const HubDetails = (props : HubDetailsProps) => {
         };
     });
 
-    function disconnect(hubHolder : HubHolder) {
+    function disconnect(hubHolder: HubHolder) {
         hubHolder.hub.disconnect()
             .then(() => console.log("Disconnected"))
-            .catch((err : any) => console.log(err.message));
+            .catch((err: any) => console.log(err.message));
     }
 
-    function hubType(hubType : Consts.HubType) : string {
-        switch (hubType) {
+    function hubType(type: Consts.HubType): string {
+        switch (type) {
             case HubType.UNKNOWN:
                 return "UNKNOWN";
             case HubType.WEDO2_SMART_HUB:
@@ -138,8 +138,8 @@ const HubDetails = (props : HubDetailsProps) => {
             <Descriptions.Item label="Battery level">
                 <Progress
                     strokeColor={{
-                        '0%': '#ff0000',
-                        '100%': '#87d068',
+                        "0%": "#ff0000",
+                        "100%": "#87d068",
                     }}
                     strokeLinecap="square"
                     status="normal"
@@ -149,7 +149,7 @@ const HubDetails = (props : HubDetailsProps) => {
         </Descriptions>
         <br/>
         <Button onClick={() => disconnect(props.hubHolder)}>Disconnect</Button>
-    </div>
+    </div>;
 };
 
 export default HubDetails;
