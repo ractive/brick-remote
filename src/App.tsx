@@ -127,9 +127,9 @@ const App: React.FC = () => {
                 console.log(`Color detected on port ${port} (Color: ${color})`);
             });
 
-            hub.on("rotate", (port, rotation) => {
-                console.log(`Rotation detected on port ${port} (Rotation: ${rotation})`);
-            });
+            // hub.on("rotate", (port, rotation) => {
+            //     console.log(`Rotation detected on port ${port} (Rotation: ${rotation})`);
+            // });
 
             hub.on("button", (button, state) => {
                 console.log(`Button press detected (Button: ${button}, State: ${state})`);
