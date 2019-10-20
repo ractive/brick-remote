@@ -10,7 +10,7 @@ import RemoteControl from "./components/RemoteControl";
 import {display} from "./Utils";
 import { HubsContext } from './HubsContext';
 
-const { Header, Footer, Content, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 
 const App: React.FC = () => {
     interface HubRenameForm {
@@ -43,7 +43,7 @@ const App: React.FC = () => {
                 <div>
                     <Input type="text" value={name} onChange={e => setName(e.target.value)} autoFocus={true} onPressEnter={handlePressEnter}/>
                     <Button icon="check" onClick={handleSubmit} />
-                    <Button icon="close" />
+                    <Button icon="close" onClick={handleCancel} />
                 </div>
             }>
                 <Button icon="edit" onClick={() => setVisible(!visible)} />
@@ -188,7 +188,6 @@ const App: React.FC = () => {
                     <Content style={{ margin: '10px' }}>
                         <RemoteControl motorControlProps={motorControlProps}/>
                     </Content>
-                    <Footer style={{ textAlign: 'center' }}></Footer>
                 </Layout>
             </Layout>
         </HubsContext.Provider>
