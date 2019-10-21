@@ -1,6 +1,6 @@
-import {Button, Card, Input, Layout, Popover, Spin, Tooltip} from "antd";
+import {Button, Card, Layout, Spin, Typography} from "antd";
 import {Hub} from "node-poweredup";
-import React, {KeyboardEvent, MouseEvent, useEffect, useReducer, useState} from "react";
+import React, {useEffect, useReducer, useState} from "react";
 import "./App.css";
 import HubDetails from "./components/HubDetails";
 import {IMotorControlProps} from "./components/MotorControl";
@@ -11,53 +11,9 @@ import usePoweredup from "./poweredup";
 import {display} from "./Utils";
 
 const { Header, Content, Sider } = Layout;
+const { Paragraph } = Typography;
 
 const App: React.FC = () => {
-    interface IHubRenameForm {
-        hubName: string;
-        handleNameChange(newName: string): void;
-    }
-
-    const HubRenamePopover = ({hubName, handleNameChange}: IHubRenameForm) => {
-        const [name, setName] = useState(hubName);
-        const [visible, setVisible] = useState(false);
-
-        function handlePressEnter(event: KeyboardEvent<HTMLInputElement>) {
-            handleNameChange(name);
-            setVisible(false);
-            event.preventDefault();
-        }
-
-        function handleSubmit(event: MouseEvent<HTMLElement>) {
-            handleNameChange(name);
-            setVisible(false);
-            event.preventDefault();
-        }
-
-        function handleCancel(event: MouseEvent<HTMLElement>) {
-            setVisible(false);
-            event.preventDefault();
-        }
-
-        return <Tooltip title="Rename hub">
-            <Popover placement="bottomRight" title="Rename hub"  trigger="click" visible={visible} content={
-                <div>
-                    <Input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        autoFocus={true}
-                        onPressEnter={handlePressEnter}
-                    />
-                    <Button icon="check" onClick={handleSubmit} />
-                    <Button icon="close" onClick={handleCancel} />
-                </div>
-            }>
-                <Button icon="edit" onClick={() => setVisible(!visible)} />
-            </Popover>
-        </Tooltip>;
-    };
-
     enum ActionType {
         CONNECT,
         DISCONNECT,
@@ -182,12 +138,11 @@ const App: React.FC = () => {
                         <br/>
                             {
                                 hubs.map((hub) =>
-                                    <Card title={hub.name} key={hub.uuid()} extra={
-                                            <HubRenamePopover
-                                                hubName={hub.name}
-                                                handleNameChange={(name) => setHubName(hub, name)}
-                                            />
-                                        }>
+                                    <Card title={
+                                            <Paragraph editable={{ onChange: (name) => setHubName(hub, name) }}>
+                                                {hub.name}
+                                            </Paragraph> }
+                                          key={hub.uuid()}>
                                         <HubDetails hubHolder={hub} addMotorControlProps={addMotorControlProps} />
                                     </Card>)
                             }
