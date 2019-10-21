@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/1f374f84-7e2e-49b1-8312-0b4ad6f24083/deploy-status)](https://app.netlify.com/sites/lego-remote/deploys)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
