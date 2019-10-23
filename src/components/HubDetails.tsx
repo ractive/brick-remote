@@ -58,8 +58,8 @@ const MotorDetails = (props: IMotorDetailsProps) => {
         }
     }
 
-    return <div>
-        {portDeviceType(props.hubHolder.hub.getPortDeviceType(props.port))}
+    return <div className="hubDetails">
+        <div>{portDeviceType(props.hubHolder.hub.getPortDeviceType(props.port))}</div>
         <Tooltip title="Add a control for this port to the &quot;Hub Controls&quot; panel on the right.">
             <Button
                 size="small"
@@ -75,7 +75,10 @@ interface ITiltIndicatorProps {
     tilt: number;
 }
 const TiltIndicator = ({tilt}: ITiltIndicatorProps) => (
-    <span>{tilt} <Icon type="vertical-align-middle" rotate={tilt} style={{fontSize: "20px", float: "right"}} /></span>
+    <div className="hubDetails">
+        <div>{tilt}</div>
+        <Icon type="vertical-align-middle" rotate={tilt} style={{fontSize: "20px", float: "right"}} />
+    </div>
 );
 
 const HubDetails = (props: IHubDetailsProps) => {
@@ -120,7 +123,7 @@ const HubDetails = (props: IHubDetailsProps) => {
     }
 
     return <div>
-        <Descriptions layout={"horizontal"} bordered  column={1} size="small">
+        <Descriptions layout={"horizontal"} bordered column={1} size="small">
             <Descriptions.Item label="UUID">{ props.hubHolder.uuid() }</Descriptions.Item>
             <Descriptions.Item label="Type">{ hubType(props.hubHolder.hub.getHubType()) }</Descriptions.Item>
             <Descriptions.Item label="Tilt X"><TiltIndicator tilt={tiltX}/></Descriptions.Item>

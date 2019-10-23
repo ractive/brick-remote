@@ -22,3 +22,8 @@
 .smallForm > div {
     margin-bottom: 10px;
 }
+
+.hubDetails {
+    display: flex;
+    justify-content: space-between;
+}
