@@ -127,7 +127,8 @@ const App: React.FC = () => {
     return (
         <HubsContext.Provider value={hubs}>
             <Layout style={{ minHeight: "100vh" }}>
-                <Sider width={"25%"} collapsible collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)}  >
+                <Sider width="500px" breakpoint="lg"
+                       collapsible collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)}  >
                     <div style={{padding: "15px"}} className={display(!collapsed)}>
                         <Spin spinning={scanning}>
                             <Button type="primary" onClick={scan} icon="search" block>
