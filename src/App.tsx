@@ -1,4 +1,4 @@
-import {Button, Card, Layout, Spin, Typography} from "antd";
+import {Button, Layout, Spin} from "antd";
 import {Hub} from "node-poweredup";
 import React, {useEffect, useReducer, useState} from "react";
 import "./App.css";
@@ -11,7 +11,6 @@ import usePoweredup from "./poweredup";
 import {display} from "./Utils";
 
 const { Header, Content, Sider } = Layout;
-const { Paragraph } = Typography;
 
 const App: React.FC = () => {
     enum ActionType {
@@ -139,13 +138,12 @@ const App: React.FC = () => {
                         <br/>
                             {
                                 hubs.map((hub) =>
-                                    <Card title={
-                                            <Paragraph editable={{ onChange: (name) => setHubName(hub, name) }}>
-                                                {hub.name}
-                                            </Paragraph> }
-                                          key={hub.uuid()}>
-                                        <HubDetails hubHolder={hub} addMotorControlProps={addMotorControlProps} />
-                                    </Card>)
+                                    <HubDetails
+                                        key={hub.uuid()}
+                                        hubHolder={hub}
+                                        addMotorControlProps={addMotorControlProps}
+                                        renameHub={(name) => setHubName(hub, name)}
+                                    />)
                             }
                     </div>
                 </Sider>

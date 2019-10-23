@@ -1,13 +1,16 @@
-import {Button, Descriptions, Icon, Progress, Tooltip} from "antd";
+import {Button, Card, Descriptions, Icon, Progress, Tooltip, Typography} from "antd";
 import * as Consts from "node-poweredup/dist/node/consts";
 import {DeviceType, HubType} from "node-poweredup/dist/node/consts";
 import React, {useEffect, useState} from "react";
 import {HubHolder} from "../HubHolder";
 import {IMotorControlProps} from "./MotorControl";
 
+const { Paragraph } = Typography;
+
 export interface IHubDetailsProps {
     hubHolder: HubHolder;
     addMotorControlProps(motorControlProps: IMotorControlProps): void;
+    renameHub(newName: string): void;
 }
 
 interface IMotorDetailsProps {
@@ -122,7 +125,10 @@ const HubDetails = (props: IHubDetailsProps) => {
         }
     }
 
-    return <div>
+    return <Card title={
+        <Paragraph editable={{ onChange: props.renameHub }} style={{marginBottom: "0"}}>
+            {props.hubHolder.hub.name}
+        </Paragraph> } bodyStyle={{padding: 0}}>
         <Descriptions layout={"horizontal"} bordered column={1} size="small">
             <Descriptions.Item label="UUID">{ props.hubHolder.uuid() }</Descriptions.Item>
             <Descriptions.Item label="Type">{ hubType(props.hubHolder.hub.getHubType()) }</Descriptions.Item>
@@ -152,9 +158,8 @@ const HubDetails = (props: IHubDetailsProps) => {
                 />
             </Descriptions.Item>
         </Descriptions>
-        <br/>
-        <Button onClick={() => disconnect(props.hubHolder)}>Disconnect</Button>
-    </div>;
+        <Button style={{margin: "10px"}} onClick={() => disconnect(props.hubHolder)}>Disconnect</Button>
+    </Card>;
 };
 
 export default HubDetails;
