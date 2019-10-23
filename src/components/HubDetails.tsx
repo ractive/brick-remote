@@ -98,7 +98,7 @@ const HubDetails = (props: IHubDetailsProps) => {
         return () => {
             props.hubHolder.hub.removeListener("tilt", tiltListener);
         };
-    });
+    }, [props.hubHolder]);
 
     function disconnect(hubHolder: HubHolder) {
         hubHolder.hub.disconnect()
