@@ -1,15 +1,18 @@
-import {Button, Card, Descriptions, Icon, Progress, Tooltip, Typography} from "antd";
+import {Button, Card, Descriptions, Progress, Tooltip, Typography} from "antd";
 import * as Consts from "node-poweredup/dist/node/consts";
 import {DeviceType, HubType} from "node-poweredup/dist/node/consts";
-import React, {useEffect, useState} from "react";
+import React from "react";
+import useTiltEffect from "../hooks/useTiltEffect";
 import {HubHolder} from "../HubHolder";
 import {IMotorControlProps} from "./MotorControl";
+import {Axis, ITiltControlProps} from "./TiltControl";
 
 const { Paragraph } = Typography;
 
 export interface IHubDetailsProps {
     hubHolder: HubHolder;
     addMotorControlProps(motorControlProps: IMotorControlProps): void;
+    addTiltControlProps(tiltControlProps: ITiltControlProps): void;
     renameHub(newName: string): void;
 }
 
@@ -74,32 +77,29 @@ const MotorDetails = (props: IMotorDetailsProps) => {
     </div>;
 };
 
-interface ITiltIndicatorProps {
-    tilt: number;
+interface ITiltDetailsProps {
+    axis: Axis;
+    hubHolder: HubHolder;
+    addTiltControlProps(tiltControlProps: ITiltControlProps): void;
 }
-const TiltIndicator = ({tilt}: ITiltIndicatorProps) => (
-    <div className="hubDetails">
-        <div>{tilt}</div>
-        <Icon type="vertical-align-middle" rotate={tilt} style={{fontSize: "20px", float: "right"}} />
-    </div>
-);
+
+const TiltDetails = (props: ITiltDetailsProps) => {
+    const [tiltX, tiltY] = useTiltEffect(props.hubHolder.uuid());
+
+    return <div className="hubDetails">
+        <div>{props.axis === Axis.X ? tiltX : tiltY}</div>
+        <Tooltip title="Add a tilt indicator for this axis.">
+            <Button
+                size="small"
+                icon="double-right"
+                style={{float: "right"}}
+                onClick={() => props.addTiltControlProps({axis: props.axis, hubUuid: props.hubHolder.uuid()})}
+            />
+        </Tooltip>
+    </div>;
+};
 
 const HubDetails = (props: IHubDetailsProps) => {
-    const [tiltX, setTiltX] = useState(0);
-    const [tiltY, setTiltY] = useState(0);
-
-    useEffect(() => {
-        function tiltListener(port: string, x: number, y: number) {
-            setTiltX(x);
-            setTiltY(y);
-        }
-
-        props.hubHolder.hub.on("tilt", tiltListener);
-        return () => {
-            props.hubHolder.hub.removeListener("tilt", tiltListener);
-        };
-    }, [props.hubHolder]);
-
     function disconnect(hubHolder: HubHolder) {
         hubHolder.hub.disconnect()
             .then(() => console.log("Disconnected"))
@@ -132,8 +132,12 @@ const HubDetails = (props: IHubDetailsProps) => {
         <Descriptions layout={"horizontal"} bordered column={1} size="small">
             <Descriptions.Item label="UUID">{ props.hubHolder.uuid() }</Descriptions.Item>
             <Descriptions.Item label="Type">{ hubType(props.hubHolder.hub.getHubType()) }</Descriptions.Item>
-            <Descriptions.Item label="Tilt X"><TiltIndicator tilt={tiltX}/></Descriptions.Item>
-            <Descriptions.Item label="Tilt Y"><TiltIndicator tilt={tiltY}/></Descriptions.Item>
+            <Descriptions.Item label="Tilt X">
+                <TiltDetails axis={Axis.X} hubHolder={props.hubHolder} addTiltControlProps={props.addTiltControlProps}/>
+            </Descriptions.Item>
+            <Descriptions.Item label="Tilt Y">
+                <TiltDetails axis={Axis.Y} hubHolder={props.hubHolder} addTiltControlProps={props.addTiltControlProps}/>
+            </Descriptions.Item>
             <Descriptions.Item label="Port A">
                 <MotorDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="A"/>
             </Descriptions.Item>

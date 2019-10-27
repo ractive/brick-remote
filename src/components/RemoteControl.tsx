@@ -2,43 +2,49 @@ import {Card} from "antd";
 import React, {useContext} from "react";
 import {hubByUuid, HubsContext} from "../HubsContext";
 import MotorControl, {IMotorControlProps} from "./MotorControl";
+import TiltControl, {ITiltControlProps} from "./TiltControl";
 
 export interface IRemoteControlProps {
    motorControlProps: IMotorControlProps[];
+   tiltControlProps: ITiltControlProps[];
 }
 
 const RemoteControl = (props: IRemoteControlProps) => {
     const hubs = useContext(HubsContext);
-    function groupBy<K, V>(result: Map<K, V[]>, element: V, keyExtractor: (v: V) => K): Map<K, V[]> {
-        if (!result.get(keyExtractor(element))) {
-            result.set(keyExtractor(element), []);
-        }
-        // @ts-ignore
-        result.get(keyExtractor(element)).push(element);
-        return result;
-    }
+
+    const hubUuids = new Set<string>([
+        ...props.motorControlProps
+            .map((p) => p.hubUuid),
+        ...props.tiltControlProps
+            .map((p) => p.hubUuid),
+    ]);
 
     return <div>
         {
-            Array.from(props.motorControlProps
-                .reduce(
-                    (result, element) => groupBy(result, element, (e) => e.hubUuid),
-                    new Map<string, IMotorControlProps[]>(),
-                )
-                .entries()).map(([hubUuid, motorControlProps]) =>
-                    <Card title={hubByUuid(hubs, hubUuid).name} key={hubUuid}>
-                        {
-                            motorControlProps
-                                .sort((a, b) => a.motorPort.localeCompare(b.motorPort))
-                                .map((motorControl) =>
-                                    <div key={motorControl.hubUuid + "_" + motorControl.motorPort}
-                                         style={{display: "inline-block", padding: "5px"}}>
-                                        <MotorControl hubUuid={motorControl.hubUuid}
-                                                      motorPort={motorControl.motorPort}/>
-                                    </div>,
+            Array.from(hubUuids).map((hubUuid) =>
+                <Card title={hubByUuid(hubs, hubUuid).name} key={hubUuid}>
+                    <div>
+                    {
+                        props.motorControlProps
+                            .filter((p) => p.hubUuid === hubUuid)
+                            .sort((a, b) => a.motorPort.localeCompare(b.motorPort))
+                            .map((motorControl) =>
+                                <div key={motorControl.hubUuid + "_" + motorControl.motorPort}
+                                     style={{display: "inline-block", padding: "5px"}}>
+                                    <MotorControl hubUuid={motorControl.hubUuid}
+                                                  motorPort={motorControl.motorPort}/>
+                                </div>,
                             )
+                    }
+                    </div>
+                    <div>
+                        {
+                            props.tiltControlProps
+                                .filter((p) => p.hubUuid === hubUuid)
+                                .map((p) => <TiltControl axis={p.axis}  hubUuid={p.hubUuid}/>)
                         }
-                    </Card>,
+                    </div>
+                </Card>,
             )
         }
     </div>;

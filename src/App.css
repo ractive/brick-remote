@@ -27,3 +27,20 @@
     display: flex;
     justify-content: space-between;
 }
+
+.tiltControl {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 15px;
+}
+.tiltIcon {
+    font-size: 50pt;
+    border-radius: 100px;
+    background-color: lightgray;
+    padding: 10px;
+}
+.tiltValue {
+    margin: 10px;
+    width: 2em;
+}

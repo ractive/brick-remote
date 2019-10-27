@@ -5,6 +5,7 @@ import "./App.css";
 import HubDetails from "./components/HubDetails";
 import {IMotorControlProps} from "./components/MotorControl";
 import RemoteControl from "./components/RemoteControl";
+import {ITiltControlProps} from "./components/TiltControl";
 import {HubHolder} from "./HubHolder";
 import { HubsContext } from "./HubsContext";
 import usePoweredup from "./poweredup";
@@ -56,6 +57,7 @@ const App: React.FC = () => {
     const poweredUP = usePoweredup();
     const [hubs, dispatch] = useReducer(reducer, new Array<HubHolder>());
     const [motorControlProps, setMotorControlProps] = useState(new Array<IMotorControlProps>());
+    const [tiltControlProps, setTiltControlProps] = useState(new Array<ITiltControlProps>());
     const [scanning, setScanning] = useState(false);
 
     useEffect(() => {
@@ -119,6 +121,10 @@ const App: React.FC = () => {
         setMotorControlProps([...motorControlProps, newMotorCotrolProps]);
     }
 
+    function addTiltControlProps(newTiltCotrolProps: ITiltControlProps): void {
+        setTiltControlProps([...tiltControlProps, newTiltCotrolProps]);
+    }
+
     function setHubName(hubHolder: HubHolder, name: string): void {
         dispatch({type: ActionType.RENAME, payload : { hub: hubHolder.hub, name }});
     }
@@ -142,6 +148,7 @@ const App: React.FC = () => {
                                         key={hub.uuid()}
                                         hubHolder={hub}
                                         addMotorControlProps={addMotorControlProps}
+                                        addTiltControlProps={addTiltControlProps}
                                         renameHub={(name) => setHubName(hub, name)}
                                     />)
                             }
@@ -150,7 +157,7 @@ const App: React.FC = () => {
                 <Layout>
                     <Header style={{ background: "#fff", padding: "0px 10px"}}><h1>Hub controls</h1></Header>
                     <Content style={{ margin: "10px" }}>
-                        <RemoteControl motorControlProps={motorControlProps}/>
+                        <RemoteControl motorControlProps={motorControlProps} tiltControlProps={tiltControlProps}/>
                     </Content>
                 </Layout>
             </Layout>
