@@ -44,3 +44,7 @@
     margin: 10px;
     width: 2em;
 }
+
+.ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-label, .ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-content {
+    padding: 8px 8px;
+}

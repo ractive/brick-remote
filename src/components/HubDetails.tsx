@@ -1,7 +1,7 @@
-import {Button, Card, Descriptions, Progress, Tooltip, Typography} from "antd";
+import {Button, Card, Descriptions, Icon, Progress, Tooltip, Typography} from "antd";
 import * as Consts from "node-poweredup/dist/node/consts";
 import {DeviceType, HubType} from "node-poweredup/dist/node/consts";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import useTiltEffect from "../hooks/useTiltEffect";
 import {HubHolder} from "../HubHolder";
 import {IMotorControlProps} from "./MotorControl";
@@ -16,63 +16,78 @@ export interface IHubDetailsProps {
     renameHub(newName: string): void;
 }
 
-interface IMotorDetailsProps {
+interface IPortDetailsProps {
     port: string;
     hubHolder: HubHolder;
     addMotorControlProps(motorControlProps: IMotorControlProps): void;
 }
 
-const MotorDetails = (props: IMotorDetailsProps) => {
-    function portDeviceType(type: Consts.DeviceType): string {
-        switch (type) {
-            case DeviceType.UNKNOWN:
-                return "UNKNOWN";
-            case DeviceType.BASIC_MOTOR:
-                return "BASIC_MOTOR";
-            case DeviceType.TRAIN_MOTOR:
-                return "TRAIN_MOTOR";
-            case DeviceType.LED_LIGHTS:
-                return "LED_LIGHTS";
-            case DeviceType.BOOST_LED:
-                return "BOOST_LED";
-            case DeviceType.WEDO2_TILT:
-                return "WEDO2_TILT";
-            case DeviceType.WEDO2_DISTANCE:
-                return "WEDO2_DISTANCE";
-            case DeviceType.BOOST_DISTANCE:
-                return "BOOST_DISTANCE";
-            case DeviceType.BOOST_TACHO_MOTOR:
-                return "BOOST_TACHO_MOTOR";
-            case DeviceType.BOOST_MOVE_HUB_MOTOR:
-                return "BOOST_MOVE_HUB_MOTOR";
-            case DeviceType.BOOST_TILT:
-                return "BOOST_TILT";
-            case DeviceType.DUPLO_TRAIN_BASE_MOTOR:
-                return "DUPLO_TRAIN_BASE_MOTOR";
-            case DeviceType.DUPLO_TRAIN_BASE_SPEAKER:
-                return "DUPLO_TRAIN_BASE_SPEAKER";
-            case DeviceType.DUPLO_TRAIN_BASE_COLOR:
-                return "DUPLO_TRAIN_BASE_COLOR";
-            case DeviceType.DUPLO_TRAIN_BASE_SPEEDOMETER:
-                return "DUPLO_TRAIN_BASE_SPEEDOMETER";
-            case DeviceType.CONTROL_PLUS_LARGE_MOTOR:
-                return "CONTROL_PLUS_LARGE_MOTOR";
-            case DeviceType.CONTROL_PLUS_XLARGE_MOTOR:
-                return "CONTROL_PLUS_XLARGE_MOTOR";
-            case DeviceType.POWERED_UP_REMOTE_BUTTON:
-                return "POWERED_UP_REMOTE_BUTTON";
+const PortDetails = (props: IPortDetailsProps) => {
+
+    const [motorName, setMotorName] = useState("unknown");
+
+    useEffect(() => {
+        function portDeviceType(type: Consts.DeviceType): string {
+            switch (type) {
+                case DeviceType.UNKNOWN:
+                    return "unknown";
+                case DeviceType.BASIC_MOTOR:
+                    return "Basic motor";
+                case DeviceType.TRAIN_MOTOR:
+                    return "Train motor";
+                case DeviceType.LED_LIGHTS:
+                    return "LED lights";
+                case DeviceType.BOOST_LED:
+                    return "boost LED";
+                case DeviceType.WEDO2_TILT:
+                    return "wedo2 tils";
+                case DeviceType.WEDO2_DISTANCE:
+                    return "wedo2 distance";
+                case DeviceType.BOOST_DISTANCE:
+                    return "boost distance";
+                case DeviceType.BOOST_TACHO_MOTOR:
+                    return "boost tacho motor";
+                case DeviceType.BOOST_MOVE_HUB_MOTOR:
+                    return "boost move hub motor";
+                case DeviceType.BOOST_TILT:
+                    return "boost tils";
+                case DeviceType.DUPLO_TRAIN_BASE_MOTOR:
+                    return "Duplo train motor";
+                case DeviceType.DUPLO_TRAIN_BASE_SPEAKER:
+                    return "Duplo train speaker";
+                case DeviceType.DUPLO_TRAIN_BASE_COLOR:
+                    return "Duplo train color";
+                case DeviceType.DUPLO_TRAIN_BASE_SPEEDOMETER:
+                    return "Duplo train spodometer";
+                case DeviceType.CONTROL_PLUS_LARGE_MOTOR:
+                    return "Control+ large motor";
+                case DeviceType.CONTROL_PLUS_XLARGE_MOTOR:
+                    return "Control+ x-large motor";
+                case DeviceType.POWERED_UP_REMOTE_BUTTON:
+                    return "PoweredUp remote button";
+            }
         }
-    }
+        function portType() {
+            return portDeviceType(props.hubHolder.hub.getPortDeviceType(props.port));
+        }
+
+        const interval = setInterval(() => {
+            setMotorName(portType);
+        }, 2000);
+        return () => clearInterval(interval);
+    }, [props.hubHolder.hub, props.port]);
 
     return <div className="hubDetails">
-        <div>{portDeviceType(props.hubHolder.hub.getPortDeviceType(props.port))}</div>
+        <div>{motorName}</div>
         <Tooltip title="Add a control for this port to the &quot;Hub Controls&quot; panel on the right.">
             <Button
                 size="small"
-                icon="double-right"
                 style={{float: "right"}}
                 onClick={() => props.addMotorControlProps({motorPort: props.port, hubUuid: props.hubHolder.uuid()})}
-            />
+            >
+                Add
+                <Icon type="double-right" />
+            </Button>
         </Tooltip>
     </div>;
 };
@@ -87,14 +102,16 @@ const TiltDetails = (props: ITiltDetailsProps) => {
     const [tiltX, tiltY] = useTiltEffect(props.hubHolder.uuid());
 
     return <div className="hubDetails">
-        <div>{props.axis === Axis.X ? tiltX : tiltY}</div>
+        <div>{props.axis === Axis.X ? tiltX : tiltY}&deg;</div>
         <Tooltip title="Add a tilt indicator for this axis.">
             <Button
                 size="small"
-                icon="double-right"
                 style={{float: "right"}}
                 onClick={() => props.addTiltControlProps({axis: props.axis, hubUuid: props.hubHolder.uuid()})}
-            />
+            >
+                Add
+                <Icon type="double-right" />
+            </Button>
         </Tooltip>
     </div>;
 };
@@ -139,18 +156,18 @@ const HubDetails = (props: IHubDetailsProps) => {
                 <TiltDetails axis={Axis.Y} hubHolder={props.hubHolder} addTiltControlProps={props.addTiltControlProps}/>
             </Descriptions.Item>
             <Descriptions.Item label="Port A">
-                <MotorDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="A"/>
+                <PortDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="A"/>
             </Descriptions.Item>
             <Descriptions.Item label="Port B">
-                <MotorDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="B"/>
+                <PortDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="B"/>
             </Descriptions.Item>
             <Descriptions.Item label="Port C">
-                <MotorDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="C"/>
+                <PortDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="C"/>
             </Descriptions.Item>
             <Descriptions.Item label="Port D">
-                <MotorDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="D"/>
+                <PortDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="D"/>
             </Descriptions.Item>
-            <Descriptions.Item label="Battery level">
+            <Descriptions.Item label="Battery">
                 <Progress
                     strokeColor={{
                         "0%": "#ff0000",

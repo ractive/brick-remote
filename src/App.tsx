@@ -1,7 +1,6 @@
 import {Button, Layout, Spin} from "antd";
 import {Hub} from "node-poweredup";
 import React, {useEffect, useReducer, useState} from "react";
-import "./App.css";
 import HubDetails from "./components/HubDetails";
 import {IMotorControlProps} from "./components/MotorControl";
 import RemoteControl from "./components/RemoteControl";
@@ -10,6 +9,8 @@ import {HubHolder} from "./HubHolder";
 import { HubsContext } from "./HubsContext";
 import usePoweredup from "./poweredup";
 import {display} from "./Utils";
+// tslint:disable-next-line:ordered-imports
+import "./App.css";
 
 const { Header, Content, Sider } = Layout;
 
@@ -66,6 +67,7 @@ const App: React.FC = () => {
             console.log("Connect...");
             await hub.connect(); // Connect to hub
             console.log("Connected");
+
             dispatch({type: ActionType.CONNECT, payload: {hub}});
 
             hub.on("attach", (port, device) => {
@@ -78,6 +80,16 @@ const App: React.FC = () => {
 
             hub.on("distance", (port, distance) => {
                 console.log(`Motion detected on port ${port} (Distance: ${distance})`);
+            });
+
+            hub.on("accel", (port, x, y, z) => {
+                console.log(`Acceleration detected on port ${port} (Acceleration: x=${x}, y=${y}, z=${z})`);
+            });
+            hub.on("rotate", (port, rotation) => {
+                console.log(`Rotation detected on port ${port} (Rotation: ${rotation})`);
+            });
+            hub.on("speed", (port, speed) => {
+                console.log(`Speed detected on port ${port} (Speed: ${speed})`);
             });
 
             hub.on("color", (port, color) => {
@@ -132,7 +144,7 @@ const App: React.FC = () => {
     return (
         <HubsContext.Provider value={hubs}>
             <Layout style={{ minHeight: "100vh" }}>
-                <Sider width="500px" breakpoint="lg"
+                <Sider width="400px" breakpoint="lg"
                        collapsible collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)}  >
                     <div style={{padding: "15px"}} className={display(!collapsed)}>
                         <Spin spinning={scanning}>
