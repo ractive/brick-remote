@@ -1,4 +1,4 @@
-import {Hub} from "node-poweredup";
+import {ControlPlusHub, Hub} from "node-poweredup";
 
 export class HubHolder {
     public hub: Hub;
@@ -14,6 +14,6 @@ export class HubHolder {
     }
 
     public uuid(): string {
-        return this.hub!.uuid;
+        return this.hub.uuid;
     }
 }
