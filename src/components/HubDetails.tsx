@@ -1,6 +1,6 @@
 import {Button, Card, Descriptions, Icon, Progress, Tooltip, Typography} from "antd";
 import * as Consts from "node-poweredup/dist/node/consts";
-import {DeviceType, HubType} from "node-poweredup/dist/node/consts";
+import {DeviceType} from "node-poweredup/dist/node/consts";
 import React, {useEffect, useState} from "react";
 import useTiltEffect from "../hooks/useTiltEffect";
 import {HubHolder} from "../HubHolder";
@@ -68,7 +68,9 @@ const PortDetails = (props: IPortDetailsProps) => {
             }
         }
         function portType() {
-            return portDeviceType(props.hubHolder.hub.getPortDeviceType(props.port));
+            return props.hubHolder.hub
+                ? portDeviceType(props.hubHolder.hub.getPortDeviceType(props.port))
+                : "undefined";
         }
 
         const interval = setInterval(() => {
@@ -83,7 +85,7 @@ const PortDetails = (props: IPortDetailsProps) => {
             <Button
                 size="small"
                 style={{float: "right"}}
-                onClick={() => props.addMotorControlProps({motorPort: props.port, hubUuid: props.hubHolder.uuid()})}
+                onClick={() => props.addMotorControlProps({motorPort: props.port, hubUuid: props.hubHolder.getUuid()})}
             >
                 Add
                 <Icon type="double-right" />
@@ -99,7 +101,7 @@ interface ITiltDetailsProps {
 }
 
 const TiltDetails = (props: ITiltDetailsProps) => {
-    const [tiltX, tiltY] = useTiltEffect(props.hubHolder.uuid());
+    const [tiltX, tiltY] = useTiltEffect(props.hubHolder.getUuid());
 
     return <div className="hubDetails">
         <div>{props.axis === Axis.X ? tiltX : tiltY}&deg;</div>
@@ -107,7 +109,7 @@ const TiltDetails = (props: ITiltDetailsProps) => {
             <Button
                 size="small"
                 style={{float: "right"}}
-                onClick={() => props.addTiltControlProps({axis: props.axis, hubUuid: props.hubHolder.uuid()})}
+                onClick={() => props.addTiltControlProps({axis: props.axis, hubUuid: props.hubHolder.getUuid()})}
             >
                 Add
                 <Icon type="double-right" />
@@ -118,37 +120,20 @@ const TiltDetails = (props: ITiltDetailsProps) => {
 
 const HubDetails = (props: IHubDetailsProps) => {
     function disconnect(hubHolder: HubHolder) {
-        hubHolder.hub.disconnect()
-            .then(() => console.log("Disconnected"))
-            .catch((err: any) => console.log(err.message));
-    }
-
-    function hubType(type: Consts.HubType): string {
-        switch (type) {
-            case HubType.UNKNOWN:
-                return "UNKNOWN";
-            case HubType.WEDO2_SMART_HUB:
-                return "WEDO2_SMART_HUB";
-            case HubType.BOOST_MOVE_HUB:
-                return "BOOST_MOVE_HUB";
-            case HubType.POWERED_UP_HUB:
-                return "POWERED_UP_HUB";
-            case HubType.POWERED_UP_REMOTE:
-                return "POWERED_UP_REMOTE";
-            case HubType.DUPLO_TRAIN_HUB:
-                return "DUPLO_TRAIN_HUB";
-            case HubType.CONTROL_PLUS_HUB:
-                return "CONTROL_PLUS_HUB";
+        if (hubHolder.hub) {
+            hubHolder.hub.disconnect()
+                .then(() => console.log("Disconnected"))
+                .catch((err: any) => console.log(err.message));
         }
     }
 
     return <Card title={
         <Paragraph editable={{ onChange: props.renameHub }} style={{marginBottom: "0"}}>
-            {props.hubHolder.hub.name}
+            {props.hubHolder.getHubName()}
         </Paragraph> } bodyStyle={{padding: 0}}>
         <Descriptions layout={"horizontal"} bordered column={1} size="small">
-            <Descriptions.Item label="UUID">{ props.hubHolder.uuid() }</Descriptions.Item>
-            <Descriptions.Item label="Type">{ hubType(props.hubHolder.hub.getHubType()) }</Descriptions.Item>
+            <Descriptions.Item label="UUID">{ props.hubHolder.getUuid() }</Descriptions.Item>
+            <Descriptions.Item label="Type">{ props.hubHolder.getHubType() }</Descriptions.Item>
             <Descriptions.Item label="Tilt X">
                 <TiltDetails axis={Axis.X} hubHolder={props.hubHolder} addTiltControlProps={props.addTiltControlProps}/>
             </Descriptions.Item>
@@ -175,7 +160,7 @@ const HubDetails = (props: IHubDetailsProps) => {
                     }}
                     strokeLinecap="square"
                     status="normal"
-                    percent={props.hubHolder.hub.batteryLevel}
+                    percent={props.hubHolder.hub ? props.hubHolder.hub.batteryLevel : 0}
                 />
             </Descriptions.Item>
         </Descriptions>

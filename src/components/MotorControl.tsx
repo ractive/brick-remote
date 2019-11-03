@@ -139,8 +139,10 @@ const MotorControl = (props: IMotorControlProps) => {
             function driveMotor() {
                 console.log("driveMotor", motorSpeed, inverted);
                 const hub = poweredUP.getConnectedHubByUUID(decodeURIComponent(props.hubUuid));
-                hub.setMotorSpeed(props.motorPort, inverted ? -motorSpeed : motorSpeed)
-                    .catch((err: any) => console.log("Error while setting motorSpeed", err));
+                if (hub) {
+                    hub.setMotorSpeed(props.motorPort, inverted ? -motorSpeed : motorSpeed)
+                        .catch((err: any) => console.log("Error while setting motorSpeed", err));
+                }
             }
 
             driveMotor();

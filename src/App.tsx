@@ -9,6 +9,7 @@ import {HubHolder} from "./HubHolder";
 import { HubsContext } from "./HubsContext";
 import usePoweredup from "./poweredup";
 import {display} from "./Utils";
+
 // tslint:disable-next-line:ordered-imports
 import "./App.css";
 
@@ -24,23 +25,24 @@ const App: React.FC = () => {
     interface IAction {
         type: ActionType;
         payload: {
-            hub: Hub,
+            hub?: Hub,
             name?: string,
         };
     }
 
     const reducer = (hubHolders: HubHolder[], action: IAction): HubHolder[] => {
         const hub = action.payload.hub;
+        const hubUuid = hub ? hub.uuid : "";
         switch (action.type) {
             case ActionType.CONNECT:
-                if (!hubHolders.find((hubHolder) => hubHolder.uuid() === hub.uuid)) {
+                if (!hubHolders.find((hubHolder) => hubHolder.getUuid() === hubUuid)) {
                     return [...hubHolders, new HubHolder(hub)];
                 }
                 break;
             case ActionType.DISCONNECT:
-                return hubHolders.filter((hubHolder) => hubHolder.uuid() !== hub.uuid);
+                return hubHolders.filter((hubHolder) => hubHolder.getUuid() !== hubUuid);
             case ActionType.RENAME:
-                const i = hubHolders.findIndex((hubHolder) => hubHolder.uuid() === hub.uuid);
+                const i = hubHolders.findIndex((hubHolder) => hubHolder.getUuid() === hubUuid);
                 if (i >= 0 && action.payload.name) {
                     return [
                         ...hubHolders.slice(0, i),
@@ -138,7 +140,9 @@ const App: React.FC = () => {
     }
 
     function setHubName(hubHolder: HubHolder, name: string): void {
-        dispatch({type: ActionType.RENAME, payload : { hub: hubHolder.hub, name }});
+        if (hubHolder.hub) {
+            dispatch({type: ActionType.RENAME, payload : { hub: hubHolder.hub, name }});
+        }
     }
 
     return (
@@ -152,12 +156,19 @@ const App: React.FC = () => {
                                 Scan for hubs
                             </Button>
                         </Spin>
+                        <Button
+                            onClick={() => dispatch({type: ActionType.CONNECT, payload: {hub: undefined}}) }
+                            icon="search"
+                            block
+                        >
+                            Add fake
+                        </Button>
                         <br/>
                         <br/>
                             {
                                 hubs.map((hub) =>
                                     <HubDetails
-                                        key={hub.uuid()}
+                                        key={hub.getUuid()}
                                         hubHolder={hub}
                                         addMotorControlProps={addMotorControlProps}
                                         addTiltControlProps={addTiltControlProps}
