@@ -153,32 +153,38 @@ const App: React.FC = () => {
     return (
         <HubsContext.Provider value={hubs}>
             <Layout style={{ minHeight: "100vh" }}>
-                <Sider width="400px" breakpoint="lg"
-                       collapsible collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)}  >
+                <Sider
+                    width="400px"
+                    breakpoint="lg"
+                    collapsible={true}
+                    collapsed={collapsed}
+                    onCollapse={() => setCollapsed(!collapsed)}
+                >
                     <div style={{padding: "15px"}} className={display(!collapsed)}>
                         <Spin spinning={scanning}>
-                            <Button type="primary" onClick={scan} icon="search" block>
+                            <Button type="primary" onClick={scan} icon="search" block={true}>
                                 Scan for hubs
                             </Button>
                         </Spin>
                         <Button
-                            onClick={() => dispatch({type: ActionType.CONNECT, payload: {hub: undefined}}) }
+                            onClick={() => dispatch({type: ActionType.CONNECT, payload: {hub: undefined}})}
                             icon="search"
-                            block
+                            block={true}
                         >
                             Add fake
                         </Button>
                         <br/>
                         <br/>
                             {
-                                hubs.map((hub) =>
+                                hubs.map((hub) => (
                                     <HubDetails
                                         key={hub.getUuid()}
                                         hubHolder={hub}
                                         addMotorControlProps={addMotorControlProps}
                                         addTiltControlProps={addTiltControlProps}
                                         renameHub={(name) => setHubName(hub, name)}
-                                    />)
+                                    />
+                                ))
                             }
                     </div>
                 </Sider>

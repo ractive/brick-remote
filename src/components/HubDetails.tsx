@@ -19,7 +19,7 @@ export interface IHubDetailsProps {
 interface IPortDetailsProps {
     port: string;
     hubHolder: HubHolder;
-    addMotorControlProps(motorControlProps: IMotorControlDefinition): void;
+    addMotorControlProps(): void;
 }
 
 const PortDetails = (props: IPortDetailsProps) => {
@@ -79,43 +79,48 @@ const PortDetails = (props: IPortDetailsProps) => {
         return () => clearInterval(interval);
     }, [props.hubHolder.hub, props.port]);
 
-    return <div className="hubDetails">
-        <div>{motorName}</div>
-        <Tooltip title="Add a control for this port to the &quot;Hub Controls&quot; panel on the right.">
-            <Button
-                size="small"
-                style={{float: "right"}}
-                onClick={() => props.addMotorControlProps({motorPort: props.port, hubUuid: props.hubHolder.getUuid()})}
-            >
-                Add
-                <Icon type="double-right" />
-            </Button>
-        </Tooltip>
-    </div>;
+    return (
+        <div className="hubDetails">
+            <div>{motorName}</div>
+            <Tooltip title="Add a control for this port to the &quot;Hub Controls&quot; panel on the right.">
+                <Button
+                    size="small"
+                    style={{float: "right"}}
+                    /* tslint:disable-next-line:max-line-length */
+                    onClick={props.addMotorControlProps}
+                >
+                    Add
+                    <Icon type="double-right" />
+                </Button>
+            </Tooltip>
+        </div>
+    );
 };
 
 interface ITiltDetailsProps {
     axis: Axis;
     hubHolder: HubHolder;
-    addTiltControlProps(tiltControlProps: ITiltControlProps): void;
+    addTiltControlProps(): void;
 }
 
 const TiltDetails = (props: ITiltDetailsProps) => {
     const [tiltX, tiltY] = useTiltEffect(props.hubHolder.getUuid());
 
-    return <div className="hubDetails">
-        <div>{props.axis === Axis.X ? tiltX : tiltY}&deg;</div>
-        <Tooltip title="Add a tilt indicator for this axis.">
-            <Button
-                size="small"
-                style={{float: "right"}}
-                onClick={() => props.addTiltControlProps({axis: props.axis, hubUuid: props.hubHolder.getUuid()})}
-            >
-                Add
-                <Icon type="double-right" />
-            </Button>
-        </Tooltip>
-    </div>;
+    return (
+        <div className="hubDetails">
+            <div>{props.axis === Axis.X ? tiltX : tiltY}&deg;</div>
+            <Tooltip title="Add a tilt indicator for this axis.">
+                <Button
+                    size="small"
+                    style={{float: "right"}}
+                    onClick={props.addTiltControlProps}
+                >
+                    Add
+                    <Icon type="double-right" />
+                </Button>
+            </Tooltip>
+        </div>
+    );
 };
 
 const HubDetails = (props: IHubDetailsProps) => {
@@ -127,53 +132,76 @@ const HubDetails = (props: IHubDetailsProps) => {
         }
     }
 
-    return <Card title={
-        <Paragraph editable={{ onChange: props.renameHub }} style={{marginBottom: "0"}}>
-            {props.hubHolder.getHubName()}
-        </Paragraph> } bodyStyle={{padding: 0}}>
-        <Descriptions layout={"horizontal"} bordered column={1} size="small">
-            <Descriptions.Item label="UUID">{ props.hubHolder.getUuid() }</Descriptions.Item>
-            <Descriptions.Item label="Type">{ props.hubHolder.getHubType() }</Descriptions.Item>
+    return (
+        <Card
+            /* tslint:disable-next-line:jsx-no-multiline-js */
+            title={(
+                <Paragraph editable={{ onChange: props.renameHub }} style={{marginBottom: "0"}}>
+                    {props.hubHolder.getHubName()}
+                </Paragraph>
+            )}
+            bodyStyle={{padding: 0}}
+        >
+        <Descriptions layout={"horizontal"} bordered={true} column={1} size="small">
+            <Descriptions.Item label="UUID">{props.hubHolder.getUuid()}</Descriptions.Item>
+            <Descriptions.Item label="Type">{props.hubHolder.getHubType()}</Descriptions.Item>
             <Descriptions.Item label="Tilt X">
-                <TiltDetails axis={Axis.X} hubHolder={props.hubHolder} addTiltControlProps={props.addTiltControlProps}/>
+                <TiltDetails
+                    axis={Axis.X}
+                    hubHolder={props.hubHolder}
+                    addTiltControlProps={
+                        () => props.addTiltControlProps({axis: Axis.X, hubUuid: props.hubHolder.getUuid()})
+                    }
+                />
             </Descriptions.Item>
             <Descriptions.Item label="Tilt Y">
-                <TiltDetails axis={Axis.Y} hubHolder={props.hubHolder} addTiltControlProps={props.addTiltControlProps}/>
+                <TiltDetails
+                    axis={Axis.Y}
+                    hubHolder={props.hubHolder}
+                    addTiltControlProps={
+                        () => props.addTiltControlProps({axis: Axis.Y, hubUuid: props.hubHolder.getUuid()})
+                    }
+                />
             </Descriptions.Item>
             <Descriptions.Item label="Port A">
                 <PortDetails
                     hubHolder={props.hubHolder}
-                    addMotorControlProps={props.addMotorControlProps}
+                    addMotorControlProps={
+                        () => props.addMotorControlProps({motorPort: "A", hubUuid: props.hubHolder.getUuid()})
+                    }
                     port="A"
                 />
             </Descriptions.Item>
             <Descriptions.Item label="Port B">
                 <PortDetails
                     hubHolder={props.hubHolder}
-                    addMotorControlProps={props.addMotorControlProps}
+                    addMotorControlProps={
+                        () => props.addMotorControlProps({motorPort: "B", hubUuid: props.hubHolder.getUuid()})
+                    }
                     port="B"
                 />
             </Descriptions.Item>
             <Descriptions.Item label="Port C">
                 <PortDetails
                     hubHolder={props.hubHolder}
-                    addMotorControlProps={props.addMotorControlProps}
+                    addMotorControlProps={
+                        () => props.addMotorControlProps({motorPort: "C", hubUuid: props.hubHolder.getUuid()})
+                    }
                     port="C"
                 />
             </Descriptions.Item>
             <Descriptions.Item label="Port D">
                 <PortDetails
                     hubHolder={props.hubHolder}
-                    addMotorControlProps={props.addMotorControlProps}
+                    addMotorControlProps={
+                        () => props.addMotorControlProps({motorPort: "D", hubUuid: props.hubHolder.getUuid()})
+                    }
                     port="D"
                 />
             </Descriptions.Item>
             <Descriptions.Item label="Battery">
                 <Progress
-                    strokeColor={{
-                        "0%": "#ff0000",
-                        "100%": "#87d068",
-                    }}
+                    strokeColor={{"0%": "#ff0000", "100%": "#87d068"}}
                     strokeLinecap="square"
                     status="normal"
                     percent={props.hubHolder.hub ? props.hubHolder.hub.batteryLevel : 0}
@@ -181,7 +209,8 @@ const HubDetails = (props: IHubDetailsProps) => {
             </Descriptions.Item>
         </Descriptions>
         <Button style={{margin: "10px"}} onClick={() => disconnect(props.hubHolder)}>Disconnect</Button>
-    </Card>;
+        </Card>
+    );
 };
 
 export default HubDetails;

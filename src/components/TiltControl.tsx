@@ -12,10 +12,12 @@ export interface ITiltControlProps {
 const TiltControl = (props: ITiltControlProps) => {
     const [tiltX, tiltY] = useTiltEffect(props.hubUuid);
     const tilt = props.axis === Axis.X ? tiltX : tiltY;
-    return <div className="tiltControl">
-        <div className="tiltValue">{props.axis === Axis.X ? tiltX : tiltY}&deg;</div>
-        <Icon type="vertical-align-middle" rotate={tilt} className="tiltIcon" />
-    </div>;
+    return (
+        <div className="tiltControl">
+            <div className="tiltValue">{props.axis === Axis.X ? tiltX : tiltY}&deg;</div>
+            <Icon type="vertical-align-middle" rotate={tilt} className="tiltIcon" />
+        </div>
+    );
 };
 
 export default TiltControl;
