@@ -174,7 +174,7 @@ const MotorControl = (props: IMotorControlProps) => {
         <div className="motor-control">
             <div>{"Port " + props.motorPort}</div>
             <div>
-                <Tooltip title="Invert the motor speed">
+                <Tooltip title="Invert the rotation of the motor">
                     <Switch
                         style={{marginBottom: "10px"}}
                         checkedChildren={<Icon type="double-right" rotate={90} />}
