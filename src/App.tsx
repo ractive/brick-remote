@@ -73,7 +73,7 @@ const App: React.FC = () => {
             dispatch({type: ActionType.CONNECT, payload: {hub}});
 
             hub.on("attach", (port, device) => {
-                console.log(`Device attached to port ${port} (Device ID: ${device})`) ;
+                // console.log(`Device attached to port ${port} (Device ID: ${device})`) ;
             });
 
             // hub.on("tilt", (port, x, y) => {
@@ -81,21 +81,21 @@ const App: React.FC = () => {
             // });
 
             hub.on("distance", (port, distance) => {
-                console.log(`Motion detected on port ${port} (Distance: ${distance})`);
+                // console.log(`Motion detected on port ${port} (Distance: ${distance})`);
             });
 
             hub.on("accel", (port, x, y, z) => {
-                console.log(`Acceleration detected on port ${port} (Acceleration: x=${x}, y=${y}, z=${z})`);
+                // console.log(`Acceleration detected on port ${port} (Acceleration: x=${x}, y=${y}, z=${z})`);
             });
             hub.on("rotate", (port, rotation) => {
-                console.log(`Rotation detected on port ${port} (Rotation: ${rotation})`);
+                // console.log(`Rotation detected on port ${port} (Rotation: ${rotation})`);
             });
             hub.on("speed", (port, speed) => {
-                console.log(`Speed detected on port ${port} (Speed: ${speed})`);
+                // console.log(`Speed detected on port ${port} (Speed: ${speed})`);
             });
 
             hub.on("color", (port, color) => {
-                console.log(`Color detected on port ${port} (Color: ${color})`);
+                // console.log(`Color detected on port ${port} (Color: ${color})`);
             });
 
             // hub.on("rotate", (port, rotation) => {
@@ -103,15 +103,15 @@ const App: React.FC = () => {
             // });
 
             hub.on("button", (button, state) => {
-                console.log(`Button press detected (Button: ${button}, State: ${state})`);
+                // console.log(`Button press detected (Button: ${button}, State: ${state})`);
             });
 
             hub.on("attach", (port, device) => {
-                console.log(`Device attached to port ${port} (Device ID: ${device})`) ;
+                // console.log(`Device attached to port ${port} (Device ID: ${device})`) ;
             });
 
             hub.on("detach", (port) => {
-                console.log(`Device detached from port ${port}`) ;
+                // console.log(`Device detached from port ${port}`) ;
             });
 
             setScanning(false);
