@@ -101,7 +101,7 @@ const MotorControlConfig = (props: IMotorControlConfigProps) => {
                 </div>
             </div>
           }>
-          <Button icon="setting" onClick={() => setVisible(true)}/>
+          <Icon className="small-icon" type="setting" onClick={() => setVisible(true)}/>
       </Popover>
     </Tooltip>;
 };
@@ -159,13 +159,20 @@ const MotorControl = (props: IMotorControlProps) => {
 
     return <Card
             size="small"
-            title={"Port " + props.motorPort}
-            extra={<Tooltip title="Remove">
-                <Button size="small" icon="close" onClick={() => props.remove(props)}/>
-            </Tooltip>}
+            extra={
+                <>
+                    <Tooltip title="Config">
+                        <MotorControlConfig setHotkeys={setHotKeys}/>
+                    </Tooltip>
+                    <Tooltip title="Remove">
+                        <Icon className="small-icon" type="close" onClick={() => props.remove(props)}/>
+                    </Tooltip>
+                </>
+            }
             className="motor-control-card"
         >
         <div className="motor-control">
+            <div>{"Port " + props.motorPort}</div>
             <div>
                 <Tooltip title="Invert the motor speed">
                     <Switch
@@ -214,9 +221,6 @@ const MotorControl = (props: IMotorControlProps) => {
                 <Tooltip title="Stop the motor">
                     <Button icon="stop" onClick={() => setMotorSpeed(0)}>{hotKeys[2]}</Button>
                 </Tooltip>
-            </div>
-            <div>
-                <MotorControlConfig setHotkeys={setHotKeys}/>
             </div>
         </div>
     </Card>;

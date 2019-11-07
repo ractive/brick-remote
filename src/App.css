@@ -2,14 +2,6 @@
     display: none !important;
 }
 
-/*.close-icon {*/
-/*    position: absolute;*/
-/*    padding: 3px;*/
-/*    right: 0;*/
-/*    top: 0;*/
-/*    color: gray;*/
-/*}*/
-
 .motor-control-card .ant-card-body {
     background-color: lightgray;
     padding: 10px;
@@ -22,8 +14,12 @@
     right: -3px;
 }
 
-.close-icon {
-    font-size: 11px;
+.small-icon {
+    font-size: 14px;
+    border: 1px solid #d4d4d4;
+    border-radius: 3px;
+    padding: 2px;
+    margin: 2px;
 }
 
 .motor-control {
@@ -70,4 +66,16 @@
 
 .ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-label, .ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-content {
     padding: 8px 8px;
+}
+
+.motor-control-card > .ant-card-head {
+    background-color: #f6f6f6;
+}
+
+.motor-control-card > .ant-card-head > .ant-card-head-wrapper > .ant-card-head-title {
+    padding: 0;
+}
+
+.motor-control-card > .ant-card-head > .ant-card-head-wrapper > .ant-card-extra {
+    padding: 0;
 }
