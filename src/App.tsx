@@ -166,13 +166,13 @@ const App: React.FC = () => {
                                 Scan for hubs
                             </Button>
                         </Spin>
-                        <Button
-                            onClick={() => dispatch({type: ActionType.CONNECT, payload: {hub: undefined}})}
-                            icon="search"
-                            block={true}
-                        >
-                            Add fake
-                        </Button>
+                        {/*<Button*/}
+                        {/*    onClick={() => dispatch({type: ActionType.CONNECT, payload: {hub: undefined}})}*/}
+                        {/*    icon="search"*/}
+                        {/*    block={true}*/}
+                        {/*>*/}
+                        {/*    Add fake*/}
+                        {/*</Button>*/}
                         <br/>
                         <br/>
                             {
