@@ -4,14 +4,14 @@ import {DeviceType} from "node-poweredup/dist/node/consts";
 import React, {useEffect, useState} from "react";
 import useTiltEffect from "../hooks/useTiltEffect";
 import {HubHolder} from "../HubHolder";
-import {IMotorControlProps} from "./MotorControl";
+import {IMotorControlDefinition} from "./MotorControl";
 import {Axis, ITiltControlProps} from "./TiltControl";
 
 const { Paragraph } = Typography;
 
 export interface IHubDetailsProps {
     hubHolder: HubHolder;
-    addMotorControlProps(motorControlProps: IMotorControlProps): void;
+    addMotorControlProps(motorControlProps: IMotorControlDefinition): void;
     addTiltControlProps(tiltControlProps: ITiltControlProps): void;
     renameHub(newName: string): void;
 }
@@ -19,7 +19,7 @@ export interface IHubDetailsProps {
 interface IPortDetailsProps {
     port: string;
     hubHolder: HubHolder;
-    addMotorControlProps(motorControlProps: IMotorControlProps): void;
+    addMotorControlProps(motorControlProps: IMotorControlDefinition): void;
 }
 
 const PortDetails = (props: IPortDetailsProps) => {
@@ -141,16 +141,32 @@ const HubDetails = (props: IHubDetailsProps) => {
                 <TiltDetails axis={Axis.Y} hubHolder={props.hubHolder} addTiltControlProps={props.addTiltControlProps}/>
             </Descriptions.Item>
             <Descriptions.Item label="Port A">
-                <PortDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="A"/>
+                <PortDetails
+                    hubHolder={props.hubHolder}
+                    addMotorControlProps={props.addMotorControlProps}
+                    port="A"
+                />
             </Descriptions.Item>
             <Descriptions.Item label="Port B">
-                <PortDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="B"/>
+                <PortDetails
+                    hubHolder={props.hubHolder}
+                    addMotorControlProps={props.addMotorControlProps}
+                    port="B"
+                />
             </Descriptions.Item>
             <Descriptions.Item label="Port C">
-                <PortDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="C"/>
+                <PortDetails
+                    hubHolder={props.hubHolder}
+                    addMotorControlProps={props.addMotorControlProps}
+                    port="C"
+                />
             </Descriptions.Item>
             <Descriptions.Item label="Port D">
-                <PortDetails hubHolder={props.hubHolder} addMotorControlProps={props.addMotorControlProps} port="D"/>
+                <PortDetails
+                    hubHolder={props.hubHolder}
+                    addMotorControlProps={props.addMotorControlProps}
+                    port="D"
+                />
             </Descriptions.Item>
             <Descriptions.Item label="Battery">
                 <Progress

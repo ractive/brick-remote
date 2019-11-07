@@ -3,33 +3,7 @@ import {HubType} from "node-poweredup/dist/node/consts";
 import * as Consts from "node-poweredup/dist/node/consts";
 
 export class HubHolder {
-    public hub?: Hub;
-    public name: string;
-
-    constructor(hub?: Hub, name?: string) {
-        this.hub = hub;
-        if (name) {
-            this.name = name;
-        } else if (hub) {
-            this.name = hub.name;
-        } else {
-            this.name = "undefined";
-        }
-    }
-
-    public getUuid(): string {
-        return this.hub ? this.hub.uuid : "";
-    }
-
-    public getHubName(): string {
-        return this.hub ? this.hub.name : "undefined";
-    }
-
-    public getHubType(): string {
-        return this.hub ? this.hubType(this.hub.getHubType()) : "undefined";
-    }
-
-    private hubType(type: Consts.HubType): string {
+    private static hubType(type: Consts.HubType): string {
         switch (type) {
             case HubType.UNKNOWN:
                 return "UNKNOWN";
@@ -46,5 +20,30 @@ export class HubHolder {
             case HubType.CONTROL_PLUS_HUB:
                 return "CONTROL_PLUS_HUB";
         }
+    }
+    public hub?: Hub;
+    public name: string;
+
+    constructor(hub?: Hub, name?: string) {
+        this.hub = hub;
+        if (name) {
+            this.name = name;
+        } else if (hub) {
+            this.name = hub.name;
+        } else {
+            this.name = "undefined";
+        }
+    }
+
+    public getUuid(): string {
+        return this.hub ? this.hub.uuid : this.name;
+    }
+
+    public getHubName(): string {
+        return this.hub ? this.hub.name : "undefined";
+    }
+
+    public getHubType(): string {
+        return this.hub ? HubHolder.hubType(this.hub.getHubType()) : "undefined";
     }
 }

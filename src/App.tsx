@@ -2,7 +2,7 @@ import {Button, Layout, Spin} from "antd";
 import {Hub} from "node-poweredup";
 import React, {useEffect, useReducer, useState} from "react";
 import HubDetails from "./components/HubDetails";
-import {IMotorControlProps} from "./components/MotorControl";
+import {IMotorControlDefinition} from "./components/MotorControl";
 import RemoteControl from "./components/RemoteControl";
 import {ITiltControlProps} from "./components/TiltControl";
 import {HubHolder} from "./HubHolder";
@@ -36,7 +36,7 @@ const App: React.FC = () => {
         switch (action.type) {
             case ActionType.CONNECT:
                 if (!hubHolders.find((hubHolder) => hubHolder.getUuid() === hubUuid)) {
-                    return [...hubHolders, new HubHolder(hub)];
+                    return [...hubHolders, new HubHolder(hub, btoa(Math.random().toString()).slice(0, 5))];
                 }
                 break;
             case ActionType.DISCONNECT:
@@ -59,7 +59,7 @@ const App: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
     const poweredUP = usePoweredup();
     const [hubs, dispatch] = useReducer(reducer, new Array<HubHolder>());
-    const [motorControlProps, setMotorControlProps] = useState(new Array<IMotorControlProps>());
+    const [motorControlProps, setMotorControlProps] = useState(new Array<IMotorControlDefinition>());
     const [tiltControlProps, setTiltControlProps] = useState(new Array<ITiltControlProps>());
     const [scanning, setScanning] = useState(false);
 
@@ -131,8 +131,13 @@ const App: React.FC = () => {
         // dispatch({type: ActionType.CONNECT, payload: {hub: new Hub(new WebBLEDevice({}))}});
     }
 
-    function addMotorControlProps(newMotorCotrolProps: IMotorControlProps): void {
+    function addMotorControlProps(newMotorCotrolProps: IMotorControlDefinition): void {
         setMotorControlProps([...motorControlProps, newMotorCotrolProps]);
+    }
+
+    function removeMotorControlProps(remove: IMotorControlDefinition): void {
+        setMotorControlProps(motorControlProps
+            .filter((p) => p.hubUuid !== remove.hubUuid || p.motorPort !== remove.motorPort));
     }
 
     function addTiltControlProps(newTiltCotrolProps: ITiltControlProps): void {
@@ -180,7 +185,11 @@ const App: React.FC = () => {
                 <Layout>
                     <Header style={{ background: "#fff", padding: "0px 10px"}}><h1>Hub controls</h1></Header>
                     <Content style={{ margin: "10px" }}>
-                        <RemoteControl motorControlProps={motorControlProps} tiltControlProps={tiltControlProps}/>
+                        <RemoteControl
+                            motorControlProps={motorControlProps}
+                            tiltControlProps={tiltControlProps}
+                            removeMotorControl={removeMotorControlProps}
+                        />
                     </Content>
                 </Layout>
             </Layout>

@@ -1,4 +1,4 @@
-import {Button, Icon, Input, Modal, Popover, Slider, Switch, Tooltip} from "antd";
+import {Button, Card, Icon, Input, Modal, Popover, Slider, Switch, Tooltip} from "antd";
 import { SliderValue } from "antd/lib/slider";
 import React, {MouseEvent, useEffect, useState} from "react";
 import useHotkeys from "use-hotkeys";
@@ -106,9 +106,13 @@ const MotorControlConfig = (props: IMotorControlConfigProps) => {
     </Tooltip>;
 };
 
-export interface IMotorControlProps {
+export interface IMotorControlDefinition {
     hubUuid: string;
     motorPort: string;
+}
+
+export interface IMotorControlProps extends IMotorControlDefinition {
+    remove(motorControlDefinition: IMotorControlDefinition): void;
 }
 
 const MotorControl = (props: IMotorControlProps) => {
@@ -153,62 +157,69 @@ const MotorControl = (props: IMotorControlProps) => {
         setMotorSpeed(speed);
     }
 
-    return <div className="motor-control">
-        <div>Port {props.motorPort}</div>
-        <div>
-            <Tooltip title="Invert the motor speed">
-                <Switch
-                    style={{marginBottom: "10px"}}
-                    checkedChildren={<Icon type="double-right" rotate={90} />}
-                    unCheckedChildren={<Icon type="double-left" rotate={90} />}
-                    checked={inverted}
-                    onChange={(checked) => setInverted(checked)}
-
-                />
-            </Tooltip>
-        </div>
-        {
-            hotKeys[0].length > 0 &&
+    return <Card
+            size="small"
+            title={"Port " + props.motorPort}
+            extra={<Tooltip title="Remove">
+                <Button size="small" icon="close" onClick={() => props.remove(props)}/>
+            </Tooltip>}
+            className="motor-control-card"
+        >
+        <div className="motor-control">
             <div>
-                <Tooltip title="Shortcut to increase motor speed">
-                    <Button>{hotKeys[0]}</Button>
+                <Tooltip title="Invert the motor speed">
+                    <Switch
+                        style={{marginBottom: "10px"}}
+                        checkedChildren={<Icon type="double-right" rotate={90} />}
+                        unCheckedChildren={<Icon type="double-left" rotate={90} />}
+                        checked={inverted}
+                        onChange={(checked) => setInverted(checked)}
+                    />
                 </Tooltip>
             </div>
-        }
-        <div>
-            <Tooltip title="Speed of the motor">
-                <Slider
-                    value={motorSpeed}
-                    marks={{0: "0"}}
-                    defaultValue={ 0 }
-                    style={{height: "300px"}}
-                    vertical
-                    min={ -100 }
-                    max={ 100 }
-                    step={ step }
-                    onChange={onChangeMotorSpeed}
-                    onAfterChange={onChangeMotorSpeed}
-                    included={ true }
-                />
-            </Tooltip>
-        </div>
-        {
-            hotKeys[1].length > 0 &&
+            {
+                hotKeys[0].length > 0 &&
+                <div>
+                    <Tooltip title="Shortcut to increase motor speed">
+                        <Button>{hotKeys[0]}</Button>
+                    </Tooltip>
+                </div>
+            }
             <div>
-                <Tooltip title="Shortcut to decrease motor speed">
-                    <Button>{hotKeys[1]}</Button>
+                <Tooltip title="Speed of the motor">
+                    <Slider
+                        value={motorSpeed}
+                        marks={{0: "0"}}
+                        defaultValue={ 0 }
+                        style={{height: "300px"}}
+                        vertical
+                        min={ -100 }
+                        max={ 100 }
+                        step={ step }
+                        onChange={onChangeMotorSpeed}
+                        onAfterChange={onChangeMotorSpeed}
+                        included={ true }
+                    />
                 </Tooltip>
             </div>
-        }
-        <div>
-            <Tooltip title="Stop the motor">
-                <Button icon="stop" onClick={() => setMotorSpeed(0)}>{hotKeys[2]}</Button>
-            </Tooltip>
+            {
+                hotKeys[1].length > 0 &&
+                <div>
+                    <Tooltip title="Shortcut to decrease motor speed">
+                        <Button>{hotKeys[1]}</Button>
+                    </Tooltip>
+                </div>
+            }
+            <div>
+                <Tooltip title="Stop the motor">
+                    <Button icon="stop" onClick={() => setMotorSpeed(0)}>{hotKeys[2]}</Button>
+                </Tooltip>
+            </div>
+            <div>
+                <MotorControlConfig setHotkeys={setHotKeys}/>
+            </div>
         </div>
-        <div>
-            <MotorControlConfig setHotkeys={setHotKeys}/>
-        </div>
-    </div>;
+    </Card>;
 };
 
 export default MotorControl;

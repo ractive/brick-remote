@@ -1,12 +1,13 @@
 import {Card} from "antd";
 import React, {useContext} from "react";
 import {hubByUuid, HubsContext} from "../HubsContext";
-import MotorControl, {IMotorControlProps} from "./MotorControl";
+import MotorControl, {IMotorControlDefinition} from "./MotorControl";
 import TiltControl, {ITiltControlProps} from "./TiltControl";
 
 export interface IRemoteControlProps {
-   motorControlProps: IMotorControlProps[];
+   motorControlProps: IMotorControlDefinition[];
    tiltControlProps: ITiltControlProps[];
+   removeMotorControl(motorControlProps: IMotorControlDefinition): void;
 }
 
 const RemoteControl = (props: IRemoteControlProps) => {
@@ -31,8 +32,11 @@ const RemoteControl = (props: IRemoteControlProps) => {
                             .map((motorControl) =>
                                 <div key={motorControl.hubUuid + "_" + motorControl.motorPort}
                                      style={{display: "inline-block", padding: "5px"}}>
-                                    <MotorControl hubUuid={motorControl.hubUuid}
-                                                  motorPort={motorControl.motorPort}/>
+                                    <MotorControl
+                                        hubUuid={motorControl.hubUuid}
+                                        motorPort={motorControl.motorPort}
+                                        remove={() => props.removeMotorControl(motorControl)}
+                                    />
                                 </div>,
                             )
                     }

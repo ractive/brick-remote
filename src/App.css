@@ -2,13 +2,36 @@
     display: none !important;
 }
 
-.motor-control {
+/*.close-icon {*/
+/*    position: absolute;*/
+/*    padding: 3px;*/
+/*    right: 0;*/
+/*    top: 0;*/
+/*    color: gray;*/
+/*}*/
+
+.motor-control-card .ant-card-body {
     background-color: lightgray;
     padding: 10px;
+}
+.motor-control-card .ant-card-head {
+    padding: 5px;
+}
+.motor-control-card .ant-card-extra {
+    position: relative;
+    right: -3px;
+}
+
+.close-icon {
+    font-size: 11px;
+}
+
+.motor-control {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
+
 .motor-control > div {
     margin-bottom: 10px;
 }
