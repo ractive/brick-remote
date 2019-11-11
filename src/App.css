@@ -67,6 +67,7 @@
 .motor-control-card {
     display: inline-block;
     margin: 0 10px 0 0;
+    background-color: lightgray;
 }
 .motor-control-card > .ant-card-head {
     background-color: #f6f6f6;
