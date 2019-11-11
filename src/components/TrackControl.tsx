@@ -152,7 +152,7 @@ const TrackControl = (props: ITrackControlProps) => {
                 </div>
                 <div>
                     <Tooltip title="Stop the motor">
-                        <Button icon="stop" onClick={() => console.log("stop")}>x</Button>
+                        <Button icon="stop" onClick={() => console.log("stop")}>{hotKeys.stop.key}</Button>
                     </Tooltip>
                 </div>
             </div>
