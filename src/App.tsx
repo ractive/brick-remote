@@ -204,10 +204,16 @@ const App: React.FC = () => {
                         />
                     </Content>
                     <Footer>
-                        <a target="_blank" rel="noopener" href="/icons/icons8-bulldozer-96.png">Bulldozer</a>,
-                        <a target="_blank" rel="noopener" href="/icons/icons8-speedometer-100.png">Speedometer</a>
+                        <a target="_blank" rel="noopener noreferrer" href="/icons/icons8-bulldozer-96.png">
+                            Bulldozer
+                        </a>,
+                        <a target="_blank" rel="noopener noreferrer" href="/icons/icons8-speedometer-100.png">
+                            Speedometer
+                        </a>
                         and other icons by
-                        <a target="_blank" rel="noopener" href="https://icons8.com">Icons8</a>
+                        <a target="_blank" rel="noopener noreferrer" href="https://icons8.com">
+                            Icons8
+                        </a>
                     </Footer>
                 </Layout>
             </Layout>
