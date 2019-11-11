@@ -1,6 +1,6 @@
 import {Button, Icon, Input, Modal, Popover, Tooltip} from "antd";
 import React, {MouseEvent, useState} from "react";
-import useHotkeys from "use-hotkeys";
+import { useHotkeys } from "react-hotkeys-hook";
 
 export interface IHotKeyInfo {
     [id: string]: {
@@ -17,12 +17,12 @@ export interface IControlConfigProps {
 const ControlConfig = (props: IControlConfigProps) => {
     const [visible, setVisible] = useState(false);
     const [hotKeys, setHotKeys] = useState<IHotKeyInfo>({...props.hotkeyInfo});
-    useHotkeys((key) => {
+    useHotkeys("esc",
+        (_) => {
             if (visible) {
                 setVisible(false);
             }
         },
-        ["escape"],
         [visible, setVisible],
     );
 

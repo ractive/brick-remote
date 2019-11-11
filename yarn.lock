@@ -4925,10 +4925,10 @@ hosted-git-info@^2.1.4:
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.8.5.tgz#759cfcf2c4d156ade59b0b2dfabddc42a6b9c70c"
   integrity sha512-kssjab8CvdXfcXMXVcvsXum4Hwdq9XGtRD3TteMEvEbq0LXyiNQr6AprqKqfeaDXze7SxWvRxdpwE6ku7ikLkg==
 
-hotkeys-js@3.4.4:
-  version "3.4.4"
-  resolved "https://registry.yarnpkg.com/hotkeys-js/-/hotkeys-js-3.4.4.tgz#ecf24deb4b4df59123668a762a2fc970ca68abd8"
-  integrity sha512-UmjYxR45flFBB4pGOFqD33oaLls/ZNqESsh5flrajF4F4extk/eWULPMIpe2HFI4f3czXcN/bafNjIKJIwCvzw==
+hotkeys-js@3.7.1:
+  version "3.7.1"
+  resolved "https://registry.yarnpkg.com/hotkeys-js/-/hotkeys-js-3.7.1.tgz#851f92fc3ae18f6a0b0cf77449f0e4b961a6c083"
+  integrity sha512-dCQOlRQdDBxKLFjT4/yi5QODTfKlxuXvXgz65g1T3qHuUUc5cWudJw4ok0IvL7XgGgOknbB13tcIW2VTG7ZUIw==
 
 hpack.js@^2.1.6:
   version "2.1.6"
@@ -9133,6 +9133,13 @@ react-error-overlay@^6.0.3:
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.3.tgz#c378c4b0a21e88b2e159a3e62b2f531fd63bf60d"
   integrity sha512-bOUvMWFQVk5oz8Ded9Xb7WVdEi3QGLC8tH7HmYP0Fdp4Bn3qw0tRFmr5TW6mvahzvmrK4a6bqWGfCevBflP+Xw==
 
+react-hotkeys-hook@^1.5.3:
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/react-hotkeys-hook/-/react-hotkeys-hook-1.5.3.tgz#975e90084be2524940b631e1cd8641a5d3bf8d80"
+  integrity sha512-HAk7mFLXSLG2D6hCsQrZe0bv2/Gl09N0ZsNvZqgKo3G39FquPXp5WHXAhlbUeNHuQ6wuxwU4p1ak9QbiWm1fbA==
+  dependencies:
+    hotkeys-js "3.7.1"
+
 react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4:
   version "16.11.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.11.0.tgz#b85dfecd48ad1ce469ff558a882ca8e8313928fa"
@@ -10878,13 +10885,6 @@ usb@^1.1.0:
     bindings "^1.4.0"
     nan "2.13.2"
     prebuild-install "^5.2.4"
-
-use-hotkeys@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/use-hotkeys/-/use-hotkeys-1.1.0.tgz#570550092fc8c9891d757e706013ce3a34f91135"
-  integrity sha512-hPLh5blaIEpN+FbGnQCVJ3shZCb66WHkXIDbSbpsq49fFs5E3RrWQcygKRLZIOBzLRMnqbG8v+BnRpoPdQVlug==
-  dependencies:
-    hotkeys-js "3.4.4"
 
 use@^3.1.0:
   version "3.1.1"

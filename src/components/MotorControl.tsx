@@ -1,7 +1,7 @@
 import {Button, Card, Icon, Slider, Switch, Tooltip} from "antd";
 import { SliderValue } from "antd/lib/slider";
 import React, {useEffect, useState} from "react";
-import useHotkeys from "use-hotkeys";
+import { useHotkeys } from "react-hotkeys-hook";
 import usePoweredup from "../poweredup";
 import ControlConfig, {IHotKeyInfo} from "./ControlConfig";
 
@@ -38,8 +38,10 @@ const MotorControl = (props: IMotorControlProps) => {
     const [inverted, setInverted] = useState(false);
     const [hotKeys, setHotKeys] = useState(hotKeyInfo);
 
-    useHotkeys((key) => {
-            switch (key) {
+    useHotkeys(
+        Object.values(hotKeys).map((k) => k.key).join(","),
+        (e, handler) => {
+            switch (handler.key) {
                 case hotKeys.inc.key:
                     return setMotorSpeed((v) => Math.min(v + step, 100));
                 case hotKeys.dec.key:
@@ -48,7 +50,6 @@ const MotorControl = (props: IMotorControlProps) => {
                     return setMotorSpeed(0);
             }
         },
-        Object.values(hotKeys).map((k) => k.key),
         [hotKeys],
     );
 
