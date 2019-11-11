@@ -1,4 +1,4 @@
-import {Button, Card, Descriptions, Icon, Progress, Tooltip, Typography} from "antd";
+import {Button, Card, Descriptions, Progress, Tooltip, Typography} from "antd";
 import * as Consts from "node-poweredup/dist/node/consts";
 import {DeviceType} from "node-poweredup/dist/node/consts";
 import React, {useEffect, useState} from "react";
@@ -90,7 +90,7 @@ const PortDetails = (props: IPortDetailsProps) => {
                     onClick={props.addMotorControlProps}
                 >
                     Add
-                    <Icon type="double-right" />
+                    <img className="small-image" src="/icons/icons8-speedometer-100.png" alt="Motor Control" />
                 </Button>
             </Tooltip>
         </div>
@@ -116,7 +116,7 @@ const TiltDetails = (props: ITiltDetailsProps) => {
                     onClick={props.addTiltControlProps}
                 >
                     Add
-                    <Icon type="double-right" />
+                    <img className="small-image" src="/icons/icons8-hill-descent-control-96.png" alt="Tilt Control" />
                 </Button>
             </Tooltip>
         </div>

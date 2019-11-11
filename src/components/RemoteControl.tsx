@@ -3,6 +3,7 @@ import React, {useContext} from "react";
 import {hubByUuid, HubsContext} from "../HubsContext";
 import MotorControl, {IMotorControlDefinition} from "./MotorControl";
 import TiltControl, {ITiltControlProps} from "./TiltControl";
+import TrackControl from "./TrackControl";
 
 export interface IRemoteControlProps {
    motorControlProps: IMotorControlDefinition[];
@@ -26,25 +27,27 @@ const RemoteControl = (props: IRemoteControlProps) => {
                 Array.from(hubUuids).map((hubUuid) =>
                     (
                         <Card title={hubByUuid(hubs, hubUuid).name} key={hubUuid}>
-                            <div>
+                            <div className="hub-controls">
                             {
                                 props.motorControlProps
                                     .filter((p) => p.hubUuid === hubUuid)
                                     .sort((a, b) => a.motorPort.localeCompare(b.motorPort))
                                     .map((motorControl) => (
-                                        <div
+                                        <MotorControl
                                             key={motorControl.hubUuid + "_" + motorControl.motorPort}
-                                            style={{display: "inline-block", padding: "5px"}}
-                                        >
-                                            <MotorControl
-                                                hubUuid={motorControl.hubUuid}
-                                                motorPort={motorControl.motorPort}
-                                                remove={() => props.removeMotorControl(motorControl)}
-                                            />
-                                        </div>
+                                            hubUuid={motorControl.hubUuid}
+                                            motorPort={motorControl.motorPort}
+                                            remove={() => props.removeMotorControl(motorControl)}
+                                        />
                                         )
                                     )
                             }
+                                <TrackControl
+                                    remove={() => { console.log("remove"); }}
+                                    hubUuid={"asdf"}
+                                    motorPortLeft={"A"}
+                                    motorPortRight={"B"}
+                                />
                             </div>
                             <div>
                                 {

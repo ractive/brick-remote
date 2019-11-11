@@ -1,6 +1,7 @@
 import {Button, Layout, Spin} from "antd";
 import {Hub} from "node-poweredup";
 import React, {useEffect, useReducer, useState} from "react";
+import Controls from "./components/Controls";
 import HubDetails from "./components/HubDetails";
 import {IMotorControlDefinition} from "./components/MotorControl";
 import RemoteControl from "./components/RemoteControl";
@@ -13,7 +14,7 @@ import {display} from "./Utils";
 // tslint:disable-next-line:ordered-imports
 import "./App.css";
 
-const { Header, Content, Sider } = Layout;
+const { Header, Content, Sider, Footer } = Layout;
 
 const App: React.FC = () => {
     enum ActionType {
@@ -124,11 +125,14 @@ const App: React.FC = () => {
         });
     }, [ActionType.CONNECT, ActionType.DISCONNECT, poweredUP]);
 
+    useEffect(() => {
+        dispatch({type: ActionType.CONNECT, payload: {hub: undefined}});
+    }, [ActionType.CONNECT]);
+
     function scan() {
         console.log("Scan...");
         setScanning(true);
         return poweredUP.scan();
-        // dispatch({type: ActionType.CONNECT, payload: {hub: new Hub(new WebBLEDevice({}))}});
     }
 
     function addMotorControlProps(newMotorCotrolProps: IMotorControlDefinition): void {
@@ -166,13 +170,13 @@ const App: React.FC = () => {
                                 Scan for hubs
                             </Button>
                         </Spin>
-                        {/*<Button*/}
-                        {/*    onClick={() => dispatch({type: ActionType.CONNECT, payload: {hub: undefined}})}*/}
-                        {/*    icon="search"*/}
-                        {/*    block={true}*/}
-                        {/*>*/}
-                        {/*    Add fake*/}
-                        {/*</Button>*/}
+                        <Button
+                            onClick={() => dispatch({type: ActionType.CONNECT, payload: {hub: undefined}})}
+                            icon="search"
+                            block={true}
+                        >
+                            Add fake
+                        </Button>
                         <br/>
                         <br/>
                             {
@@ -186,6 +190,8 @@ const App: React.FC = () => {
                                     />
                                 ))
                             }
+                         <br/>
+                         <Controls />
                     </div>
                 </Sider>
                 <Layout>
@@ -197,6 +203,12 @@ const App: React.FC = () => {
                             removeMotorControl={removeMotorControlProps}
                         />
                     </Content>
+                    <Footer>
+                        <a target="_blank" rel="noopener" href="/icons/icons8-bulldozer-96.png">Bulldozer</a>,
+                        <a target="_blank" rel="noopener" href="/icons/icons8-speedometer-100.png">Speedometer</a>
+                        and other icons by
+                        <a target="_blank" rel="noopener" href="https://icons8.com">Icons8</a>
+                    </Footer>
                 </Layout>
             </Layout>
         </HubsContext.Provider>
