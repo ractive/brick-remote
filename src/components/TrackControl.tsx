@@ -1,6 +1,7 @@
 import {Button, Card, Icon, Slider, Tooltip} from "antd";
+import {SliderValue} from "antd/lib/slider";
 import React, {useState} from "react";
-import useHotkeys from "use-hotkeys";
+import { useHotkeys } from "react-hotkeys-hook";
 import ControlConfig, {IHotKeyInfo} from "./ControlConfig";
 
 export interface ITrackControlDefinition {
@@ -51,9 +52,13 @@ const TrackControl = (props: ITrackControlProps) => {
     const [motorSpeedLeft, setMotorSpeedLeft] = useState(0);
     const [hotKeys, setHotKeys] = useState(hotKeyInfo);
 
-    useHotkeys((key) => {
-            console.log("Key ", key, "left: ", motorSpeedLeft, "right: ", motorSpeedRight);
-            switch (key) {
+    useHotkeys(
+        Object.values(hotKeys).map((k) => k.key).join(","),
+        (e, handler) => {
+            console.log("Key ", handler.key, "left: ", motorSpeedLeft, "right: ", motorSpeedRight);
+            const speedDiff = motorSpeedLeft - motorSpeedRight;
+
+            switch (handler.key) {
                 case hotKeys.inc.key:
                     setMotorSpeedLeft((v) => inc(v));
                     setMotorSpeedRight((v) => inc(v));
@@ -63,15 +68,19 @@ const TrackControl = (props: ITrackControlProps) => {
                     setMotorSpeedRight((v) => dec(v));
                     break;
                 case hotKeys.left.key:
-                    if (motorSpeedLeft < 100) {
+                    if (motorSpeedLeft < 100 || (motorSpeedLeft === 100 && motorSpeedRight === 100)) {
                         setMotorSpeedLeft((v) => dec(v));
                     }
-                    setMotorSpeedRight((v) => inc(v));
+                    if (speedDiff !== step || motorSpeedLeft === 100) {
+                        setMotorSpeedRight((v) => inc(v));
+                    }
                     break;
                 case hotKeys.right.key:
-                    setMotorSpeedLeft((v) => inc(v));
-                    if (motorSpeedRight < 100) {
+                    if (motorSpeedRight < 100 || (motorSpeedLeft === 100 && motorSpeedRight === 100)) {
                         setMotorSpeedRight((v) => dec(v));
+                    }
+                    if (speedDiff !== -step || motorSpeedRight === 100) {
+                        setMotorSpeedLeft((v) => inc(v));
                     }
                     break;
                 case hotKeys.stop.key:
@@ -80,9 +89,18 @@ const TrackControl = (props: ITrackControlProps) => {
                     break;
             }
         },
-        Object.values(hotKeys).map((k) => k.key),
         [hotKeys, motorSpeedRight, motorSpeedLeft],
     );
+
+    function onChangeMotorSpeedRight(value: SliderValue) {
+        const speed = value instanceof Array ? value[0] : value;
+        setMotorSpeedRight(speed);
+    }
+
+    function onChangeMotorSpeedLeft(value: SliderValue) {
+        const speed = value instanceof Array ? value[0] : value;
+        setMotorSpeedLeft(speed);
+    }
 
     return (
         <Card
@@ -115,6 +133,8 @@ const TrackControl = (props: ITrackControlProps) => {
                         max={100}
                         step={step}
                         included={true}
+                        onChange={onChangeMotorSpeedLeft}
+                        onAfterChange={onChangeMotorSpeedLeft}
                     />
                     <Slider
                         value={motorSpeedRight}
@@ -126,6 +146,8 @@ const TrackControl = (props: ITrackControlProps) => {
                         max={100}
                         step={step}
                         included={true}
+                        onChange={onChangeMotorSpeedRight}
+                        onAfterChange={onChangeMotorSpeedRight}
                     />
                 </div>
                 <div>
