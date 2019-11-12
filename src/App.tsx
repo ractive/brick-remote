@@ -196,7 +196,7 @@ const App: React.FC = () => {
                                 ))
                             }
                          <br/>
-                         <Controls />
+                         {/*<Controls />*/}
                     </div>
                 </Sider>
                 <Layout>

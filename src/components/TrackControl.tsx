@@ -1,7 +1,8 @@
 import {Button, Card, Col, Icon, Row, Slider, Tooltip} from "antd";
 import {SliderValue} from "antd/lib/slider";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+import usePoweredup from "../poweredup";
 import ControlConfig, {IHotKeyInfo} from "./ControlConfig";
 
 export interface ITrackControlDefinition {
@@ -41,9 +42,24 @@ const TrackControl = (props: ITrackControlProps) => {
         }
     };
 
+    const poweredUP = usePoweredup();
     const [motorSpeedRight, setMotorSpeedRight] = useState(0);
     const [motorSpeedLeft, setMotorSpeedLeft] = useState(0);
     const [hotKeys, setHotKeys] = useState(hotKeyInfo);
+    useEffect(() => {
+        function driveTracks() {
+            console.log("drive tracks", motorSpeedLeft, motorSpeedRight);
+            const hub = poweredUP.getConnectedHubByUUID(decodeURIComponent(props.hubUuid));
+            if (hub) {
+                hub.setMotorSpeed(props.motorPortLeft, motorSpeedLeft)
+                    .catch((err: any) => console.log("Error while setting motorSpeedLeft", err));
+                hub.setMotorSpeed(props.motorPortRight, -motorSpeedRight)
+                    .catch((err: any) => console.log("Error while setting motorSpeedRight", err));
+            }
+        }
+
+        driveTracks();
+    }, [motorSpeedRight, motorSpeedLeft, props.motorPortLeft, props.motorPortRight, props.hubUuid, poweredUP]);
 
     function dec(v: number): number {
         return Math.max(v - step, -100);

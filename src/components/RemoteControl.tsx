@@ -22,7 +22,9 @@ const RemoteControl = (props: IRemoteControlProps) => {
     ]);
 
     return (
-        <div>
+        <div
+            style={{height: "100%"}}
+        >
             {
                 Array.from(hubUuids).map((hubUuid) =>
                     (
@@ -44,7 +46,7 @@ const RemoteControl = (props: IRemoteControlProps) => {
                             }
                                 <TrackControl
                                     remove={() => { console.log("remove"); }}
-                                    hubUuid={"asdf"}
+                                    hubUuid={hubUuid}
                                     motorPortLeft={"A"}
                                     motorPortRight={"B"}
                                 />
