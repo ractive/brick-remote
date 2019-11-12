@@ -107,7 +107,7 @@ const ControlConfig = (props: IControlConfigProps) => {
                                 ))
                             }
                         </div>
-                        <div style={{width: "100%"}}>
+                        <div style={{width: "100%", marginTop: "10px"}}>
                             <Button icon="check" onClick={handleSubmit} />
                             <Button icon="close" onClick={handleCancel} />
                             <Button icon="question-circle" onClick={showHelp} style={{float: "right"}}/>
