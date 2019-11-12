@@ -9,7 +9,7 @@ const Controls = () => {
     }
     return (
         <Card title="Controls">
-            <Row>
+            <Row gutter={[0, 32]}>
                 <Col span={12}>
                     <Tooltip title="Motor control">
                         <img src="/icons/icons8-speedometer-100.png" alt="Motor control" />
@@ -21,9 +21,9 @@ const Controls = () => {
                     </Tooltip>
                 </Col>
             </Row>
-            <Row>
-                <Col span={12}>
-                    <Tooltip title="Motor control">
+            <Row gutter={[0, 32]}>
+                <Col span={24}>
+                    <Tooltip title="Tilt indicator">
                         <img src="/icons/icons8-hill-descent-control-96.png" alt="Tilt indicator" />
                     </Tooltip>
                 </Col>

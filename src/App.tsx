@@ -64,6 +64,7 @@ const App: React.FC = () => {
     const [tiltControlProps, setTiltControlProps] = useState(new Array<ITiltControlProps>());
     const [scanning, setScanning] = useState(false);
 
+    // eslint-disable-next-line
     function debugEvents(hub: Hub) {
         hub.on("attach", (port, device) => {
             console.log(`Device attached to port ${port} (Device ID: ${device})`);
