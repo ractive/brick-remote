@@ -1,4 +1,4 @@
-import {Button, Card, Icon, Slider, Tooltip} from "antd";
+import {Button, Card, Col, Icon, Row, Slider, Tooltip} from "antd";
 import {SliderValue} from "antd/lib/slider";
 import React, {useState} from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -41,52 +41,61 @@ const TrackControl = (props: ITrackControlProps) => {
         }
     };
 
+    const [motorSpeedRight, setMotorSpeedRight] = useState(0);
+    const [motorSpeedLeft, setMotorSpeedLeft] = useState(0);
+    const [hotKeys, setHotKeys] = useState(hotKeyInfo);
+
     function dec(v: number): number {
         return Math.max(v - step, -100);
     }
     function inc(v: number): number {
         return Math.min(v + step, 100);
     }
-
-    const [motorSpeedRight, setMotorSpeedRight] = useState(0);
-    const [motorSpeedLeft, setMotorSpeedLeft] = useState(0);
-    const [hotKeys, setHotKeys] = useState(hotKeyInfo);
+    function onInc() {
+        setMotorSpeedLeft((v) => inc(v));
+        setMotorSpeedRight((v) => inc(v));
+    }
+    function onDec() {
+        setMotorSpeedLeft((v) => dec(v));
+        setMotorSpeedRight((v) => dec(v));
+    }
+    function onLeft() {
+        const speedDiff = motorSpeedLeft - motorSpeedRight;
+        if (motorSpeedLeft < 100 || (motorSpeedLeft === 100 && motorSpeedRight === 100)) {
+            setMotorSpeedLeft((v) => dec(v));
+        }
+        if (speedDiff !== step || motorSpeedLeft === 100) {
+            setMotorSpeedRight((v) => inc(v));
+        }
+    }
+    function onRight() {
+        const speedDiff = motorSpeedLeft - motorSpeedRight;
+        if (motorSpeedRight < 100 || (motorSpeedLeft === 100 && motorSpeedRight === 100)) {
+            setMotorSpeedRight((v) => dec(v));
+        }
+        if (speedDiff !== -step || motorSpeedRight === 100) {
+            setMotorSpeedLeft((v) => inc(v));
+        }
+    }
+    function onStop() {
+        setMotorSpeedLeft(0);
+        setMotorSpeedRight(0);
+    }
 
     useHotkeys(
         Object.values(hotKeys).map((k) => k.key).join(","),
         (e, handler) => {
-            console.log("Key ", handler.key, "left: ", motorSpeedLeft, "right: ", motorSpeedRight);
-            const speedDiff = motorSpeedLeft - motorSpeedRight;
-
             switch (handler.key) {
                 case hotKeys.inc.key:
-                    setMotorSpeedLeft((v) => inc(v));
-                    setMotorSpeedRight((v) => inc(v));
-                    break;
+                    return onInc();
                 case hotKeys.dec.key:
-                    setMotorSpeedLeft((v) => dec(v));
-                    setMotorSpeedRight((v) => dec(v));
-                    break;
+                    return onDec();
                 case hotKeys.left.key:
-                    if (motorSpeedLeft < 100 || (motorSpeedLeft === 100 && motorSpeedRight === 100)) {
-                        setMotorSpeedLeft((v) => dec(v));
-                    }
-                    if (speedDiff !== step || motorSpeedLeft === 100) {
-                        setMotorSpeedRight((v) => inc(v));
-                    }
-                    break;
+                    return onLeft();
                 case hotKeys.right.key:
-                    if (motorSpeedRight < 100 || (motorSpeedLeft === 100 && motorSpeedRight === 100)) {
-                        setMotorSpeedRight((v) => dec(v));
-                    }
-                    if (speedDiff !== -step || motorSpeedRight === 100) {
-                        setMotorSpeedLeft((v) => inc(v));
-                    }
-                    break;
+                    return onRight();
                 case hotKeys.stop.key:
-                    setMotorSpeedLeft(0);
-                    setMotorSpeedRight(0);
-                    break;
+                    return onStop();
             }
         },
         [hotKeys, motorSpeedRight, motorSpeedLeft],
@@ -151,8 +160,54 @@ const TrackControl = (props: ITrackControlProps) => {
                     />
                 </div>
                 <div>
-                    <Tooltip title="Stop the motor">
-                        <Button icon="stop" onClick={() => console.log("stop")}>{hotKeys.stop.key}</Button>
+                    <Row>
+                        <Col span={8} offset={8}>
+                            <Tooltip title={hotKeys.inc.key}>
+                                <Button
+                                    icon="caret-up"
+                                    size="small"
+                                    className="shortcut-button"
+                                    onClick={onInc}
+                                />
+                            </Tooltip>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={8}>
+                            <Tooltip title={hotKeys.left.key}>
+                                <Button
+                                    icon="caret-left"
+                                    size="small"
+                                    className="shortcut-button"
+                                    onClick={onInc}
+                                />
+                            </Tooltip>
+                        </Col>
+                        <Col span={8}>
+                            <Tooltip title={hotKeys.dec.key}>
+                                <Button
+                                    icon="caret-down"
+                                    size="small"
+                                    className="shortcut-button"
+                                    onClick={onInc}
+                                />
+                            </Tooltip>
+                        </Col>
+                        <Col span={8}>
+                            <Tooltip title={hotKeys.right.key}>
+                                <Button
+                                    icon="caret-right"
+                                    size="small"
+                                    className="shortcut-button"
+                                    onClick={onInc}
+                                />
+                            </Tooltip>
+                        </Col>
+                    </Row>
+                </div>
+                <div>
+                    <Tooltip title={hotKeys.stop.key}>
+                        <Button icon="stop" onClick={onStop}/>
                     </Tooltip>
                 </div>
             </div>

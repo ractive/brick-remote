@@ -6,9 +6,11 @@
     background-color: lightgray;
     padding: 10px;
 }
+
 .motor-control-card .ant-card-head {
     padding: 5px;
 }
+
 .motor-control-card .ant-card-extra {
     position: relative;
     right: -3px;
@@ -28,34 +30,36 @@
     margin: -2px 0 0 5px;
 }
 
-.smallForm {
+.small-form {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
 
-.smallForm > div {
+.small-form > div {
     margin-bottom: 10px;
 }
 
-.hubDetails {
+.hub-details {
     display: flex;
     justify-content: space-between;
 }
 
-.tiltControl {
+.tilt-control {
     display: flex;
     flex-direction: row;
     align-items: center;
     margin: 15px;
 }
-.tiltIcon {
+
+.tilt-icon {
     font-size: 50pt;
     border-radius: 100px;
     background-color: lightgray;
     padding: 10px;
 }
-.tiltValue {
+
+.tilt-value {
     margin: 10px;
     width: 2em;
 }
@@ -91,6 +95,10 @@
     margin-bottom: 10px;
 }
 
+.motor-control-card-body .ant-slider-with-marks {
+    margin-bottom: 5px;
+}
+
 .track-control-container {
     display: flex;
     flex-direction: row;
@@ -99,3 +107,9 @@
 .hub-controls {
     display: flex;
 }
+
+.shortcut-button {
+    font-size: 9pt;
+    width: 40px;
+}
+

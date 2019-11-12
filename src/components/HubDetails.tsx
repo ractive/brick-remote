@@ -80,7 +80,7 @@ const PortDetails = (props: IPortDetailsProps) => {
     }, [props.hubHolder.hub, props.port]);
 
     return (
-        <div className="hubDetails">
+        <div className="hub-details">
             <div>{motorName}</div>
             <Tooltip title="Add a control for this port to the &quot;Hub Controls&quot; panel on the right.">
                 <Button
@@ -107,7 +107,7 @@ const TiltDetails = (props: ITiltDetailsProps) => {
     const [tiltX, tiltY] = useTiltEffect(props.hubHolder.getUuid());
 
     return (
-        <div className="hubDetails">
+        <div className="hub-details">
             <div>{props.axis === Axis.X ? tiltX : tiltY}&deg;</div>
             <Tooltip title="Add a tilt indicator for this axis.">
                 <Button
@@ -134,7 +134,6 @@ const HubDetails = (props: IHubDetailsProps) => {
 
     return (
         <Card
-            /* tslint:disable-next-line:jsx-no-multiline-js */
             title={(
                 <Paragraph editable={{ onChange: props.renameHub }} style={{marginBottom: "0"}}>
                     {props.hubHolder.getHubName()}

@@ -93,9 +93,9 @@ const ControlConfig = (props: IControlConfigProps) => {
                 visible={visible}
                 content={(
                     <>
-                        <div className="smallForm">
+                        <div className="small-form">
                             {
-                                Object.entries(props.hotkeyInfo).map(([id, {key, label}]) => (
+                                Object.entries(props.hotkeyInfo).map(([id, {label}]) => (
                                     <>
                                         <label htmlFor={"hotkeyinfo_" + id}>{label}:</label>
                                         <Input

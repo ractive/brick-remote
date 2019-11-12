@@ -38,16 +38,28 @@ const MotorControl = (props: IMotorControlProps) => {
     const [inverted, setInverted] = useState(false);
     const [hotKeys, setHotKeys] = useState(hotKeyInfo);
 
+    function onInc() {
+        setMotorSpeed((v) => Math.min(v + step, 100));
+    }
+
+    function onDec() {
+        setMotorSpeed((v) => Math.max(v - step, -100));
+    }
+
+    function onStop() {
+        setMotorSpeed(0);
+    }
+
     useHotkeys(
         Object.values(hotKeys).map((k) => k.key).join(","),
         (e, handler) => {
             switch (handler.key) {
                 case hotKeys.inc.key:
-                    return setMotorSpeed((v) => Math.min(v + step, 100));
+                    return onInc();
                 case hotKeys.dec.key:
-                    return setMotorSpeed((v) => Math.max(v - step, -100));
+                    return onDec();
                 case hotKeys.stop.key:
-                    return setMotorSpeed(0);
+                    return onStop();
             }
         },
         [hotKeys],
@@ -102,16 +114,14 @@ const MotorControl = (props: IMotorControlProps) => {
                         />
                     </Tooltip>
                 </div>
-                {
-                    hotKeys.inc.key &&
-                    (
-                        <div>
-                            <Tooltip title="Shortcut to increase motor speed">
-                                <Button>{hotKeys.inc.key}</Button>
-                            </Tooltip>
-                        </div>
-                    )
-                }
+                <Tooltip title={hotKeys.inc.key}>
+                    <Button
+                        icon="caret-up"
+                        size="small"
+                        className="shortcut-button"
+                        onClick={onInc}
+                    />
+                </Tooltip>
                 <div>
                     <Tooltip title="Speed of the motor">
                         <Slider
@@ -129,19 +139,19 @@ const MotorControl = (props: IMotorControlProps) => {
                         />
                     </Tooltip>
                 </div>
-                {
-                    hotKeys.dec.key &&
-                    (
-                        <div>
-                            <Tooltip title="Shortcut to decrease motor speed">
-                                <Button>{hotKeys.dec.key}</Button>
-                            </Tooltip>
-                        </div>
-                    )
-                }
                 <div>
-                    <Tooltip title="Stop the motor">
-                        <Button icon="stop" onClick={() => setMotorSpeed(0)}>{hotKeys.stop.key}</Button>
+                    <Tooltip title={hotKeys.dec.key}>
+                        <Button
+                            icon="caret-down"
+                            size="small"
+                            className="shortcut-button"
+                            onClick={onDec}
+                        />
+                    </Tooltip>
+                </div>
+                <div>
+                    <Tooltip title={hotKeys.stop.key}>
+                        <Button icon="stop" onClick={onStop} />
                     </Tooltip>
                 </div>
             </div>

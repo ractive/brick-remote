@@ -64,6 +64,50 @@ const App: React.FC = () => {
     const [tiltControlProps, setTiltControlProps] = useState(new Array<ITiltControlProps>());
     const [scanning, setScanning] = useState(false);
 
+    function debugEvents(hub: Hub) {
+        hub.on("attach", (port, device) => {
+            console.log(`Device attached to port ${port} (Device ID: ${device})`);
+        });
+
+        hub.on("tilt", (port, x, y) => {
+            console.log(`Tilt detected on port ${port} (X: ${x}, Y: ${y})`);
+        });
+
+        hub.on("distance", (port, distance) => {
+            console.log(`Motion detected on port ${port} (Distance: ${distance})`);
+        });
+
+        hub.on("accel", (port, x, y, z) => {
+            console.log(`Acceleration detected on port ${port} (Acceleration: x=${x}, y=${y}, z=${z})`);
+        });
+        hub.on("rotate", (port, rotation) => {
+            console.log(`Rotation detected on port ${port} (Rotation: ${rotation})`);
+        });
+        hub.on("speed", (port, speed) => {
+            console.log(`Speed detected on port ${port} (Speed: ${speed})`);
+        });
+
+        hub.on("color", (port, color) => {
+            console.log(`Color detected on port ${port} (Color: ${color})`);
+        });
+
+        hub.on("rotate", (port, rotation) => {
+            console.log(`Rotation detected on port ${port} (Rotation: ${rotation})`);
+        });
+
+        hub.on("button", (button, state) => {
+            console.log(`Button press detected (Button: ${button}, State: ${state})`);
+        });
+
+        hub.on("attach", (port, device) => {
+            console.log(`Device attached to port ${port} (Device ID: ${device})`);
+        });
+
+        hub.on("detach", (port) => {
+            console.log(`Device detached from port ${port}`);
+        });
+    }
+
     useEffect(() => {
         console.log("useEffect...");
         poweredUP.on("discover", async (hub: Hub) => { // Wait to discover hubs
@@ -73,47 +117,7 @@ const App: React.FC = () => {
 
             dispatch({type: ActionType.CONNECT, payload: {hub}});
 
-            hub.on("attach", (port, device) => {
-                // console.log(`Device attached to port ${port} (Device ID: ${device})`) ;
-            });
-
-            // hub.on("tilt", (port, x, y) => {
-            //     console.log(`Tilt detected on port ${port} (X: ${x}, Y: ${y})`);
-            // });
-
-            hub.on("distance", (port, distance) => {
-                // console.log(`Motion detected on port ${port} (Distance: ${distance})`);
-            });
-
-            hub.on("accel", (port, x, y, z) => {
-                // console.log(`Acceleration detected on port ${port} (Acceleration: x=${x}, y=${y}, z=${z})`);
-            });
-            hub.on("rotate", (port, rotation) => {
-                // console.log(`Rotation detected on port ${port} (Rotation: ${rotation})`);
-            });
-            hub.on("speed", (port, speed) => {
-                // console.log(`Speed detected on port ${port} (Speed: ${speed})`);
-            });
-
-            hub.on("color", (port, color) => {
-                // console.log(`Color detected on port ${port} (Color: ${color})`);
-            });
-
-            // hub.on("rotate", (port, rotation) => {
-            //     console.log(`Rotation detected on port ${port} (Rotation: ${rotation})`);
-            // });
-
-            hub.on("button", (button, state) => {
-                // console.log(`Button press detected (Button: ${button}, State: ${state})`);
-            });
-
-            hub.on("attach", (port, device) => {
-                // console.log(`Device attached to port ${port} (Device ID: ${device})`) ;
-            });
-
-            hub.on("detach", (port) => {
-                // console.log(`Device detached from port ${port}`) ;
-            });
+            // debugEvents(hub);
 
             setScanning(false);
 
@@ -206,12 +210,9 @@ const App: React.FC = () => {
                     <Footer>
                         <a target="_blank" rel="noopener noreferrer" href="/icons/icons8-bulldozer-96.png">
                             Bulldozer
-                        </a>,
-                        <a target="_blank" rel="noopener noreferrer" href="/icons/icons8-speedometer-100.png">
-                            Speedometer
-                        </a>
-                        and other icons by
-                        <a target="_blank" rel="noopener noreferrer" href="https://icons8.com">
+                        </a>, <a target="_blank" rel="noopener noreferrer" href="/icons/icons8-speedometer-100.png">
+                           Speedometer
+                        </a> and other icons by <a target="_blank" rel="noopener noreferrer" href="https://icons8.com">
                             Icons8
                         </a>
                     </Footer>
