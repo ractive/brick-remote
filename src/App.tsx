@@ -1,7 +1,6 @@
 import {Button, Layout, Spin} from "antd";
 import {Hub} from "node-poweredup";
 import React, {useEffect, useReducer, useState} from "react";
-import Controls from "./components/Controls";
 import HubDetails from "./components/HubDetails";
 import {IMotorControlDefinition} from "./components/MotorControl";
 import RemoteControl from "./components/RemoteControl";
@@ -130,9 +129,9 @@ const App: React.FC = () => {
         });
     }, [ActionType.CONNECT, ActionType.DISCONNECT, poweredUP]);
 
-    // useEffect(() => {
-    //     dispatch({type: ActionType.CONNECT, payload: {hub: undefined}});
-    // }, [ActionType.CONNECT]);
+    useEffect(() => {
+        dispatch({type: ActionType.CONNECT, payload: {hub: undefined}});
+    }, [ActionType.CONNECT]);
 
     function scan() {
         console.log("Scan...");
@@ -175,13 +174,13 @@ const App: React.FC = () => {
                                 Scan for hubs
                             </Button>
                         </Spin>
-                        {/*<Button*/}
-                        {/*    onClick={() => dispatch({type: ActionType.CONNECT, payload: {hub: undefined}})}*/}
-                        {/*    icon="search"*/}
-                        {/*    block={true}*/}
-                        {/*>*/}
-                        {/*    Add fake*/}
-                        {/*</Button>*/}
+                        <Button
+                            onClick={() => dispatch({type: ActionType.CONNECT, payload: {hub: undefined}})}
+                            icon="search"
+                            block={true}
+                        >
+                            Add fake
+                        </Button>
                         <br/>
                         <br/>
                             {

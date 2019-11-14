@@ -1,9 +1,9 @@
 import {Button, Card, Col, Icon, Row, Slider, Tooltip} from "antd";
 import {SliderValue} from "antd/lib/slider";
 import React, {useEffect, useState} from "react";
-import { useHotkeys } from "react-hotkeys-hook";
+import {IHotKeyInfo, useHotkeyInfo} from "../hooks/useHotkeyInfo";
 import usePoweredup from "../poweredup";
-import ControlConfig, {IHotKeyInfo} from "./ControlConfig";
+import ControlConfig from "./ControlConfig";
 
 export interface ITrackControlDefinition {
     hubUuid: string;
@@ -22,23 +22,28 @@ const TrackControl = (props: ITrackControlProps) => {
     const hotKeyInfo: IHotKeyInfo = {
         inc: {
             key: "up",
-            label: "Hotkey to increase the speed"
+            label: "Hotkey to increase the speed",
+            handle: onInc
         },
         dec: {
             key: "down",
-            label: "Hotkey to decrease the speed"
+            label: "Hotkey to decrease the speed",
+            handle: onDec
         },
         left: {
             key: "left",
-            label: "Hotkey to increase turning left"
+            label: "Hotkey to increase turning left",
+            handle: onLeft
         },
         right: {
             key: "right",
-            label: "Hotkey to increase turning right"
+            label: "Hotkey to increase turning right",
+            handle: onRight
         },
         stop: {
             key: "space",
-            label: "Hotkey to stop"
+            label: "Hotkey to stop",
+            handle: onStop
         }
     };
 
@@ -97,25 +102,25 @@ const TrackControl = (props: ITrackControlProps) => {
         setMotorSpeedLeft(0);
         setMotorSpeedRight(0);
     }
-
-    useHotkeys(
-        Object.values(hotKeys).map((k) => k.key).join(","),
-        (e, handler) => {
-            switch (handler.key) {
-                case hotKeys.inc.key:
-                    return onInc();
-                case hotKeys.dec.key:
-                    return onDec();
-                case hotKeys.left.key:
-                    return onLeft();
-                case hotKeys.right.key:
-                    return onRight();
-                case hotKeys.stop.key:
-                    return onStop();
-            }
-        },
-        [hotKeys, motorSpeedRight, motorSpeedLeft],
-    );
+    useHotkeyInfo(hotKeys);
+    // useHotkeys(
+    //     Object.values(hotKeys).map((k) => k.key),
+    //     (e, handler) => {
+    //         switch (handler.key) {
+    //             case hotKeys.inc.key:
+    //                 return onInc();
+    //             case hotKeys.dec.key:
+    //                 return onDec();
+    //             case hotKeys.left.key:
+    //                 return onLeft();
+    //             case hotKeys.right.key:
+    //                 return onRight();
+    //             case hotKeys.stop.key:
+    //                 return onStop();
+    //         }
+    //     },
+    //     [hotKeys, motorSpeedRight, motorSpeedLeft],
+    // );
 
     function onChangeMotorSpeedRight(value: SliderValue) {
         const speed = value instanceof Array ? value[0] : value;

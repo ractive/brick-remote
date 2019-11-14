@@ -1,9 +1,9 @@
 import {Button, Card, Icon, Slider, Switch, Tooltip} from "antd";
 import { SliderValue } from "antd/lib/slider";
 import React, {useEffect, useState} from "react";
-import { useHotkeys } from "react-hotkeys-hook";
+import {IHotKeyInfo} from "../hooks/useHotkeyInfo";
 import usePoweredup from "../poweredup";
-import ControlConfig, {IHotKeyInfo} from "./ControlConfig";
+import ControlConfig from "./ControlConfig";
 
 export interface IMotorControlDefinition {
     hubUuid: string;
@@ -21,15 +21,18 @@ const MotorControl = (props: IMotorControlProps) => {
     const hotKeyInfo: IHotKeyInfo = {
         inc: {
             key: "",
-            label: "Hotkey to increase the speed"
+            label: "Hotkey to increase the speed",
+            handle: onInc
         },
         dec: {
             key: "",
-            label: "Hotkey to decrease the speed"
+            label: "Hotkey to decrease the speed",
+            handle: onDec
         },
         stop: {
             key: "",
-            label: "Hotkey to stop the motor"
+            label: "Hotkey to stop the motor",
+            handle: onStop
         }
     };
 
@@ -49,21 +52,6 @@ const MotorControl = (props: IMotorControlProps) => {
     function onStop() {
         setMotorSpeed(0);
     }
-
-    useHotkeys(
-        Object.values(hotKeys).map((k) => k.key).join(","),
-        (e, handler) => {
-            switch (handler.key) {
-                case hotKeys.inc.key:
-                    return onInc();
-                case hotKeys.dec.key:
-                    return onDec();
-                case hotKeys.stop.key:
-                    return onStop();
-            }
-        },
-        [hotKeys],
-    );
 
     useEffect(() => {
             function driveMotor() {
