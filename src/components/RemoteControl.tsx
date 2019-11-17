@@ -67,14 +67,15 @@ const RemoteControl = (props: IRemoteControlProps) => {
                                         )
                                     )
                             }
+                                <div>
+                                    {
+                                        props.tiltControlProps
+                                            .filter((p) => p.hubUuid === hubUuid)
+                                            .map((p) => <TiltControl key={p.axis} axis={p.axis}  hubUuid={p.hubUuid}/>)
+                                    }
+                                </div>
                             </div>
-                            <div>
-                                {
-                                    props.tiltControlProps
-                                        .filter((p) => p.hubUuid === hubUuid)
-                                        .map((p) => <TiltControl key={p.axis} axis={p.axis}  hubUuid={p.hubUuid}/>)
-                                }
-                            </div>
+
                         </Card>
                     )
                 )

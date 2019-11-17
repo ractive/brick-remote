@@ -18,13 +18,6 @@ export interface IHubDetailsProps {
     renameHub(newName: string): void;
 }
 
-interface IPortDetailsProps {
-    port: string;
-    hubHolder: HubHolder;
-    addMotorControlProps(): void;
-    addTrackControlProps(motorPortB: string): void;
-}
-
 interface ITrackControlMenuProps {
     port: string;
     ports: string[];
@@ -54,7 +47,7 @@ const TrackControlMenu = (props: ITrackControlMenuProps) => {
     );
 };
 
-const PortDetails = (props: IPortDetailsProps) => {
+const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsProps}) => {
     const [motorName, setMotorName] = useState("unknown");
 
     useEffect(() => {
@@ -100,25 +93,32 @@ const PortDetails = (props: IPortDetailsProps) => {
         }
 
         function portType() {
-            return props.hubHolder.hub
-                ? portDeviceType(props.hubHolder.hub.getPortDeviceType(props.port))
-                : "undefined";
+            return hubDetails.hubHolder.hub
+                ? portDeviceType(hubDetails.hubHolder.hub.getPortDeviceType(port))
+                : "undefined with a very long name";
         }
 
-        const interval = setInterval(() => {
-            setMotorName(portType);
-        }, 2000);
-        return () => clearInterval(interval);
-    }, [props.hubHolder.hub, props.port]);
+        setMotorName(portType);
+    }, [hubDetails.hubHolder.hub, port]);
+
+    const addMotorControlProps = () => {
+        hubDetails.addMotorControlProps(
+        {motorPort: port, hubUuid: hubDetails.hubHolder.getUuid()});
+    };
+
+    const addTrackControlProps = (motorPortRight: string) => {
+        hubDetails.addTrackControlProps(
+            {motorPortLeft: port, motorPortRight, hubUuid: hubDetails.hubHolder.getUuid()});
+    };
 
     return (
         <div className="hub-details">
-            <div>{motorName}</div>
-            <div>
-                <Tooltip title="Add a control for this port to the &quot;Hub Controls&quot; panel on the right">
+            <div style={{}}>{motorName}</div>
+            <div style={{flex: "2 0 70px", textAlign: "right"}}>
+                <Tooltip title="Add a motor control for this port to the &quot;Hub Controls&quot; panel on the right">
                     <Button
                         size="small"
-                        onClick={props.addMotorControlProps}
+                        onClick={addMotorControlProps}
                     >
                         Add
                         <img className="small-image" src="/icons/icons8-speedometer-100.png" alt="Motor Control" />
@@ -126,9 +126,9 @@ const PortDetails = (props: IPortDetailsProps) => {
                 </Tooltip>
                 &nbsp;
                 <TrackControlMenu
-                    addTrackControlProps={props.addTrackControlProps}
-                    port={props.port}
-                    ports={["A", "B", "C", "D"].filter((e) => e !== props.port)}
+                    addTrackControlProps={addTrackControlProps}
+                    port={port}
+                    ports={["A", "B", "C", "D"].filter((e) => e !== port)}
                 />
             </div>
         </div>
@@ -202,54 +202,25 @@ const HubDetails = (props: IHubDetailsProps) => {
             </Descriptions.Item>
             <Descriptions.Item label="Port A">
                 <PortDetails
-                    hubHolder={props.hubHolder}
-                    addMotorControlProps={
-                        () => props.addMotorControlProps(
-                            {motorPort: "A", hubUuid: props.hubHolder.getUuid()})
-                    }
-                    addTrackControlProps={
-                        (motorPortRight: string) => props.addTrackControlProps(
-                            {motorPortLeft: "A", motorPortRight, hubUuid: props.hubHolder.getUuid()})
-                    }
+                    hubDetails={props}
                     port="A"
                 />
             </Descriptions.Item>
             <Descriptions.Item label="Port B">
                 <PortDetails
-                    hubHolder={props.hubHolder}
-                    addMotorControlProps={
-                        () => props.addMotorControlProps({motorPort: "B", hubUuid: props.hubHolder.getUuid()})
-                    }
-                    addTrackControlProps={
-                        (motorPortRight: string) => props.addTrackControlProps(
-                            {motorPortLeft: "B", motorPortRight, hubUuid: props.hubHolder.getUuid()})
-                    }
+                    hubDetails={props}
                     port="B"
                 />
             </Descriptions.Item>
             <Descriptions.Item label="Port C">
                 <PortDetails
-                    hubHolder={props.hubHolder}
-                    addMotorControlProps={
-                        () => props.addMotorControlProps({motorPort: "C", hubUuid: props.hubHolder.getUuid()})
-                    }
-                    addTrackControlProps={
-                        (motorPortRight: string) => props.addTrackControlProps(
-                            {motorPortLeft: "C", motorPortRight, hubUuid: props.hubHolder.getUuid()})
-                    }
+                    hubDetails={props}
                     port="C"
                 />
             </Descriptions.Item>
             <Descriptions.Item label="Port D">
                 <PortDetails
-                    hubHolder={props.hubHolder}
-                    addMotorControlProps={
-                        () => props.addMotorControlProps({motorPort: "D", hubUuid: props.hubHolder.getUuid()})
-                    }
-                    addTrackControlProps={
-                        (motorPortRight: string) => props.addTrackControlProps(
-                            {motorPortLeft: "D", motorPortRight, hubUuid: props.hubHolder.getUuid()})
-                    }
+                    hubDetails={props}
                     port="D"
                 />
             </Descriptions.Item>

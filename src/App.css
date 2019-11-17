@@ -60,8 +60,7 @@
 }
 
 .tilt-value {
-    margin: 10px;
-    width: 2em;
+    width: 1.5em;
 }
 
 .ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-label, .ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-content {

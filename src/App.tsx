@@ -1,5 +1,6 @@
 import {Button, Layout, Spin} from "antd";
 import {Hub} from "node-poweredup";
+import {LPF2Hub} from "node-poweredup/dist/node/lpf2hub";
 import React, {useEffect, useReducer, useState} from "react";
 import HubDetails from "./components/HubDetails";
 import {IMotorControlDefinition} from "./components/MotorControl";
@@ -7,7 +8,7 @@ import RemoteControl from "./components/RemoteControl";
 import {ITiltControlProps} from "./components/TiltControl";
 import {ITrackControlDefinition} from "./components/TrackControl";
 import {HubHolder} from "./HubHolder";
-import { HubsContext } from "./HubsContext";
+import {HubsContext} from "./HubsContext";
 import usePoweredup from "./poweredup";
 import {display} from "./Utils";
 
@@ -45,6 +46,10 @@ const App: React.FC = () => {
             case ActionType.RENAME:
                 const i = hubHolders.findIndex((hubHolder) => hubHolder.getUuid() === hubUuid);
                 if (i >= 0 && action.payload.name) {
+                    if (hub instanceof LPF2Hub) {
+                        (hub as LPF2Hub).setName(action.payload.name)
+                            .catch((e) => {console.log("Error setting hub name", e); });
+                    }
                     return [
                         ...hubHolders.slice(0, i),
                         new HubHolder(hubHolders[i].hub, action.payload.name),
@@ -132,7 +137,7 @@ const App: React.FC = () => {
     }, [ActionType.CONNECT, ActionType.DISCONNECT, poweredUP]);
 
     useEffect(() => {
-        dispatch({type: ActionType.CONNECT, payload: {hub: undefined}});
+        // dispatch({type: ActionType.CONNECT, payload: {hub: undefined}});
     }, [ActionType.CONNECT]);
 
     function scan() {
@@ -187,14 +192,6 @@ const App: React.FC = () => {
                                 Scan for hubs
                             </Button>
                         </Spin>
-                        <Button
-                            onClick={() => dispatch({type: ActionType.CONNECT, payload: {hub: undefined}})}
-                            icon="search"
-                            block={true}
-                        >
-                            Add fake
-                        </Button>
-                        <br/>
                         <br/>
                             {
                                 hubs.map((hub) => (
@@ -223,7 +220,7 @@ const App: React.FC = () => {
                             removeTrackControl={removeTrackControlProps}
                         />
                     </Content>
-                    <Footer>
+                    <Footer style={{fontSize: "9pt"}}>
                         <a target="_blank" rel="noopener noreferrer" href="/icons/icons8-bulldozer-96.png">
                             Bulldozer
                         </a>, <a target="_blank" rel="noopener noreferrer" href="/icons/icons8-speedometer-100.png">
