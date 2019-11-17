@@ -1,7 +1,7 @@
 import {Button, Card, Icon, Slider, Switch, Tooltip} from "antd";
 import { SliderValue } from "antd/lib/slider";
 import React, {useEffect, useState} from "react";
-import {IHotKeyInfo} from "../hooks/useHotkeyInfo";
+import {IHotKeyInfo, useHotkeyInfo} from "../hooks/useHotkeyInfo";
 import usePoweredup from "../poweredup";
 import ControlConfig from "./ControlConfig";
 
@@ -64,7 +64,9 @@ const MotorControl = (props: IMotorControlProps) => {
             }
 
             driveMotor();
-        }, [motorSpeed, inverted, props.motorPort, props.hubUuid, poweredUP]);
+     }, [motorSpeed, inverted, props.motorPort, props.hubUuid, poweredUP]);
+
+    useHotkeyInfo(hotKeys);
 
     function onChangeMotorSpeed(value: SliderValue) {
         const speed = value instanceof Array ? value[0] : value;
@@ -116,7 +118,7 @@ const MotorControl = (props: IMotorControlProps) => {
                             value={motorSpeed}
                             marks={{0: "0"}}
                             defaultValue={0}
-                            style={{height: "300px"}}
+                            style={{height: "200px"}}
                             vertical={true}
                             min={-100}
                             max={100}

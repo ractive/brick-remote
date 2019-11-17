@@ -8,7 +8,8 @@ export function useHotkeys(keys: string[], keyHandler: KeyHandler, deps: any[] =
     const callback = useCallback(keyHandler, deps);
 
     useEffect(() => {
-        const keysString = keys.join(",");
+        // filter empty strings
+        const keysString = keys.filter(Boolean).join(",");
         hotkeys(keysString, callback);
         return () => hotkeys.unbind(keysString, callback);
     }, [keys, callback]);

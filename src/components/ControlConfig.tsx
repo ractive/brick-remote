@@ -81,7 +81,7 @@ const ControlConfig = (props: IControlConfigProps) => {
     }
 
     return (
-        <Tooltip title="Motor control configuration">
+        <Tooltip title="Keyboard control configuration">
             <Popover
                 trigger="click"
                 visible={visible}

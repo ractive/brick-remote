@@ -1,7 +1,7 @@
-import {Button, Card, Descriptions, Icon, Modal, Progress, Select, Tooltip, Typography} from "antd";
+import {Button, Card, Descriptions, Dropdown, Icon, Menu, Progress, Tooltip, Typography} from "antd";
 import * as Consts from "node-poweredup/dist/node/consts";
 import {DeviceType} from "node-poweredup/dist/node/consts";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import useTiltEffect from "../hooks/useTiltEffect";
 import {HubHolder} from "../HubHolder";
 import {IMotorControlDefinition} from "./MotorControl";
@@ -9,7 +9,6 @@ import {Axis, ITiltControlProps} from "./TiltControl";
 import {ITrackControlDefinition} from "./TrackControl";
 
 const { Paragraph } = Typography;
-const { Option } = Select;
 
 export interface IHubDetailsProps {
     hubHolder: HubHolder;
@@ -26,10 +25,37 @@ interface IPortDetailsProps {
     addTrackControlProps(motorPortB: string): void;
 }
 
-const PortDetails = (props: IPortDetailsProps) => {
+interface ITrackControlMenuProps {
+    port: string;
+    ports: string[];
+    addTrackControlProps(motorPortB: string): void;
+}
 
+const TrackControlMenu = (props: ITrackControlMenuProps) => {
+    const menu = (
+        <Menu onClick={({key}) => props.addTrackControlProps(key)}>
+            {props.ports.map((p) => (
+                <Menu.Item key={p}>
+                    {`${props.port} & ${p}`}
+                </Menu.Item>
+            ))}
+        </Menu>
+    );
+
+    return (
+        <Tooltip title="Add a track control to the &quot;Hub Controls&quot; panel on the right for two motors on the ports...">
+            <Dropdown overlay={menu} trigger={["click"]}>
+                <Button size="small">
+                    Add <img className="small-image" src="/icons/icons8-bulldozer-96.png" alt="Track Control" />
+                    <Icon type="down" style={{marginLeft: "3px"}}/>
+                </Button>
+            </Dropdown>
+        </Tooltip>
+    );
+};
+
+const PortDetails = (props: IPortDetailsProps) => {
     const [motorName, setMotorName] = useState("unknown");
-    const [trackControlMotorPortRight, setTrackControlMotorPortRight] = useState("A");
 
     useEffect(() => {
         function portDeviceType(type: Consts.DeviceType): string {
@@ -85,59 +111,25 @@ const PortDetails = (props: IPortDetailsProps) => {
         return () => clearInterval(interval);
     }, [props.hubHolder.hub, props.port]);
 
-    useEffect(() => console.log(trackControlMotorPortRight), [trackControlMotorPortRight]);
-    const onOk = useCallback(() => {
-        props.addTrackControlProps(trackControlMotorPortRight);
-    }, [props.addTrackControlProps, props, trackControlMotorPortRight]);
-
-    const addTrackControl = useCallback(() => {
-        Modal.info({
-            content: (
-                <div>
-                    <Select
-                        defaultValue={trackControlMotorPortRight}
-                        onChange={(e: string) => setTrackControlMotorPortRight(e)}
-                    >
-                        <Option value="A">A</Option>
-                        <Option value="B">B</Option>
-                        <Option value="C">C</Option>
-                        <Option value="D">D</Option>
-                    </Select>
-                </div>
-            ),
-            icon: <Icon type="question-circle" />,
-            onOk,
-            title: "Port of second motor for track control (A-D)",
-            width: "300px"
-        });
-    }, [trackControlMotorPortRight, onOk]);
-
     return (
         <div className="hub-details">
             <div>{motorName}</div>
             <div>
-                <Tooltip title="Add a control for this port to the &quot;Hub Controls&quot; panel on the right.">
+                <Tooltip title="Add a control for this port to the &quot;Hub Controls&quot; panel on the right">
                     <Button
                         size="small"
-                        style={{float: "right"}}
-                        /* tslint:disable-next-line:max-line-length */
                         onClick={props.addMotorControlProps}
                     >
                         Add
                         <img className="small-image" src="/icons/icons8-speedometer-100.png" alt="Motor Control" />
                     </Button>
                 </Tooltip>
-                <Tooltip title="Add track control">
-                    <Button
-                        size="small"
-                        style={{float: "right"}}
-                        /* tslint:disable-next-line:max-line-length */
-                        onClick={addTrackControl}
-                    >
-                        Add
-                        <img className="small-image" src="/icons/icons8-bulldozer-96.png" alt="Track Control" />
-                    </Button>
-                </Tooltip>
+                &nbsp;
+                <TrackControlMenu
+                    addTrackControlProps={props.addTrackControlProps}
+                    port={props.port}
+                    ports={["A", "B", "C", "D"].filter((e) => e !== props.port)}
+                />
             </div>
         </div>
     );
@@ -181,7 +173,7 @@ const HubDetails = (props: IHubDetailsProps) => {
     return (
         <Card
             title={(
-                <Paragraph editable={{ onChange: props.renameHub }} style={{marginBottom: "0"}}>
+                <Paragraph ellipsis={{rows: 14}} editable={{ onChange: props.renameHub }} style={{marginBottom: "0"}}>
                     {props.hubHolder.getHubName()}
                 </Paragraph>
             )}

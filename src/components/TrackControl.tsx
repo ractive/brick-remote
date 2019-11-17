@@ -21,27 +21,27 @@ const TrackControl = (props: ITrackControlProps) => {
     // tslint:disable:object-literal-sort-keys
     const hotKeyInfo: IHotKeyInfo = {
         inc: {
-            key: "up",
+            key: "",
             label: "Hotkey to increase the speed",
             handle: onInc
         },
         dec: {
-            key: "down",
+            key: "",
             label: "Hotkey to decrease the speed",
             handle: onDec
         },
         left: {
-            key: "left",
+            key: "",
             label: "Hotkey to increase turning left",
             handle: onLeft
         },
         right: {
-            key: "right",
+            key: "",
             label: "Hotkey to increase turning right",
             handle: onRight
         },
         stop: {
-            key: "space",
+            key: "",
             label: "Hotkey to stop",
             handle: onStop
         }
@@ -56,12 +56,16 @@ const TrackControl = (props: ITrackControlProps) => {
 
     useEffect(() => {
         function driveTracks() {
-            console.log("drive tracks", motorSpeedLeft, motorSpeedRight);
+            const left = invertedLeft ? -motorSpeedLeft : motorSpeedLeft;
+            const right = invertedRight ? motorSpeedRight : -motorSpeedRight;
+
+            console.log("drive tracks", left, right);
+
             const hub = poweredUP.getConnectedHubByUUID(decodeURIComponent(props.hubUuid));
             if (hub) {
-                hub.setMotorSpeed(props.motorPortLeft, invertedLeft ? -motorSpeedLeft : motorSpeedLeft)
+                hub.setMotorSpeed(props.motorPortLeft, left)
                     .catch((err: any) => console.log("Error while setting motorSpeedLeft", err));
-                hub.setMotorSpeed(props.motorPortRight, invertedRight ? motorSpeedRight : -motorSpeedRight)
+                hub.setMotorSpeed(props.motorPortRight, right)
                     .catch((err: any) => console.log("Error while setting motorSpeedRight", err));
             }
         }
@@ -141,7 +145,7 @@ const TrackControl = (props: ITrackControlProps) => {
             className="motor-control-card"
         >
             <div className="motor-control-card-body">
-                <div>{`Ports ${props.motorPortLeft}/${props.motorPortRight}`}</div>
+                <div>{`Ports ${props.motorPortLeft} & ${props.motorPortRight}`}</div>
                 <div>
                     <Tooltip title="Invert the rotation of left motor">
                         <Switch
@@ -168,7 +172,7 @@ const TrackControl = (props: ITrackControlProps) => {
                         value={motorSpeedLeft}
                         marks={{0: "0"}}
                         defaultValue={0}
-                        style={{height: "300px"}}
+                        style={{height: "200px"}}
                         vertical={true}
                         min={-100}
                         max={100}
@@ -181,7 +185,7 @@ const TrackControl = (props: ITrackControlProps) => {
                         value={motorSpeedRight}
                         marks={{0: "0"}}
                         defaultValue={0}
-                        style={{height: "300px"}}
+                        style={{height: "200px"}}
                         vertical={true}
                         min={-100}
                         max={100}
