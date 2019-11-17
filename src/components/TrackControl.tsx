@@ -1,4 +1,4 @@
-import {Button, Card, Col, Icon, Row, Slider, Tooltip} from "antd";
+import {Button, Card, Col, Icon, Row, Slider, Switch, Tooltip} from "antd";
 import {SliderValue} from "antd/lib/slider";
 import React, {useEffect, useState} from "react";
 import {IHotKeyInfo, useHotkeyInfo} from "../hooks/useHotkeyInfo";
@@ -50,21 +50,30 @@ const TrackControl = (props: ITrackControlProps) => {
     const poweredUP = usePoweredup();
     const [motorSpeedRight, setMotorSpeedRight] = useState(0);
     const [motorSpeedLeft, setMotorSpeedLeft] = useState(0);
+    const [invertedLeft, setInvertedLeft] = useState(false);
+    const [invertedRight, setInvertedRight] = useState(false);
     const [hotKeys, setHotKeys] = useState(hotKeyInfo);
+
     useEffect(() => {
         function driveTracks() {
             console.log("drive tracks", motorSpeedLeft, motorSpeedRight);
             const hub = poweredUP.getConnectedHubByUUID(decodeURIComponent(props.hubUuid));
             if (hub) {
-                hub.setMotorSpeed(props.motorPortLeft, motorSpeedLeft)
+                hub.setMotorSpeed(props.motorPortLeft, invertedLeft ? -motorSpeedLeft : motorSpeedLeft)
                     .catch((err: any) => console.log("Error while setting motorSpeedLeft", err));
-                hub.setMotorSpeed(props.motorPortRight, -motorSpeedRight)
+                hub.setMotorSpeed(props.motorPortRight, invertedRight ? motorSpeedRight : -motorSpeedRight)
                     .catch((err: any) => console.log("Error while setting motorSpeedRight", err));
             }
         }
 
         driveTracks();
-    }, [motorSpeedRight, motorSpeedLeft, props.motorPortLeft, props.motorPortRight, props.hubUuid, poweredUP]);
+        }, [
+            motorSpeedRight, motorSpeedLeft, invertedLeft, invertedRight,
+            props.motorPortLeft, props.motorPortRight, props.hubUuid, poweredUP
+        ]
+    );
+
+    useHotkeyInfo(hotKeys);
 
     function dec(v: number): number {
         return Math.max(v - step, -100);
@@ -102,25 +111,6 @@ const TrackControl = (props: ITrackControlProps) => {
         setMotorSpeedLeft(0);
         setMotorSpeedRight(0);
     }
-    useHotkeyInfo(hotKeys);
-    // useHotkeys(
-    //     Object.values(hotKeys).map((k) => k.key),
-    //     (e, handler) => {
-    //         switch (handler.key) {
-    //             case hotKeys.inc.key:
-    //                 return onInc();
-    //             case hotKeys.dec.key:
-    //                 return onDec();
-    //             case hotKeys.left.key:
-    //                 return onLeft();
-    //             case hotKeys.right.key:
-    //                 return onRight();
-    //             case hotKeys.stop.key:
-    //                 return onStop();
-    //         }
-    //     },
-    //     [hotKeys, motorSpeedRight, motorSpeedLeft],
-    // );
 
     function onChangeMotorSpeedRight(value: SliderValue) {
         const speed = value instanceof Array ? value[0] : value;
@@ -152,6 +142,27 @@ const TrackControl = (props: ITrackControlProps) => {
         >
             <div className="motor-control-card-body">
                 <div>{`Ports ${props.motorPortLeft}/${props.motorPortRight}`}</div>
+                <div>
+                    <Tooltip title="Invert the rotation of left motor">
+                        <Switch
+                            size="small"
+                            checkedChildren={<Icon type="double-right" rotate={90} />}
+                            unCheckedChildren={<Icon type="double-left" rotate={90} />}
+                            checked={invertedLeft}
+                            onChange={(checked) => setInvertedLeft(checked)}
+                        />
+                    </Tooltip>
+                    &nbsp;
+                    <Tooltip title="Invert the rotation of right motor">
+                        <Switch
+                            size="small"
+                            checkedChildren={<Icon type="double-right" rotate={90} />}
+                            unCheckedChildren={<Icon type="double-left" rotate={90} />}
+                            checked={invertedRight}
+                            onChange={(checked) => setInvertedRight(checked)}
+                        />
+                    </Tooltip>
+                </div>
                 <div className="track-control-container">
                     <Slider
                         value={motorSpeedLeft}

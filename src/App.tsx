@@ -5,6 +5,7 @@ import HubDetails from "./components/HubDetails";
 import {IMotorControlDefinition} from "./components/MotorControl";
 import RemoteControl from "./components/RemoteControl";
 import {ITiltControlProps} from "./components/TiltControl";
+import {ITrackControlDefinition} from "./components/TrackControl";
 import {HubHolder} from "./HubHolder";
 import { HubsContext } from "./HubsContext";
 import usePoweredup from "./poweredup";
@@ -60,6 +61,7 @@ const App: React.FC = () => {
     const poweredUP = usePoweredup();
     const [hubs, dispatch] = useReducer(reducer, new Array<HubHolder>());
     const [motorControlProps, setMotorControlProps] = useState(new Array<IMotorControlDefinition>());
+    const [trackControlProps, setTrackControlProps] = useState(new Array<ITrackControlDefinition>());
     const [tiltControlProps, setTiltControlProps] = useState(new Array<ITiltControlProps>());
     const [scanning, setScanning] = useState(false);
 
@@ -139,13 +141,24 @@ const App: React.FC = () => {
         return poweredUP.scan();
     }
 
-    function addMotorControlProps(newMotorCotrolProps: IMotorControlDefinition): void {
-        setMotorControlProps([...motorControlProps, newMotorCotrolProps]);
+    function addMotorControlProps(newMotorControlProps: IMotorControlDefinition): void {
+        setMotorControlProps([...motorControlProps, newMotorControlProps]);
+    }
+
+    function addTrackControlProps(newTrackControlProps: ITrackControlDefinition): void {
+        setTrackControlProps([...trackControlProps, newTrackControlProps]);
     }
 
     function removeMotorControlProps(remove: IMotorControlDefinition): void {
         setMotorControlProps(motorControlProps
             .filter((p) => p.hubUuid !== remove.hubUuid || p.motorPort !== remove.motorPort));
+    }
+    function removeTrackControlProps(remove: ITrackControlDefinition): void {
+        setTrackControlProps(trackControlProps
+            .filter((p) => p.hubUuid !== remove.hubUuid ||
+                p.motorPortLeft !== remove.motorPortLeft ||
+                p.motorPortRight !== remove.motorPortRight)
+        );
     }
 
     function addTiltControlProps(newTiltCotrolProps: ITiltControlProps): void {
@@ -189,6 +202,7 @@ const App: React.FC = () => {
                                         key={hub.getUuid()}
                                         hubHolder={hub}
                                         addMotorControlProps={addMotorControlProps}
+                                        addTrackControlProps={addTrackControlProps}
                                         addTiltControlProps={addTiltControlProps}
                                         renameHub={(name) => setHubName(hub, name)}
                                     />
@@ -204,7 +218,9 @@ const App: React.FC = () => {
                         <RemoteControl
                             motorControlProps={motorControlProps}
                             tiltControlProps={tiltControlProps}
+                            trackControlProps={trackControlProps}
                             removeMotorControl={removeMotorControlProps}
+                            removeTrackControl={removeTrackControlProps}
                         />
                     </Content>
                     <Footer>

@@ -1,17 +1,20 @@
-import {Button, Card, Descriptions, Progress, Tooltip, Typography} from "antd";
+import {Button, Card, Descriptions, Icon, Modal, Progress, Select, Tooltip, Typography} from "antd";
 import * as Consts from "node-poweredup/dist/node/consts";
 import {DeviceType} from "node-poweredup/dist/node/consts";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import useTiltEffect from "../hooks/useTiltEffect";
 import {HubHolder} from "../HubHolder";
 import {IMotorControlDefinition} from "./MotorControl";
 import {Axis, ITiltControlProps} from "./TiltControl";
+import {ITrackControlDefinition} from "./TrackControl";
 
 const { Paragraph } = Typography;
+const { Option } = Select;
 
 export interface IHubDetailsProps {
     hubHolder: HubHolder;
     addMotorControlProps(motorControlProps: IMotorControlDefinition): void;
+    addTrackControlProps(trackControlProps: ITrackControlDefinition): void;
     addTiltControlProps(tiltControlProps: ITiltControlProps): void;
     renameHub(newName: string): void;
 }
@@ -20,11 +23,13 @@ interface IPortDetailsProps {
     port: string;
     hubHolder: HubHolder;
     addMotorControlProps(): void;
+    addTrackControlProps(motorPortB: string): void;
 }
 
 const PortDetails = (props: IPortDetailsProps) => {
 
     const [motorName, setMotorName] = useState("unknown");
+    const [trackControlMotorPortRight, setTrackControlMotorPortRight] = useState("A");
 
     useEffect(() => {
         function portDeviceType(type: Consts.DeviceType): string {
@@ -67,6 +72,7 @@ const PortDetails = (props: IPortDetailsProps) => {
                     return "PoweredUp remote button";
             }
         }
+
         function portType() {
             return props.hubHolder.hub
                 ? portDeviceType(props.hubHolder.hub.getPortDeviceType(props.port))
@@ -79,20 +85,60 @@ const PortDetails = (props: IPortDetailsProps) => {
         return () => clearInterval(interval);
     }, [props.hubHolder.hub, props.port]);
 
+    useEffect(() => console.log(trackControlMotorPortRight), [trackControlMotorPortRight]);
+    const onOk = useCallback(() => {
+        props.addTrackControlProps(trackControlMotorPortRight);
+    }, [props.addTrackControlProps, props, trackControlMotorPortRight]);
+
+    const addTrackControl = useCallback(() => {
+        Modal.info({
+            content: (
+                <div>
+                    <Select
+                        defaultValue={trackControlMotorPortRight}
+                        onChange={(e: string) => setTrackControlMotorPortRight(e)}
+                    >
+                        <Option value="A">A</Option>
+                        <Option value="B">B</Option>
+                        <Option value="C">C</Option>
+                        <Option value="D">D</Option>
+                    </Select>
+                </div>
+            ),
+            icon: <Icon type="question-circle" />,
+            onOk,
+            title: "Port of second motor for track control (A-D)",
+            width: "300px"
+        });
+    }, [trackControlMotorPortRight, onOk]);
+
     return (
         <div className="hub-details">
             <div>{motorName}</div>
-            <Tooltip title="Add a control for this port to the &quot;Hub Controls&quot; panel on the right.">
-                <Button
-                    size="small"
-                    style={{float: "right"}}
-                    /* tslint:disable-next-line:max-line-length */
-                    onClick={props.addMotorControlProps}
-                >
-                    Add
-                    <img className="small-image" src="/icons/icons8-speedometer-100.png" alt="Motor Control" />
-                </Button>
-            </Tooltip>
+            <div>
+                <Tooltip title="Add a control for this port to the &quot;Hub Controls&quot; panel on the right.">
+                    <Button
+                        size="small"
+                        style={{float: "right"}}
+                        /* tslint:disable-next-line:max-line-length */
+                        onClick={props.addMotorControlProps}
+                    >
+                        Add
+                        <img className="small-image" src="/icons/icons8-speedometer-100.png" alt="Motor Control" />
+                    </Button>
+                </Tooltip>
+                <Tooltip title="Add track control">
+                    <Button
+                        size="small"
+                        style={{float: "right"}}
+                        /* tslint:disable-next-line:max-line-length */
+                        onClick={addTrackControl}
+                    >
+                        Add
+                        <img className="small-image" src="/icons/icons8-bulldozer-96.png" alt="Track Control" />
+                    </Button>
+                </Tooltip>
+            </div>
         </div>
     );
 };
@@ -166,7 +212,12 @@ const HubDetails = (props: IHubDetailsProps) => {
                 <PortDetails
                     hubHolder={props.hubHolder}
                     addMotorControlProps={
-                        () => props.addMotorControlProps({motorPort: "A", hubUuid: props.hubHolder.getUuid()})
+                        () => props.addMotorControlProps(
+                            {motorPort: "A", hubUuid: props.hubHolder.getUuid()})
+                    }
+                    addTrackControlProps={
+                        (motorPortRight: string) => props.addTrackControlProps(
+                            {motorPortLeft: "A", motorPortRight, hubUuid: props.hubHolder.getUuid()})
                     }
                     port="A"
                 />
@@ -177,6 +228,10 @@ const HubDetails = (props: IHubDetailsProps) => {
                     addMotorControlProps={
                         () => props.addMotorControlProps({motorPort: "B", hubUuid: props.hubHolder.getUuid()})
                     }
+                    addTrackControlProps={
+                        (motorPortRight: string) => props.addTrackControlProps(
+                            {motorPortLeft: "B", motorPortRight, hubUuid: props.hubHolder.getUuid()})
+                    }
                     port="B"
                 />
             </Descriptions.Item>
@@ -186,6 +241,10 @@ const HubDetails = (props: IHubDetailsProps) => {
                     addMotorControlProps={
                         () => props.addMotorControlProps({motorPort: "C", hubUuid: props.hubHolder.getUuid()})
                     }
+                    addTrackControlProps={
+                        (motorPortRight: string) => props.addTrackControlProps(
+                            {motorPortLeft: "C", motorPortRight, hubUuid: props.hubHolder.getUuid()})
+                    }
                     port="C"
                 />
             </Descriptions.Item>
@@ -194,6 +253,10 @@ const HubDetails = (props: IHubDetailsProps) => {
                     hubHolder={props.hubHolder}
                     addMotorControlProps={
                         () => props.addMotorControlProps({motorPort: "D", hubUuid: props.hubHolder.getUuid()})
+                    }
+                    addTrackControlProps={
+                        (motorPortRight: string) => props.addTrackControlProps(
+                            {motorPortLeft: "D", motorPortRight, hubUuid: props.hubHolder.getUuid()})
                     }
                     port="D"
                 />

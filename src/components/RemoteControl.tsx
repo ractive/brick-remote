@@ -3,12 +3,14 @@ import React, {useContext} from "react";
 import {hubByUuid, HubsContext} from "../HubsContext";
 import MotorControl, {IMotorControlDefinition} from "./MotorControl";
 import TiltControl, {ITiltControlProps} from "./TiltControl";
-import TrackControl from "./TrackControl";
+import TrackControl, {ITrackControlDefinition} from "./TrackControl";
 
 export interface IRemoteControlProps {
    motorControlProps: IMotorControlDefinition[];
+   trackControlProps: ITrackControlDefinition[];
    tiltControlProps: ITiltControlProps[];
    removeMotorControl(motorControlProps: IMotorControlDefinition): void;
+   removeTrackControl(trackControlProps: ITrackControlDefinition): void;
 }
 
 const RemoteControl = (props: IRemoteControlProps) => {
@@ -17,9 +19,15 @@ const RemoteControl = (props: IRemoteControlProps) => {
     const hubUuids = new Set<string>([
         ...props.motorControlProps
             .map((p) => p.hubUuid),
+        ...props.trackControlProps
+            .map((p) => p.hubUuid),
         ...props.tiltControlProps
             .map((p) => p.hubUuid),
     ]);
+
+    function key(trackControl: ITrackControlDefinition): string {
+        return trackControl.hubUuid + "_" + trackControl.motorPortLeft + "_" + trackControl.motorPortRight;
+    }
 
     return (
         <div
@@ -44,12 +52,21 @@ const RemoteControl = (props: IRemoteControlProps) => {
                                         )
                                     )
                             }
-                                <TrackControl
-                                    remove={() => { console.log("remove"); }}
-                                    hubUuid={hubUuid}
-                                    motorPortLeft={"A"}
-                                    motorPortRight={"B"}
-                                />
+                            {
+                                props.trackControlProps
+                                    .filter((p) => p.hubUuid === hubUuid)
+                                    .sort((a, b) => a.motorPortLeft.localeCompare(b.motorPortLeft))
+                                    .map((trackControl) => (
+                                        <TrackControl
+                                            key={key(trackControl)}
+                                            hubUuid={trackControl.hubUuid}
+                                            motorPortLeft={trackControl.motorPortLeft}
+                                            motorPortRight={trackControl.motorPortRight}
+                                            remove={() => props.removeTrackControl(trackControl)}
+                                        />
+                                        )
+                                    )
+                            }
                             </div>
                             <div>
                                 {
