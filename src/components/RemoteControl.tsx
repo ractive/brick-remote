@@ -30,13 +30,11 @@ const RemoteControl = (props: IRemoteControlProps) => {
     }
 
     return (
-        <div
-            style={{height: "100%"}}
-        >
+        <div className="remote-control">
             {
                 Array.from(hubUuids).map((hubUuid) =>
                     (
-                        <Card title={hubByUuid(hubs, hubUuid).name} key={hubUuid}>
+                        <Card title={hubByUuid(hubs, hubUuid).name} key={hubUuid} className="remote-control-hub">
                             <div className="hub-controls">
                             {
                                 props.motorControlProps

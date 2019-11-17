@@ -137,7 +137,8 @@ const App: React.FC = () => {
     }, [ActionType.CONNECT, ActionType.DISCONNECT, poweredUP]);
 
     useEffect(() => {
-        // dispatch({type: ActionType.CONNECT, payload: {hub: undefined}});
+        dispatch({type: ActionType.CONNECT, payload: {hub: undefined}});
+        dispatch({type: ActionType.CONNECT, payload: {hub: undefined}});
     }, [ActionType.CONNECT]);
 
     function scan() {

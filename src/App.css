@@ -111,3 +111,11 @@
     font-size: 9pt;
     width: 40px;
 }
+
+.remote-control {
+    display: flex;
+}
+
+.remote-control-hub {
+    margin: 5px;
+}
