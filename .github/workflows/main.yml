@@ -23,7 +23,7 @@ jobs:
       uses: SamKirkland/FTP-Deploy-Action@2.0.0
       with:
         # FTP server name (you may need to specify a port)
-        ftp_server: lego-remote.ractive.ch
+        ftp_server: ractive.ch
         # FTP account username
         ftp_username: ractive
         # FTP account password
