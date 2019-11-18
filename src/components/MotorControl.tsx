@@ -1,4 +1,4 @@
-import {Button, Card, Icon, Slider, Switch, Tooltip} from "antd";
+import {Button, Card, Col, Icon, Row, Slider, Switch, Tooltip} from "antd";
 import { SliderValue } from "antd/lib/slider";
 import React, {useEffect, useState} from "react";
 import {IHotKeyInfo, useHotkeyInfo} from "../hooks/useHotkeyInfo";
@@ -96,7 +96,7 @@ const MotorControl = (props: IMotorControlProps) => {
                 <div>
                     <Tooltip title="Invert the rotation of the motor">
                         <Switch
-                            style={{marginBottom: "10px"}}
+                            size="small"
                             checkedChildren={<Icon type="double-right" rotate={90} />}
                             unCheckedChildren={<Icon type="double-left" rotate={90} />}
                             checked={inverted}
@@ -104,14 +104,6 @@ const MotorControl = (props: IMotorControlProps) => {
                         />
                     </Tooltip>
                 </div>
-                <Tooltip title={hotKeys.inc.key}>
-                    <Button
-                        icon="caret-up"
-                        size="small"
-                        className="shortcut-button"
-                        onClick={onInc}
-                    />
-                </Tooltip>
                 <div>
                     <Tooltip title="Speed of the motor">
                         <Slider
@@ -130,14 +122,30 @@ const MotorControl = (props: IMotorControlProps) => {
                     </Tooltip>
                 </div>
                 <div>
-                    <Tooltip title={hotKeys.dec.key}>
-                        <Button
-                            icon="caret-down"
-                            size="small"
-                            className="shortcut-button"
-                            onClick={onDec}
-                        />
-                    </Tooltip>
+                    <Row>
+                        <Col span={24}>
+                            <Tooltip title={hotKeys.inc.key}>
+                                <Button
+                                    icon="caret-up"
+                                    size="small"
+                                    className="shortcut-button"
+                                    onClick={onInc}
+                                />
+                            </Tooltip>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={24}>
+                            <Tooltip title={hotKeys.dec.key}>
+                                <Button
+                                    icon="caret-down"
+                                    size="small"
+                                    className="shortcut-button"
+                                    onClick={onDec}
+                                />
+                            </Tooltip>
+                        </Col>
+                    </Row>
                 </div>
                 <div>
                     <Tooltip title={hotKeys.stop.key}>
