@@ -1,4 +1,4 @@
-name: FTP deployment
+name: lego-remote
 
 on: [push]
 
