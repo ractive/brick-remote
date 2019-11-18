@@ -9,14 +9,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
+    - name: Setup node 12.x
+      uses: actions/setup-node@v1
       with:
         node-version: '12.x'
-    - run: yarn install
-    - run: yarn build
+
+    - name: Build
+      run: |
+        yarn install
+        yarn build
+
     - name: FTP Deploy
       uses: SamKirkland/FTP-Deploy-Action@2.0.0
-      with:
+      env:
         # FTP server name (you may need to specify a port)
         FTP_SERVER: ractive.ch
         # FTP account username
