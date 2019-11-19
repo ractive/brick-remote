@@ -38,7 +38,7 @@ const App: React.FC = () => {
         switch (action.type) {
             case ActionType.CONNECT:
                 if (!hubHolders.find((hubHolder) => hubHolder.getUuid() === hubUuid)) {
-                    return [...hubHolders, new HubHolder(hub, btoa(Math.random().toString()).slice(0, 5))];
+                    return [...hubHolders, new HubHolder(hub)];
                 }
                 break;
             case ActionType.DISCONNECT:
