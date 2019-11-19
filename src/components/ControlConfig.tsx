@@ -11,13 +11,11 @@ export interface IControlConfigProps {
 const ControlConfig = (props: IControlConfigProps) => {
     const [visible, setVisible] = useState(false);
     const [hotKeys, setHotKeys] = useState<IHotKeyInfo>({...props.hotkeyInfo});
-    useHotkeys([ "esc" ],
-        (_) => {
-            if (visible) {
-                setVisible(false);
-            }
-        },
-        [visible, setVisible],
+
+    useHotkeys(
+        [ "esc" ],
+        (_) => setVisible(false),
+        []
     );
 
     function handleSubmit(event: MouseEvent<HTMLElement>) {
