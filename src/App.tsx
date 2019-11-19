@@ -1,4 +1,4 @@
-import {Button, Layout, Spin} from "antd";
+import {Button, Layout, Modal, Spin} from "antd";
 import {Hub} from "node-poweredup";
 import {LPF2Hub} from "node-poweredup/dist/node/lpf2hub";
 import React, {useEffect, useReducer, useState} from "react";
@@ -140,6 +140,15 @@ const App: React.FC = () => {
         // dispatch({type: ActionType.CONNECT, payload: {hub: undefined}});
         // dispatch({type: ActionType.CONNECT, payload: {hub: undefined}});
     }, [ActionType.CONNECT]);
+
+    useEffect(() => {
+        if (!("bluetooth" in navigator)) {
+            Modal.error({
+                content: "Bluetooth is not available in your browser. Use chrome or edge beta to load this page.",
+                title: "Bluetooth not available",
+            });
+        }
+    }, []);
 
     function scan() {
         console.log("Scan...");
