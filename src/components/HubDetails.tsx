@@ -53,6 +53,20 @@ const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsP
     useEffect(() => {
         function portDeviceType(type: Consts.DeviceType): string {
             switch (type) {
+                case DeviceType.VOLTAGE:
+                    return "Voltage";
+                case DeviceType.CURRENT:
+                    return "Current";
+                case DeviceType.PIEZO_TONE:
+                    return "Piezo tone";
+                case DeviceType.RGB_LIGHT:
+                    return "RGB light";
+                case DeviceType.RSSI:
+                    return "RSSI";
+                case DeviceType.CONTROL_PLUS_ACCELEROMETER:
+                    return "Accelerometer";
+                case DeviceType.CONTROL_PLUS_TILT:
+                    return "Tilt";
                 case DeviceType.UNKNOWN:
                     return "unknown";
                 case DeviceType.BASIC_MOTOR:
@@ -61,10 +75,8 @@ const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsP
                     return "Train motor";
                 case DeviceType.LED_LIGHTS:
                     return "LED lights";
-                case DeviceType.BOOST_LED:
-                    return "boost LED";
                 case DeviceType.WEDO2_TILT:
-                    return "wedo2 tils";
+                    return "wedo2 tilt";
                 case DeviceType.WEDO2_DISTANCE:
                     return "wedo2 distance";
                 case DeviceType.BOOST_DISTANCE:
@@ -74,7 +86,7 @@ const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsP
                 case DeviceType.BOOST_MOVE_HUB_MOTOR:
                     return "boost move hub motor";
                 case DeviceType.BOOST_TILT:
-                    return "boost tils";
+                    return "boost tilt";
                 case DeviceType.DUPLO_TRAIN_BASE_MOTOR:
                     return "Duplo train motor";
                 case DeviceType.DUPLO_TRAIN_BASE_SPEAKER:
@@ -89,6 +101,8 @@ const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsP
                     return "Control+ x-large motor";
                 case DeviceType.POWERED_UP_REMOTE_BUTTON:
                     return "PoweredUp remote button";
+                default:
+                    return "unknown";
             }
         }
 
