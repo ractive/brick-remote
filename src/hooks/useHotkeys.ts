@@ -5,12 +5,14 @@ import {useCallback, useEffect} from "react";
 type KeyHandler = (keyboardEvent: KeyboardEvent, hotkeysEvent: HotkeysEvent) => void;
 
 export function useHotkeys(keys: string[], keyHandler: KeyHandler, deps: any[] = []) {
-    const callback = useCallback(keyHandler, deps);
+    // filter empty strings
+    const keysString = keys.filter(Boolean).join(",");
 
+    const callback = useCallback(keyHandler, deps);
     useEffect(() => {
-        // filter empty strings
-        const keysString = keys.filter(Boolean).join(",");
-        hotkeys(keysString, callback);
-        return () => hotkeys.unbind(keysString, callback);
-    }, [keys, callback]);
+        if (keysString.length > 0) {
+            hotkeys(keysString, callback);
+            return () => hotkeys.unbind(keysString, callback);
+        }
+    }, [keysString, callback]);
 }
