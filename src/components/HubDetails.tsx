@@ -194,7 +194,7 @@ const HubDetails = (props: IHubDetailsProps) => {
             bodyStyle={{padding: 0}}
         >
         <Descriptions layout={"horizontal"} bordered={true} column={1} size="small">
-            <Descriptions.Item label="UUID">{props.hubHolder.getUuid()}</Descriptions.Item>
+            <Descriptions.Item label="MAC address">{props.hubHolder.getPrimaryMACAddress()}</Descriptions.Item>
             <Descriptions.Item label="Type">{props.hubHolder.getHubType()}</Descriptions.Item>
             <Descriptions.Item label="Tilt X">
                 <TiltDetails

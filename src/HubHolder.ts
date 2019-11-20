@@ -39,6 +39,10 @@ export class HubHolder {
         return this.hub ? this.hub.uuid : this.name;
     }
 
+    public getPrimaryMACAddress(): string {
+        return this.hub ? this.hub.primaryMACAddress : "unknown";
+    }
+
     public getHubName(): string {
         return this.hub ? this.hub.name : "undefined";
     }
