@@ -116,11 +116,8 @@ const App: React.FC = () => {
     }
 
     useEffect(() => {
-        console.log("useEffect...");
         poweredUP.on("discover", async (hub: Hub) => { // Wait to discover hubs
-            console.log("Connect...");
             await hub.connect(); // Connect to hub
-            console.log("Connected");
 
             dispatch({type: ActionType.CONNECT, payload: {hub}});
 
@@ -129,9 +126,7 @@ const App: React.FC = () => {
             setScanning(false);
 
             hub.on("disconnect", () => {
-                console.log("disconnect event received...");
                 dispatch({type: ActionType.DISCONNECT, payload: {hub}});
-                console.log("disconnect action dispatched!");
             });
         });
     }, [ActionType.CONNECT, ActionType.DISCONNECT, poweredUP]);
@@ -151,7 +146,6 @@ const App: React.FC = () => {
     }, []);
 
     function scan() {
-        console.log("Scan...");
         setScanning(true);
         return poweredUP.scan();
     }
