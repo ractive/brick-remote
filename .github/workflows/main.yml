@@ -21,4 +21,4 @@ jobs:
       run: |
         echo $FTP_PASSWORD | base64
         echo $FTP_PASSWORD
-        echo "${$FTP_PASSWORD:1:3}"
+        echo "${FTP_PASSWORD:1:3}"
