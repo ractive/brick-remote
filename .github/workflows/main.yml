@@ -15,6 +15,7 @@ jobs:
         node-version: '12.x'
 
     - name: Build
+      shell: bash
       env:
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
       run: |
