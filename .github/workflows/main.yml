@@ -19,3 +19,5 @@ jobs:
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
       run: |
         echo $FTP_PASSWORD | base64
+        echo $FTP_PASSWORD
+        echo "${$FTP_PASSWORD:1:3}"
