@@ -42,9 +42,8 @@ const RemoteControl = (props: IRemoteControlProps) => {
                                     .sort((a, b) => a.motorPort.localeCompare(b.motorPort))
                                     .map((motorControl) => (
                                         <MotorControl
+                                            {...motorControl}
                                             key={motorControl.hubUuid + "_" + motorControl.motorPort}
-                                            hubUuid={motorControl.hubUuid}
-                                            motorPort={motorControl.motorPort}
                                             remove={() => props.removeMotorControl(motorControl)}
                                         />
                                         )
@@ -56,10 +55,8 @@ const RemoteControl = (props: IRemoteControlProps) => {
                                     .sort((a, b) => a.motorPortLeft.localeCompare(b.motorPortLeft))
                                     .map((trackControl) => (
                                         <TrackControl
+                                            {...trackControl}
                                             key={key(trackControl)}
-                                            hubUuid={trackControl.hubUuid}
-                                            motorPortLeft={trackControl.motorPortLeft}
-                                            motorPortRight={trackControl.motorPortRight}
                                             remove={() => props.removeTrackControl(trackControl)}
                                         />
                                         )
