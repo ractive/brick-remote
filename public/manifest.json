@@ -1,6 +1,6 @@
 {
-  "short_name": "Lego smarthub remote control",
-  "name": "Lego smarthub remote",
+  "short_name": "Brick control",
+  "name": "Brick control - Lego smarthub remote control",
   "icons": [
     {
       "src": "favicon.ico",

@@ -1,4 +1,4 @@
-[![Github actions status](https://github.com/ractive/lego-remote/workflows/lego-remote/badge.svg)](https://github.com/ractive/lego-remote/actions?query=workflow%3Alego-remote)
+[![Github actions status](https://github.com/ractive/brick-remote/workflows/brick-remote/badge.svg)](https://github.com/ractive/brick-remote/actions?query=workflow%3Abrick-remote)
 
 # About
 This is a prototype of a web application that allows controlling Lego :tm: smarthubs via bluetooth.
@@ -7,9 +7,9 @@ node library for communication.
 
 I only tested it with the Control+ hubs, but powered up and the boost move hubs should work as well.
 
-:information_source: The app can be found at [lego-remote.ractive.ch](https://lego-remote.ractive.ch).
+:information_source: The app can be found at [brick-remote.ractive.ch](https://brick-remote.ractive.ch).
 
-![lego-remote-screenshot](https://user-images.githubusercontent.com/783861/69193780-deee2300-0b27-11ea-9d40-cef99e0f73c4.png)
+![brick-remote-screenshot](https://user-images.githubusercontent.com/783861/69193780-deee2300-0b27-11ea-9d40-cef99e0f73c4.png)
 
 # Howto
 Turn on the control+ hub by pressing its button, click on the blue "Scan for hubs" button in the
@@ -18,7 +18,7 @@ webapp and pair the hub. You can pair multiple hubs by pressing the "Scan for hu
 The hub will then appear on the left side listing the ports A to D and the two tilt indicators for the
 X any Y axis. 
 
-![lego-remote-pair](https://user-images.githubusercontent.com/783861/69191588-160e0580-0b23-11ea-993d-069fa5e7e45d.png)
+![brick-remote-pair](https://user-images.githubusercontent.com/783861/69191588-160e0580-0b23-11ea-993d-069fa5e7e45d.png)
 
 ## Tilt indicator
 Pressing the button for a tilt indicator in the hub details on the left, adds an indicator to the controls panel
@@ -45,5 +45,5 @@ that you can use their supported keys [in this way](https://github.com/jaywcjlov
 That means that you can set e.g. `up` or `ctrl+a` or `space` as keyboard shortcuts when configuring the controls by
 pressing the "cog" symbol.
 
-![lego-remote-keyboard-shortcuts](https://user-images.githubusercontent.com/783861/69191586-15756f00-0b23-11ea-8a0f-3b0c28b4cc84.png)
+![brick-remote-keyboard-shortcuts](https://user-images.githubusercontent.com/783861/69191586-15756f00-0b23-11ea-8a0f-3b0c28b4cc84.png)
 

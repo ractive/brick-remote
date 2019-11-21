@@ -1,4 +1,4 @@
-name: lego-remote
+name: brick-remote
 
 on: [push]
 
@@ -30,5 +30,5 @@ jobs:
         FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         LOCAL_DIR: build/
         # The remote folder to copy to, deafults to root FTP folder (I recommend you configure this on your server side instead of here)
-        REMOTE_DIR: /subdomains/lego-remote/httpdocs/
+        REMOTE_DIR: /subdomains/brick-remote/httpdocs/
         ARGS: --delete
