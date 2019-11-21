@@ -46,4 +46,3 @@ That means that you can set e.g. `up` or `ctrl+a` or `space` as keyboard shortcu
 pressing the "cog" symbol.
 
 ![brick-remote-keyboard-shortcuts](https://user-images.githubusercontent.com/783861/69191586-15756f00-0b23-11ea-8a0f-3b0c28b4cc84.png)
-
