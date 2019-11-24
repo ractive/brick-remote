@@ -1,6 +1,7 @@
 import {Button, Card, Col, Icon, Row, Slider, Switch, Tooltip} from "antd";
 import { SliderValue } from "antd/lib/slider";
 import React, {useEffect, useState} from "react";
+import {useButtonActiveIndicator} from "../hooks/useButtonActiveIndicator";
 import {IHotKeyInfo, useHotkeyInfo} from "../hooks/useHotkeyInfo";
 import usePoweredup from "../poweredup";
 import ControlConfig from "./ControlConfig";
@@ -36,20 +37,27 @@ const MotorControl = (props: IMotorControlProps) => {
         }
     };
 
+    const [incIndicator, setIncIndicator] = useButtonActiveIndicator();
+    const [decIndicator, setDecIndicator] = useButtonActiveIndicator();
+    const [stopIndicator, setStopIndicator] = useButtonActiveIndicator();
+
     const poweredUP = usePoweredup();
     const [motorSpeed, setMotorSpeed] = useState(0);
     const [inverted, setInverted] = useState(false);
     const [hotKeys, setHotKeys] = useState(hotKeyInfo);
 
     function onInc() {
+        setIncIndicator();
         setMotorSpeed((v) => Math.min(v + step, 100));
     }
 
     function onDec() {
+        setDecIndicator();
         setMotorSpeed((v) => Math.max(v - step, -100));
     }
 
     function onStop() {
+        setStopIndicator();
         setMotorSpeed(0);
     }
 
@@ -71,6 +79,10 @@ const MotorControl = (props: IMotorControlProps) => {
     function onChangeMotorSpeed(value: SliderValue) {
         const speed = value instanceof Array ? value[0] : value;
         setMotorSpeed(speed);
+    }
+
+    function shortcutButtonClassName(indicator: boolean): string {
+        return "shortcut-button " + (indicator ? "shortcut-button-pressed" : "");
     }
 
     return (
@@ -128,7 +140,7 @@ const MotorControl = (props: IMotorControlProps) => {
                                 <Button
                                     icon="caret-up"
                                     size="small"
-                                    className="shortcut-button"
+                                    className={shortcutButtonClassName(incIndicator)}
                                     onClick={onInc}
                                 />
                             </Tooltip>
@@ -140,7 +152,7 @@ const MotorControl = (props: IMotorControlProps) => {
                                 <Button
                                     icon="caret-down"
                                     size="small"
-                                    className="shortcut-button"
+                                    className={shortcutButtonClassName(decIndicator)}
                                     onClick={onDec}
                                 />
                             </Tooltip>
@@ -149,7 +161,12 @@ const MotorControl = (props: IMotorControlProps) => {
                 </div>
                 <div>
                     <Tooltip title={hotKeys.stop.key}>
-                        <Button icon="stop" onClick={onStop} />
+                        <Button
+                            icon="stop"
+                            size="small"
+                            className={shortcutButtonClassName(stopIndicator)}
+                            onClick={onStop}
+                        />
                     </Tooltip>
                 </div>
             </div>

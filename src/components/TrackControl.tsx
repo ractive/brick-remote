@@ -1,6 +1,7 @@
 import {Button, Card, Col, Icon, Row, Slider, Switch, Tooltip} from "antd";
 import {SliderValue} from "antd/lib/slider";
 import React, {useEffect, useState} from "react";
+import {useButtonActiveIndicator} from "../hooks/useButtonActiveIndicator";
 import {IHotKeyInfo, useHotkeyInfo} from "../hooks/useHotkeyInfo";
 import usePoweredup from "../poweredup";
 import ControlConfig from "./ControlConfig";
@@ -47,6 +48,12 @@ const TrackControl = (props: ITrackControlProps) => {
         }
     };
 
+    const [incIndicator, setIncIndicator] = useButtonActiveIndicator();
+    const [decIndicator, setDecIndicator] = useButtonActiveIndicator();
+    const [leftIndicator, setLeftIndicator] = useButtonActiveIndicator();
+    const [rightIndicator, setRightIndicator] = useButtonActiveIndicator();
+    const [stopIndicator, setStopIndicator] = useButtonActiveIndicator();
+
     const poweredUP = usePoweredup();
     const [motorSpeedRight, setMotorSpeedRight] = useState(0);
     const [motorSpeedLeft, setMotorSpeedLeft] = useState(0);
@@ -79,6 +86,10 @@ const TrackControl = (props: ITrackControlProps) => {
 
     useHotkeyInfo(hotKeys);
 
+    function shortcutButtonClassName(indicator: boolean): string {
+        return "shortcut-button " + (indicator ? "shortcut-button-pressed" : "");
+    }
+
     function dec(v: number): number {
         return Math.max(v - step, -100);
     }
@@ -86,14 +97,17 @@ const TrackControl = (props: ITrackControlProps) => {
         return Math.min(v + step, 100);
     }
     function onInc() {
+        setIncIndicator();
         setMotorSpeedLeft((v) => inc(v));
         setMotorSpeedRight((v) => inc(v));
     }
     function onDec() {
+        setDecIndicator();
         setMotorSpeedLeft((v) => dec(v));
         setMotorSpeedRight((v) => dec(v));
     }
     function onLeft() {
+        setLeftIndicator();
         const speedDiff = motorSpeedLeft - motorSpeedRight;
         if (motorSpeedLeft < 100 || (motorSpeedLeft === 100 && motorSpeedRight === 100)) {
             setMotorSpeedLeft((v) => dec(v));
@@ -103,6 +117,7 @@ const TrackControl = (props: ITrackControlProps) => {
         }
     }
     function onRight() {
+        setRightIndicator();
         const speedDiff = motorSpeedLeft - motorSpeedRight;
         if (motorSpeedRight < 100 || (motorSpeedLeft === 100 && motorSpeedRight === 100)) {
             setMotorSpeedRight((v) => dec(v));
@@ -112,6 +127,7 @@ const TrackControl = (props: ITrackControlProps) => {
         }
     }
     function onStop() {
+        setStopIndicator();
         setMotorSpeedLeft(0);
         setMotorSpeedRight(0);
     }
@@ -202,7 +218,7 @@ const TrackControl = (props: ITrackControlProps) => {
                                 <Button
                                     icon="caret-up"
                                     size="small"
-                                    className="shortcut-button"
+                                    className={shortcutButtonClassName(incIndicator)}
                                     onClick={onInc}
                                 />
                             </Tooltip>
@@ -214,8 +230,8 @@ const TrackControl = (props: ITrackControlProps) => {
                                 <Button
                                     icon="caret-left"
                                     size="small"
-                                    className="shortcut-button"
-                                    onClick={onInc}
+                                    className={shortcutButtonClassName(leftIndicator)}
+                                    onClick={onLeft}
                                 />
                             </Tooltip>
                         </Col>
@@ -224,8 +240,8 @@ const TrackControl = (props: ITrackControlProps) => {
                                 <Button
                                     icon="caret-down"
                                     size="small"
-                                    className="shortcut-button"
-                                    onClick={onInc}
+                                    className={shortcutButtonClassName(decIndicator)}
+                                    onClick={onDec}
                                 />
                             </Tooltip>
                         </Col>
@@ -234,8 +250,8 @@ const TrackControl = (props: ITrackControlProps) => {
                                 <Button
                                     icon="caret-right"
                                     size="small"
-                                    className="shortcut-button"
-                                    onClick={onInc}
+                                    className={shortcutButtonClassName(rightIndicator)}
+                                    onClick={onRight}
                                 />
                             </Tooltip>
                         </Col>
@@ -243,7 +259,12 @@ const TrackControl = (props: ITrackControlProps) => {
                 </div>
                 <div>
                     <Tooltip title={hotKeys.stop.key}>
-                        <Button icon="stop" onClick={onStop}/>
+                        <Button
+                            icon="stop"
+                            size="small"
+                            className={shortcutButtonClassName(stopIndicator)}
+                            onClick={onStop}
+                        />
                     </Tooltip>
                 </div>
             </div>
