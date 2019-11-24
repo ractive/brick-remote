@@ -119,3 +119,8 @@
 .remote-control-hub {
     margin: 5px;
 }
+
+.remote-control .ant-slider-vertical .ant-slider-handle {
+    margin-bottom: 0;
+}
+
