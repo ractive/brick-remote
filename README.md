@@ -18,7 +18,7 @@ webapp and pair the hub. You can pair multiple hubs by pressing the "Scan for hu
 The hub will then appear on the left side listing the ports A to D and the two tilt indicators for the
 X any Y axis. 
 
-![brick-remote-pair](https://user-images.githubusercontent.com/783861/69191588-160e0580-0b23-11ea-993d-069fa5e7e45d.png)
+<img alt="brick-remote-pair" src="https://user-images.githubusercontent.com/783861/69191588-160e0580-0b23-11ea-993d-069fa5e7e45d.png" width="75%" height="75%"/>
 
 ## Tilt indicator
 Pressing the button for a tilt indicator in the hub details on the left, adds an indicator to the controls panel
@@ -45,4 +45,4 @@ that you can use their supported keys [in this way](https://github.com/jaywcjlov
 That means that you can set e.g. `up` or `ctrl+a` or `space` as keyboard shortcuts when configuring the controls by
 pressing the "cog" symbol.
 
-![brick-remote-keyboard-shortcuts](https://user-images.githubusercontent.com/783861/69191586-15756f00-0b23-11ea-8a0f-3b0c28b4cc84.png)
+<img alt="brick-remote-keyboard-shortcuts" src="https://user-images.githubusercontent.com/783861/69191586-15756f00-0b23-11ea-8a0f-3b0c28b4cc84.png" width="66%" height="66%" />
