@@ -151,7 +151,8 @@ const App: React.FC = () => {
         setScanning(true);
         console.log("Scanning for hubs...");
         poweredUP.scan()
-            .catch((e: any) => {console.log("Error scanning for hubs", e); });
+            .then((result: boolean) => console.log("Scanning result:", result))
+            .catch((e: any) => console.log("Error scanning for hubs:", e));
     }
 
     function addMotorControlProps(newMotorControlProps: IMotorControlDefinition): void {
