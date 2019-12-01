@@ -246,7 +246,7 @@ const App: React.FC = () => {
                                         <p>More information can be found on github: <a href="https://github.com/ractive/brick-remote">github.com/ractive/brick-remote</a></p>
                                         <p><img style={{maxWidth: "900px"}} src="https://user-images.githubusercontent.com/783861/69193780-deee2300-0b27-11ea-9d40-cef99e0f73c4.png" alt="brick-remote-screenshot" width="90%" /></p>
                                         <h2 id="howto">Howto</h2>
-                                        <p>Turn on the control+ hub by pressing its button, click on the blue &quot;Scan for hubs&quot; button in the
+                                        <p>Turn on the bluetooth hub on your lego model by pressing its button, click on the blue &quot;Scan for hubs&quot; button in the
                                             webapp and pair the hub. You can pair multiple hubs by pressing the &quot;Scan for hubs&quot; button again.</p>
                                         <p>The hub will then appear on the left side listing the ports A to D and the two tilt indicators for the
                                             X any Y axis. </p>

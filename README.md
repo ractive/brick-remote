@@ -12,7 +12,7 @@ I only tested it with the Control+ hubs, but powered up and the boost move hubs 
 ![brick-remote-screenshot](https://user-images.githubusercontent.com/783861/69193780-deee2300-0b27-11ea-9d40-cef99e0f73c4.png)
 
 # Howto
-Turn on the control+ hub by pressing its button, click on the blue "Scan for hubs" button in the
+Turn on the bluetooth hub on your lego model by pressing its button, click on the blue "Scan for hubs" button in the
 webapp and pair the hub. You can pair multiple hubs by pressing the "Scan for hubs" button again.
 
 The hub will then appear on the left side listing the ports A to D and the two tilt indicators for the
