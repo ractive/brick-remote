@@ -36,7 +36,7 @@ const TrackControlMenu = (props: ITrackControlMenuProps) => {
     );
 
     return (
-        <Tooltip title="Add a track control to the &quot;Hub Controls&quot; panel on the right for two motors on the ports...">
+        <Tooltip title="Add a track control to the &quot;Brick Remotes&quot; panel on the right for two motors on the ports...">
             <Dropdown overlay={menu} trigger={["click"]}>
                 <Button size="small">
                     Add <img className="small-image" src="/icons/icons8-bulldozer-96.png" alt="Track Control" />
@@ -129,7 +129,7 @@ const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsP
         <div className="hub-details">
             <div style={{}}>{motorName}</div>
             <div style={{flex: "2 0 70px", textAlign: "right"}}>
-                <Tooltip title="Add a motor control for this port to the &quot;Hub Controls&quot; panel on the right">
+                <Tooltip title="Add a motor control for this port to the &quot;Brick Remote&quot; panel on the right">
                     <Button
                         size="small"
                         onClick={addMotorControlProps}
