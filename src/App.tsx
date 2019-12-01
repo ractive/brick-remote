@@ -117,7 +117,7 @@ const App: React.FC = () => {
 
     useEffect(() => {
         poweredUP.on("discover", async (hub: Hub) => { // Wait to discover hubs
-            console.log("Connecting to hub:", hub.primaryMACAddress);
+            console.log("Connecting to hub:", hub.uuid);
             await hub.connect(); // Connect to hub
             console.log("Connected ✔");
 
@@ -151,8 +151,11 @@ const App: React.FC = () => {
         setScanning(true);
         console.log("Scanning for hubs...");
         poweredUP.scan()
-            .then((result: boolean) => console.log("Scanning result:", result))
-            .catch((e: any) => console.log("Error scanning for hubs:", e));
+            .then((result: boolean) => {
+                console.log("Scanning result:", result);
+            })
+            .catch((e: any) => console.log("Error scanning for hubs:", e))
+            .finally(() => setScanning(false));
     }
 
     function addMotorControlProps(newMotorControlProps: IMotorControlDefinition): void {
