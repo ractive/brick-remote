@@ -117,7 +117,9 @@ const App: React.FC = () => {
 
     useEffect(() => {
         poweredUP.on("discover", async (hub: Hub) => { // Wait to discover hubs
+            console.log("Connecting to hub:", hub.primaryMACAddress)
             await hub.connect(); // Connect to hub
+            console.log("Connected ✔");
 
             dispatch({type: ActionType.CONNECT, payload: {hub}});
 
