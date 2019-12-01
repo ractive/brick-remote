@@ -238,11 +238,12 @@ const App: React.FC = () => {
                                     /* tslint:disable:max-line-length */
                                     <div>
                                         <h2 id="about">About</h2>
-                                        <p>This is a prototype of a web application that allows controlling Lego :tm: smarthubs via bluetooth.
+                                        <p>This is a prototype of a web application that allows controlling Lego ™ smarthubs via bluetooth.
                                             It&#39;s a <a href="https://reactjs.org/">react</a> app using the <a href="https://github.com/nathankellenicki/node-poweredup">node-poweredup</a>
                                             node library for communication.</p>
                                         <p>I only tested it with the Control+ hubs, but powered up and the boost move hubs should work as well.</p>
-                                        <p>The app can be found at <a href="https://brick-remote.ractive.ch">brick-remote.ractive.ch</a>.</p>
+                                        <p>On Android you probably need to "scan for hubs" multiple times until a hub appears. I try to investigate why this happens on mobile phones.</p>
+                                        <p>More information can be found on github: <a href="https://github.com/ractive/brick-remote">github.com/ractive/brick-remote</a></p>
                                         <p><img src="https://user-images.githubusercontent.com/783861/69193780-deee2300-0b27-11ea-9d40-cef99e0f73c4.png" alt="brick-remote-screenshot" width="90%" /></p>
                                         <h2 id="howto">Howto</h2>
                                         <p>Turn on the control+ hub by pressing its button, click on the blue &quot;Scan for hubs&quot; button in the
