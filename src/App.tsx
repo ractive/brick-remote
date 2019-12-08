@@ -1,6 +1,7 @@
-import {Button, Icon, Layout, Modal, Spin} from "antd";
+import {Button, Layout, Modal, Spin} from "antd";
 import {Hub} from "node-poweredup";
 import {LPF2Hub} from "node-poweredup/dist/node/lpf2hub";
+import qs from "qs";
 import React, {useEffect, useReducer, useState} from "react";
 import Help from "./components/Help";
 import HelpModal from "./components/HelpModal";
@@ -136,8 +137,10 @@ const App: React.FC = () => {
     }, [ActionType.CONNECT, ActionType.DISCONNECT, poweredUP]);
 
     useEffect(() => {
-        // dispatch({type: ActionType.CONNECT, payload: {hub: undefined}});
-        // dispatch({type: ActionType.CONNECT, payload: {hub: undefined}});
+        const queryParams = qs.parse(window.location.search, { ignoreQueryPrefix: true });
+        if (queryParams.hasOwnProperty("debug")) {
+            dispatch({type: ActionType.CONNECT, payload: {hub: undefined}});
+        }
     }, [ActionType.CONNECT]);
 
     useEffect(() => {

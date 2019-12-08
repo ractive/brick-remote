@@ -46,3 +46,15 @@ That means that you can set e.g. `up` or `ctrl+a` or `space` as keyboard shortcu
 pressing the "cog" symbol.
 
 <img alt="brick-remote-keyboard-shortcuts" src="https://user-images.githubusercontent.com/783861/69191586-15756f00-0b23-11ea-8a0f-3b0c28b4cc84.png" width="66%" height="66%" />
+
+# Development
+Start the app locally with `yarn start dev` and open `localhost:3000` in a browser that supports web bluetooth
+(chrome or edge beta). To add a "fake" hub directly when starting the app, add a query parameter called "debug"
+to the URL (e.g. "localhost:3000/?debug). This fake hub allows developing many parts of the UI without having
+to actually pair a real hub.
+
+If debugging messages should be enabled, add a key called "debug" with the value "*" to the localStorage in the browser.
+In Chrome, this can be done in the developers tools in the "Application" tab:
+<img alt="localStorage" src="https://user-images.githubusercontent.com/783861/70395653-3b46b300-1a01-11ea-9568-b794ed51d38e.png" />
+
+Remove the "debug" key again when you do not want to have debug messages anymore.
