@@ -102,7 +102,7 @@ const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsP
                 case DeviceType.POWERED_UP_REMOTE_BUTTON:
                     return "PoweredUp remote button";
                 default:
-                    return "unknown";
+                    return "unknown:" + type;
             }
         }
 
