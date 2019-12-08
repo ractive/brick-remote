@@ -88,14 +88,14 @@ const ControlConfig = (props: IControlConfigProps) => {
                         <div className="small-form">
                             {
                                 Object.entries(props.hotkeyInfo).map(([id, {label}]) => (
-                                    <>
+                                    <React.Fragment key={id}>
                                         <label htmlFor={"hotkeyinfo_" + id}>{label}:</label>
                                         <Input
                                             id={"hotkeyinfo_" + id}
                                             value={hotKeys[id].key}
                                             onChange={(e) => setKey(id, e.target.value)}
                                         />
-                                    </>
+                                    </React.Fragment>
                                 ))
                             }
                         </div>
