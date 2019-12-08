@@ -23,6 +23,8 @@ export class HubHolder {
     }
     public hub?: Hub;
     public name: string;
+    private readonly _ports: Set<string> = new Set<string>();
+    private _connected: boolean = false;
 
     constructor(hub?: Hub, name?: string) {
         this.hub = hub;
@@ -33,6 +35,22 @@ export class HubHolder {
         } else {
             this.name = "undefined";
         }
+    }
+
+    public addPort(port: string) {
+        this._ports.add(port);
+    }
+
+    public get ports(): Set<string> {
+        return this._ports;
+    }
+
+    public get connected(): boolean {
+        return this._connected;
+    }
+
+    public set connected(connected) {
+        this._connected = connected;
     }
 
     public getUuid(): string {

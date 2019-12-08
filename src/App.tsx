@@ -25,6 +25,8 @@ const App: React.FC = () => {
         CONNECT,
         DISCONNECT,
         RENAME,
+        ATTACH_PORT,
+        DISCOVER,
     }
 
     interface IAction {
@@ -32,34 +34,64 @@ const App: React.FC = () => {
         payload: {
             hub?: Hub,
             name?: string,
+            port?: string,
         };
     }
 
     const reducer = (hubHolders: HubHolder[], action: IAction): HubHolder[] => {
+        function clone(hubHolder: HubHolder): HubHolder {
+            const newHubHolder = new HubHolder(hubHolder.hub, hubHolder.getHubName());
+            newHubHolder.connected = hubHolder.connected;
+            hubHolder.ports.forEach((port) => newHubHolder.addPort(port));
+            return newHubHolder;
+        }
+
+        function modifiedHubHolder(modifyFn: (hubHolder: HubHolder) => void) {
+            const i = hubHolders.findIndex((hubHolder) => hubHolder.getUuid() === hubUuid);
+            if (i >= 0) {
+                const newHubHolder = clone(hubHolders[i]);
+                modifyFn(newHubHolder);
+
+                return [
+                    ...hubHolders.slice(0, i),
+                    newHubHolder,
+                    ...hubHolders.slice(i + 1),
+                ];
+            } else {
+                return hubHolders;
+            }
+        }
+
         const hub = action.payload.hub;
         const hubUuid = hub ? hub.uuid : "";
         switch (action.type) {
-            case ActionType.CONNECT:
+            case ActionType.DISCOVER:
                 if (!hubHolders.find((hubHolder) => hubHolder.getUuid() === hubUuid)) {
                     return [...hubHolders, new HubHolder(hub)];
                 }
                 break;
             case ActionType.DISCONNECT:
                 return hubHolders.filter((hubHolder) => hubHolder.getUuid() !== hubUuid);
-            case ActionType.RENAME:
-                const i = hubHolders.findIndex((hubHolder) => hubHolder.getUuid() === hubUuid);
-                if (i >= 0 && action.payload.name) {
-                    if (hub instanceof LPF2Hub) {
-                        (hub as LPF2Hub).setName(action.payload.name)
-                            .catch((e) => {console.log("Error setting hub name", e); });
+            case ActionType.RENAME: {
+                return modifiedHubHolder((hubHolder) => {
+                    if (action.payload.name) {
+                        hubHolder.name = action.payload.name;
+
+                        if (hub instanceof LPF2Hub) {
+                            (hub as LPF2Hub).setName(action.payload.name)
+                                .catch((e) => {
+                                    console.log("Error setting hub name", e);
+                                });
+                        }
                     }
-                    return [
-                        ...hubHolders.slice(0, i),
-                        new HubHolder(hubHolders[i].hub, action.payload.name),
-                        ...hubHolders.slice(i + 1),
-                    ];
-                }
-                break;
+                });
+            }
+            case ActionType.CONNECT: {
+                return modifiedHubHolder((hubHolder) => hubHolder.connected = true);
+            }
+            case ActionType.ATTACH_PORT: {
+                return modifiedHubHolder((hubHolder) => action.payload.port && hubHolder.addPort(action.payload.port));
+            }
         }
 
         return hubHolders;
@@ -80,7 +112,7 @@ const App: React.FC = () => {
         });
 
         hub.on("tilt", (port, x, y) => {
-            console.log(`Tilt detected on port ${port} (X: ${x}, Y: ${y})`);
+            // console.log(`Tilt detected on port ${port} (X: ${x}, Y: ${y})`);
         });
 
         hub.on("distance", (port, distance) => {
@@ -88,8 +120,13 @@ const App: React.FC = () => {
         });
 
         hub.on("accel", (port, x, y, z) => {
-            console.log(`Acceleration detected on port ${port} (Acceleration: x=${x}, y=${y}, z=${z})`);
+           // console.log(`Acceleration detected on port ${port} (Acceleration: x=${x}, y=${y}, z=${z})`);
         });
+
+        hub.on("gyro", (port, x, y, z) => {
+            // console.log(`Gyro on port ${port} (Gyro: x=${x}, y=${y}, z=${z})`);
+        });
+
         hub.on("rotate", (port, rotation) => {
             console.log(`Rotation detected on port ${port} (Rotation: ${rotation})`);
         });
@@ -120,21 +157,25 @@ const App: React.FC = () => {
 
     useEffect(() => {
         poweredUP.on("discover", async (hub: Hub) => { // Wait to discover hubs
+            // debugEvents(hub);
+
+            dispatch({type: ActionType.DISCOVER, payload: {hub}});
+
+            hub.on("attach", (port, device) => {
+                dispatch({type: ActionType.ATTACH_PORT, payload: {hub, port}});
+            });
+
             console.log("Connecting to hub:", hub.uuid);
-            await hub.connect(); // Connect to hub
+            await hub.connect();
             console.log("Connected ✔");
 
             dispatch({type: ActionType.CONNECT, payload: {hub}});
-
-            // debugEvents(hub);
-
-            setScanning(false);
 
             hub.on("disconnect", () => {
                 dispatch({type: ActionType.DISCONNECT, payload: {hub}});
             });
         });
-    }, [ActionType.CONNECT, ActionType.DISCONNECT, poweredUP]);
+    }, [ActionType.CONNECT, ActionType.DISCONNECT, ActionType.DISCOVER, ActionType.ATTACH_PORT, poweredUP]);
 
     useEffect(() => {
         const queryParams = qs.parse(window.location.search, { ignoreQueryPrefix: true });

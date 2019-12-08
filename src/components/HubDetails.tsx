@@ -184,7 +184,7 @@ const HubDetails = (props: IHubDetailsProps) => {
         }
     }
 
-    return (
+    return props.hubHolder.connected ? (
         <Card
             title={(
                 <Paragraph ellipsis={{rows: 14}} editable={{ onChange: props.renameHub }} style={{marginBottom: "0"}}>
@@ -196,24 +196,34 @@ const HubDetails = (props: IHubDetailsProps) => {
         <Descriptions layout={"horizontal"} bordered={true} column={1} size="small">
             <Descriptions.Item label="UUID">{props.hubHolder.getUuid()}</Descriptions.Item>
             <Descriptions.Item label="Type">{props.hubHolder.getHubType()}</Descriptions.Item>
-            <Descriptions.Item label="Tilt X">
-                <TiltDetails
-                    axis={Axis.X}
-                    hubHolder={props.hubHolder}
-                    addTiltControlProps={
-                        () => props.addTiltControlProps({axis: Axis.X, hubUuid: props.hubHolder.getUuid()})
-                    }
-                />
-            </Descriptions.Item>
-            <Descriptions.Item label="Tilt Y">
-                <TiltDetails
-                    axis={Axis.Y}
-                    hubHolder={props.hubHolder}
-                    addTiltControlProps={
-                        () => props.addTiltControlProps({axis: Axis.Y, hubUuid: props.hubHolder.getUuid()})
-                    }
-                />
-            </Descriptions.Item>
+            {
+                // Why can't I use a fragment here and add both Description.Item elements?
+                props.hubHolder.ports.has("TILT") ? (
+                    <Descriptions.Item label="Tilt X">
+                        <TiltDetails
+                            axis={Axis.X}
+                            hubHolder={props.hubHolder}
+                            addTiltControlProps={
+                                () => props.addTiltControlProps({axis: Axis.X, hubUuid: props.hubHolder.getUuid()})
+                            }
+                        />
+                    </Descriptions.Item>
+                ) : null
+            }
+            {
+                props.hubHolder.ports.has("TILT") ? (
+                    <Descriptions.Item label="Tilt Y">
+                        <TiltDetails
+                            axis={Axis.Y}
+                            hubHolder={props.hubHolder}
+                            addTiltControlProps={
+                                () => props.addTiltControlProps({axis: Axis.Y, hubUuid: props.hubHolder.getUuid()})
+                            }
+                        />
+                    </Descriptions.Item>
+                ) : null
+            }
+
             <Descriptions.Item label="Port A">
                 <PortDetails
                     hubDetails={props}
@@ -249,7 +259,7 @@ const HubDetails = (props: IHubDetailsProps) => {
         </Descriptions>
         <Button style={{margin: "10px"}} onClick={() => disconnect(props.hubHolder)}>Disconnect</Button>
         </Card>
-    );
+    ) : <Card title="Connecting...."><div>...</div></Card>;
 };
 
 export default HubDetails;
