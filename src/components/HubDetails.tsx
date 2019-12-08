@@ -109,7 +109,7 @@ const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsP
         function portType() {
             return hubDetails.hubHolder.hub
                 ? portDeviceType(hubDetails.hubHolder.hub.getPortDeviceType(port))
-                : "undefined with a very long name";
+                : "undefined";
         }
 
         setMotorName(portType);
