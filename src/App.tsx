@@ -63,7 +63,7 @@ const App: React.FC = () => {
         }
 
         const hub = action.payload.hub;
-        const hubUuid = hub ? hub.uuid : "";
+        const hubUuid = hub ? hub.uuid : "undefined";
         switch (action.type) {
             case ActionType.DISCOVER:
                 if (!hubHolders.find((hubHolder) => hubHolder.getUuid() === hubUuid)) {
@@ -179,10 +179,27 @@ const App: React.FC = () => {
 
     useEffect(() => {
         const queryParams = qs.parse(window.location.search, { ignoreQueryPrefix: true });
-        if (queryParams.hasOwnProperty("debug")) {
+        if (queryParams.hasOwnProperty("fakeHub")) {
+            dispatch({type: ActionType.DISCOVER, payload: {hub: undefined}});
+            dispatch({type: ActionType.ATTACH_PORT, payload: {hub: undefined, port: "TILT"}});
             dispatch({type: ActionType.CONNECT, payload: {hub: undefined}});
         }
-    }, [ActionType.CONNECT]);
+        if (queryParams.hasOwnProperty("debug")) {
+            if (queryParams.debug) {
+                // Calling e.g. with "?debug=*"
+                localStorage.setItem("debug", queryParams.debug);
+            } else {
+                // Remove when just calling with "?debug"
+                localStorage.removeItem("debug");
+            }
+        }
+        if (queryParams.hasOwnProperty("jsconsole")) {
+            const script = document.createElement("script");
+            script.async = true;
+            script.src = "https://www.jsconsole.net/include.js?598c719d-4012-4f4d-075c-873a05e490c1";
+            document.head.appendChild(script);
+        }
+    }, [ActionType.CONNECT, ActionType.ATTACH_PORT, ActionType.DISCOVER]);
 
     useEffect(() => {
         if (!("bluetooth" in navigator)) {

@@ -49,12 +49,28 @@ pressing the "cog" symbol.
 
 # Development
 Start the app locally with `yarn start dev` and open `localhost:3000` in a browser that supports web bluetooth
-(chrome or edge beta). To add a "fake" hub directly when starting the app, add a query parameter called "debug"
-to the URL (e.g. "localhost:3000/?debug). This fake hub allows developing many parts of the UI without having
+(chrome or edge beta).
+
+## Adding a "fake" hub
+To add a "fake" hub directly when starting the app, add a query parameter called `fakeHub`
+to the URL (e.g. `localhost:3000/?fakeHub`). This fake hub allows developing many parts of the UI without having
 to actually pair a real hub.
 
-If debugging messages should be enabled, add a key called "debug" with the value "*" to the localStorage in the browser.
-In Chrome, this can be done in the developers tools in the "Application" tab:
-<img alt="localStorage" src="https://user-images.githubusercontent.com/783861/70395653-3b46b300-1a01-11ea-9568-b794ed51d38e.png" />
+## Debug output
+If debugging messages should be enabled, add a query parameter called `debug` with the value `*` (`localhost:3000/?debug=*`). This will add a key with the name `debug`
+to the localStorage in the browser. [The debug package](https://github.com/visionmedia/debug#readme) that is used by
+node-poweredup will read this "debug" key from localStorage and output debug messages for modules matching this key.
+Setting `debug` to `*` will enable debug output for all modules. You can of course set other values like e.g. `lpf2hub`.
 
-Remove the "debug" key again when you do not want to have debug messages anymore.
+Just call the page with an empty "debug" query parameter when you do not want to have debug messages anymore (`localhost:3000/?fakeHub`).
+
+⚠ You need to reload the page for this to take effect. I could not find a way to set the localStorage to the value in the
+debug param, before the debug library is initialized.
+
+## jsconsole output
+When the app is called with a query parameter called `jsconsole`, the logs are sent to jsconsole. This only works when you
+don't call this app via `localhost` because jsconsole then tries to communicate with localhost as well. Use `127.0.0.1` instead
+if you want to run the app on your local machine and send the logs to jsconsole.
+
+Open this page to view the logs: https://www.jsconsole.net/?598c719d-4012-4f4d-075c-873a05e490c1
+This is e.g. useful to see the logs from your android phone of from another user. 
