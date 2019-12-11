@@ -66,7 +66,7 @@ const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsP
                 case DeviceType.CONTROL_PLUS_ACCELEROMETER:
                     return "Accelerometer";
                 case DeviceType.CONTROL_PLUS_TILT:
-                    return "Tilt";
+                    return "Tilt sensor";
                 case DeviceType.UNKNOWN:
                     return "unknown";
                 case DeviceType.BASIC_MOTOR:
@@ -76,29 +76,29 @@ const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsP
                 case DeviceType.LED_LIGHTS:
                     return "LED lights";
                 case DeviceType.WEDO2_TILT:
-                    return "wedo2 tilt";
+                    return "Tilt sensor";
                 case DeviceType.WEDO2_DISTANCE:
-                    return "wedo2 distance";
+                    return "Distance sensor";
                 case DeviceType.BOOST_DISTANCE:
-                    return "boost distance";
+                    return "Distance sensor";
                 case DeviceType.BOOST_TACHO_MOTOR:
-                    return "boost tacho motor";
+                    return "Tacho motor";
                 case DeviceType.BOOST_MOVE_HUB_MOTOR:
-                    return "boost move hub motor";
+                    return "Hub motor";
                 case DeviceType.BOOST_TILT:
-                    return "boost tilt";
+                    return "Tilt sensor";
                 case DeviceType.DUPLO_TRAIN_BASE_MOTOR:
-                    return "Duplo train motor";
+                    return "Base motor";
                 case DeviceType.DUPLO_TRAIN_BASE_SPEAKER:
-                    return "Duplo train speaker";
+                    return "Speaker";
                 case DeviceType.DUPLO_TRAIN_BASE_COLOR:
-                    return "Duplo train color";
+                    return "Color sensor";
                 case DeviceType.DUPLO_TRAIN_BASE_SPEEDOMETER:
-                    return "Duplo train spodometer";
+                    return "Speedometer";
                 case DeviceType.CONTROL_PLUS_LARGE_MOTOR:
-                    return "Control+ large motor";
+                    return "Large motor";
                 case DeviceType.CONTROL_PLUS_XLARGE_MOTOR:
-                    return "Control+ x-large motor";
+                    return "X-large motor";
                 case DeviceType.POWERED_UP_REMOTE_BUTTON:
                     return "PoweredUp remote button";
                 default:
