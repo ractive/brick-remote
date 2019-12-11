@@ -107,13 +107,17 @@ const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsP
         }
 
         function portType() {
-            return hubDetails.hubHolder.hub
-                ? portDeviceType(hubDetails.hubHolder.hub.getPortDeviceType(port))
-                : "undefined";
+            if (hubDetails.hubHolder.ports.has(port)) {
+                return hubDetails.hubHolder.hub
+                    ? portDeviceType(hubDetails.hubHolder.hub.getPortDeviceType(port))
+                    : "undefined";
+            } else {
+                return "not attached";
+            }
         }
 
         setMotorName(portType);
-    }, [hubDetails.hubHolder.hub, port]);
+    }, [hubDetails.hubHolder, port]);
 
     const addMotorControlProps = () => {
         hubDetails.addMotorControlProps(
@@ -127,7 +131,7 @@ const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsP
 
     return (
         <div className="hub-details">
-            <div style={{}}>{motorName}</div>
+            <div>{motorName}</div>
             <div style={{flex: "2 0 70px", textAlign: "right"}}>
                 <Tooltip title="Add a motor control for this port to the &quot;Brick Remote&quot; panel on the right">
                     <Button

@@ -27,6 +27,7 @@ const App: React.FC = () => {
         RENAME,
         ATTACH_PORT,
         DISCOVER,
+        DETACH_PORT,
     }
 
     interface IAction {
@@ -87,10 +88,19 @@ const App: React.FC = () => {
                 });
             }
             case ActionType.CONNECT: {
-                return modifiedHubHolder((hubHolder) => hubHolder.connected = true);
+                return modifiedHubHolder(
+                    (hubHolder) => hubHolder.connected = true
+                );
             }
             case ActionType.ATTACH_PORT: {
-                return modifiedHubHolder((hubHolder) => action.payload.port && hubHolder.addPort(action.payload.port));
+                return modifiedHubHolder(
+                    (hubHolder) => action.payload.port && hubHolder.addPort(action.payload.port)
+                );
+            }
+            case ActionType.DETACH_PORT: {
+                return modifiedHubHolder(
+                    (hubHolder) => action.payload.port && hubHolder.removePort(action.payload.port)
+                );
             }
         }
 
@@ -107,10 +117,6 @@ const App: React.FC = () => {
 
     // eslint-disable-next-line
     function debugEvents(hub: Hub) {
-        hub.on("attach", (port, device) => {
-            console.log(`Device attached to port ${port} (Device ID: ${device})`);
-        });
-
         hub.on("tilt", (port, x, y) => {
             // console.log(`Tilt detected on port ${port} (X: ${x}, Y: ${y})`);
         });
@@ -165,6 +171,10 @@ const App: React.FC = () => {
                 dispatch({type: ActionType.ATTACH_PORT, payload: {hub, port}});
             });
 
+            hub.on("detach", (port) => {
+                dispatch({type: ActionType.DETACH_PORT, payload: {hub, port}});
+            });
+
             console.log("Connecting to hub:", hub.uuid);
             await hub.connect();
             console.log("Connected ✔");
@@ -175,7 +185,7 @@ const App: React.FC = () => {
                 dispatch({type: ActionType.DISCONNECT, payload: {hub}});
             });
         });
-    }, [ActionType.CONNECT, ActionType.DISCONNECT, ActionType.DISCOVER, ActionType.ATTACH_PORT, poweredUP]);
+    }, [ActionType.CONNECT, ActionType.DISCONNECT, ActionType.DISCOVER, ActionType.ATTACH_PORT, ActionType.DETACH_PORT, poweredUP]);
 
     useEffect(() => {
         const queryParams = qs.parse(window.location.search, { ignoreQueryPrefix: true });

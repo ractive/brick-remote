@@ -41,6 +41,10 @@ export class HubHolder {
         this._ports.add(port);
     }
 
+    public removePort(port: string) {
+        this._ports.delete(port);
+    }
+
     public get ports(): Set<string> {
         return this._ports;
     }
