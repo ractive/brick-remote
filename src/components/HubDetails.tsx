@@ -1,7 +1,7 @@
 import {Button, Card, Descriptions, Dropdown, Icon, Menu, Progress, Tooltip, Typography} from "antd";
 import * as Consts from "node-poweredup/dist/node/consts";
 import {DeviceType} from "node-poweredup/dist/node/consts";
-import React, {useEffect, useState} from "react";
+import React, {useMemo} from "react";
 import useTiltEffect from "../hooks/useTiltEffect";
 import {HubHolder} from "../HubHolder";
 import {IMotorControlDefinition} from "./MotorControl";
@@ -48,9 +48,7 @@ const TrackControlMenu = (props: ITrackControlMenuProps) => {
 };
 
 const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsProps}) => {
-    const [motorName, setMotorName] = useState("unknown");
-
-    useEffect(() => {
+    const motorName = useMemo(() => {
         function portDeviceType(type: Consts.DeviceType): string {
             switch (type) {
                 case DeviceType.VOLTAGE:
@@ -116,7 +114,7 @@ const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsP
             }
         }
 
-        setMotorName(portType);
+        return portType();
     }, [hubDetails.hubHolder, port]);
 
     const addMotorControlProps = () => {
