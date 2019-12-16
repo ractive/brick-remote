@@ -7855,10 +7855,10 @@ node-notifier@^5.4.2:
     shellwords "^0.1.1"
     which "^1.3.0"
 
-node-poweredup@^5.0.2:
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/node-poweredup/-/node-poweredup-5.0.2.tgz#cbaf67b68f3ee5a5381ecc50fc3924aa09cd3d09"
-  integrity sha512-h9DzyFvf0OzbPVyE5agZMKbeKXUTX+VoZjzSfIsyiUbuxiaKqxwdDvQ7rmz3USYXbQf2MMCVRdmxkAmSaLYOmg==
+node-poweredup@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/node-poweredup/-/node-poweredup-5.0.3.tgz#d753233c963ce74042ec4a4cc9cec24d1b8067c8"
+  integrity sha512-3Pv3Ifieu3dZfaS6A6LRGfqFI+g7bYkYWNIkgxD8uus6E0zaL+0PCMsdYv5G6mrxPDt47YxYIVlPSBil3FZD4Q==
   dependencies:
     "@abandonware/noble" "1.9.2-5"
     compare-versions "^3.5.1"
