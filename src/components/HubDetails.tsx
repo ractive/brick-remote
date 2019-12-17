@@ -10,6 +10,8 @@ import {ITrackControlDefinition} from "./TrackControl";
 
 const { Paragraph } = Typography;
 
+// --------------------------------------------------------------------------------------------------------------------
+
 export interface IHubDetailsProps {
     hubHolder: HubHolder;
     addMotorControlProps(motorControlProps: IMotorControlDefinition): void;
@@ -17,6 +19,8 @@ export interface IHubDetailsProps {
     addTiltControlProps(tiltControlProps: ITiltControlProps): void;
     renameHub(newName: string): void;
 }
+
+// --------------------------------------------------------------------------------------------------------------------
 
 interface ITrackControlMenuProps {
     port: string;
@@ -46,6 +50,8 @@ const TrackControlMenu = (props: ITrackControlMenuProps) => {
         </Tooltip>
     );
 };
+
+// --------------------------------------------------------------------------------------------------------------------
 
 const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsProps}) => {
     const motorName = useMemo(() => {
@@ -151,6 +157,8 @@ const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsP
     );
 };
 
+// --------------------------------------------------------------------------------------------------------------------
+
 interface ITiltDetailsProps {
     axis: Axis;
     hubHolder: HubHolder;
@@ -177,6 +185,8 @@ const TiltDetails = (props: ITiltDetailsProps) => {
     );
 };
 
+// --------------------------------------------------------------------------------------------------------------------
+
 const BatteryDetails = (props: {hubHolder: HubHolder}) => {
     const [now, setNow] = useState(0);
     // Update "now" every second
@@ -199,6 +209,8 @@ const BatteryDetails = (props: {hubHolder: HubHolder}) => {
         />
     );
 };
+
+// --------------------------------------------------------------------------------------------------------------------
 
 const HubDetails = (props: IHubDetailsProps) => {
     function disconnect(hubHolder: HubHolder) {
