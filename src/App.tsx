@@ -36,15 +36,20 @@ const App: React.FC = () => {
             hub?: Hub,
             name?: string,
             port?: string,
+            processed?: boolean,
         };
     }
 
     const reducer = (hubHolders: HubHolder[], action: IAction): HubHolder[] => {
         function clone(hubHolder: HubHolder): HubHolder {
-            const newHubHolder = new HubHolder(hubHolder.hub, hubHolder.getHubName());
+            const newHubHolder = new HubHolder(hubHolder.hub, hubHolder.name);
             newHubHolder.connected = hubHolder.connected;
             hubHolder.ports.forEach((port) => newHubHolder.addPort(port));
             return newHubHolder;
+        }
+
+        function canSetName(h: Hub): h is LPF2Hub {
+            return "setName" in h;
         }
 
         function modifiedHubHolder(modifyFn: (hubHolder: HubHolder) => void) {
@@ -76,14 +81,20 @@ const App: React.FC = () => {
             case ActionType.RENAME: {
                 return modifiedHubHolder((hubHolder) => {
                     if (action.payload.name) {
-                        hubHolder.name = action.payload.name;
-
-                        if (hub instanceof LPF2Hub) {
+                        if (!action.payload.processed && hub && canSetName(hub)) {
                             (hub as LPF2Hub).setName(action.payload.name)
+                                .then(() => {
+                                    console.log("Hub name set");
+                                    // prevent setting the name a 2nd time as reducers can be called twice for
+                                    // whatever reason: https://github.com/facebook/react/issues/16295
+                                    action.payload.processed = true;
+                                })
                                 .catch((e) => {
                                     console.log("Error setting hub name", e);
                                 });
                         }
+
+                        hubHolder.name = action.payload.name;
                     }
                 });
             }
@@ -165,6 +176,9 @@ const App: React.FC = () => {
         poweredUP.on("discover", async (hub: Hub) => { // Wait to discover hubs
             // debugEvents(hub);
 
+            if (hub instanceof Hub) {
+                console.log("HUBBY");
+            }
             dispatch({type: ActionType.DISCOVER, payload: {hub}});
 
             hub.on("attach", (port, device) => {
@@ -185,7 +199,7 @@ const App: React.FC = () => {
                 dispatch({type: ActionType.DISCONNECT, payload: {hub}});
             });
         });
-    }, [ActionType.CONNECT, ActionType.DISCONNECT, ActionType.DISCOVER, ActionType.ATTACH_PORT, ActionType.DETACH_PORT, poweredUP]);
+    }, [ActionType, poweredUP]);
 
     useEffect(() => {
         const queryParams = qs.parse(window.location.search, { ignoreQueryPrefix: true });

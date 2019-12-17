@@ -1,4 +1,18 @@
-import {Button, Card, Descriptions, Dropdown, Icon, Menu, Progress, Tooltip, Typography} from "antd";
+import {
+    Button,
+    Card,
+    Descriptions,
+    Dropdown,
+    Icon,
+    Menu,
+    message,
+    Modal,
+    Progress,
+    Skeleton,
+    Spin,
+    Tooltip,
+    Typography
+} from "antd";
 import * as Consts from "node-poweredup/dist/node/consts";
 import {DeviceType} from "node-poweredup/dist/node/consts";
 import React, {useEffect, useMemo, useState} from "react";
@@ -189,7 +203,7 @@ const TiltDetails = (props: ITiltDetailsProps) => {
 
 const BatteryDetails = (props: {hubHolder: HubHolder}) => {
     const [now, setNow] = useState(0);
-    // Update "now" every second
+    // Update "now" within an interval to force re-reading the battery level
     useEffect(() => {
         const interval = setInterval(() => setNow(new Date().getTime()), 10000);
         return () => clearInterval(interval);
@@ -201,12 +215,14 @@ const BatteryDetails = (props: {hubHolder: HubHolder}) => {
     );
 
     return (
-        <Progress
-            strokeColor={{"0%": "#ff0000", "100%": "#87d068"}}
-            strokeLinecap="square"
-            status="normal"
-            percent={props.hubHolder.hub ? batteryLevel : 0}
-        />
+        <Spin spinning={batteryLevel === 0}>
+            <Progress
+                strokeColor={{"0%": "#ff0000", "100%": "#87d068"}}
+                strokeLinecap="square"
+                status="normal"
+                percent={batteryLevel}
+            />
+        </Spin>
     );
 };
 
@@ -221,12 +237,22 @@ const HubDetails = (props: IHubDetailsProps) => {
         }
     }
 
+    function renameHub(value: string) {
+        if (value.length > 14) {
+            message.error( { content: "The hub name must not be longer then 14 characters", duration: 5 } );
+        } else {
+            props.renameHub(value);
+        }
+    }
+
     return props.hubHolder.connected ? (
         <Card
             title={(
-                <Paragraph ellipsis={{rows: 14}} editable={{ onChange: props.renameHub }} style={{marginBottom: "0"}}>
-                    {props.hubHolder.getHubName()}
-                </Paragraph>
+                <>
+                    <Paragraph ellipsis={{rows: 14}} editable={{ onChange: renameHub }} style={{marginBottom: "0"}}>
+                        {props.hubHolder.name}
+                    </Paragraph>
+                </>
             )}
             bodyStyle={{padding: 0}}
         >
@@ -291,7 +317,7 @@ const HubDetails = (props: IHubDetailsProps) => {
         </Descriptions>
         <Button style={{margin: "10px"}} onClick={() => disconnect(props.hubHolder)}>Disconnect</Button>
         </Card>
-    ) : <Card title="Connecting...."><div>...</div></Card>;
+    ) : <Card title="Connecting...."><Skeleton /></Card>;
 };
 
 export default HubDetails;

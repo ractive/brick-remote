@@ -65,10 +65,6 @@ export class HubHolder {
         return this.hub ? this.hub.primaryMACAddress : "unknown";
     }
 
-    public getHubName(): string {
-        return this.hub ? this.hub.name : "undefined";
-    }
-
     public getHubType(): string {
         return this.hub ? HubHolder.hubType(this.hub.getHubType()) : "undefined";
     }
