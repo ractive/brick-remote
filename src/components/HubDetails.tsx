@@ -1,7 +1,7 @@
 import {Button, Card, Descriptions, Dropdown, Icon, Menu, Progress, Tooltip, Typography} from "antd";
 import * as Consts from "node-poweredup/dist/node/consts";
 import {DeviceType} from "node-poweredup/dist/node/consts";
-import React, {useMemo} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import useTiltEffect from "../hooks/useTiltEffect";
 import {HubHolder} from "../HubHolder";
 import {IMotorControlDefinition} from "./MotorControl";
@@ -177,6 +177,29 @@ const TiltDetails = (props: ITiltDetailsProps) => {
     );
 };
 
+const BatteryDetails = (props: {hubHolder: HubHolder}) => {
+    const [now, setNow] = useState(0);
+    // Update "now" every second
+    useEffect(() => {
+        const interval = setInterval(() => setNow(new Date().getTime()), 10000);
+        return () => clearInterval(interval);
+    });
+    // Read the battery level whenever "now" changes
+    const batteryLevel = useMemo(
+        () => props.hubHolder.hub && now ? props.hubHolder.hub.batteryLevel : 0,
+        [props.hubHolder, now]
+    );
+
+    return (
+        <Progress
+            strokeColor={{"0%": "#ff0000", "100%": "#87d068"}}
+            strokeLinecap="square"
+            status="normal"
+            percent={props.hubHolder.hub ? batteryLevel : 0}
+        />
+    );
+};
+
 const HubDetails = (props: IHubDetailsProps) => {
     function disconnect(hubHolder: HubHolder) {
         if (hubHolder.hub) {
@@ -251,12 +274,7 @@ const HubDetails = (props: IHubDetailsProps) => {
                 />
             </Descriptions.Item>
             <Descriptions.Item label="Battery">
-                <Progress
-                    strokeColor={{"0%": "#ff0000", "100%": "#87d068"}}
-                    strokeLinecap="square"
-                    status="normal"
-                    percent={props.hubHolder.hub ? props.hubHolder.hub.batteryLevel : 0}
-                />
+                <BatteryDetails hubHolder={props.hubHolder}/>
             </Descriptions.Item>
         </Descriptions>
         <Button style={{margin: "10px"}} onClick={() => disconnect(props.hubHolder)}>Disconnect</Button>
