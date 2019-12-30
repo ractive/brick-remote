@@ -7,7 +7,7 @@ node library for communication.
 
 I only tested it with the Control+ hubs, but powered up and the boost move hubs should work as well.
 
-:information_source: The app can be found at [brick-remote.ractive.ch](https://brick-remote.ractive.ch).
+:information_source: The app can be found at [brick-remote.ractive.ch](https://brick-remote.ractive.ch) and must be used with Chrome (or Edge insider).
 
 ![brick-remote-screenshot](https://user-images.githubusercontent.com/783861/69193780-deee2300-0b27-11ea-9d40-cef99e0f73c4.png)
 
