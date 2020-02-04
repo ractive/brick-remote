@@ -175,10 +175,6 @@ const App: React.FC = () => {
     useEffect(() => {
         poweredUP.on("discover", async (hub: Hub) => { // Wait to discover hubs
             // debugEvents(hub);
-
-            if (hub instanceof Hub) {
-                console.log("HUBBY");
-            }
             dispatch({type: ActionType.DISCOVER, payload: {hub}});
 
             hub.on("attach", (port, device) => {
@@ -228,7 +224,7 @@ const App: React.FC = () => {
     useEffect(() => {
         if (!("bluetooth" in navigator)) {
             Modal.error({
-                content: "Bluetooth is not available in your browser. Use chrome or edge beta to load this page.",
+                content: "Bluetooth is not available in your browser. Use Chrome or Edge (chromium version) to load this page.",
                 title: "Bluetooth not available",
             });
         }
