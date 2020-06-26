@@ -1,4 +1,5 @@
-import {Button, Icon, Input, Modal, Popover, Tooltip} from "antd";
+import {Button, Input, Modal, Popover, Tooltip} from "antd";
+import {QuestionCircleOutlined, SettingOutlined} from '@ant-design/icons';
 import React, {MouseEvent, useState} from "react";
 import {IHotKeyInfo} from "../hooks/useHotkeyInfo";
 import {useHotkeys} from "../hooks/useHotkeys";
@@ -71,7 +72,7 @@ const ControlConfig = (props: IControlConfigProps) => {
                     </p>
                 </div>
             ),
-            icon: <Icon type="question-circle" />,
+            icon: <QuestionCircleOutlined />,
             title: "Hotkey help",
             width: "600px",
             zIndex: 2000,
@@ -107,7 +108,7 @@ const ControlConfig = (props: IControlConfigProps) => {
                     </>
                 )}
             >
-                <Icon className="small-icon" type="setting" onClick={() => setVisible(true)}/>
+                <SettingOutlined className="small-icon" onClick={() => setVisible(true)}/>
             </Popover>
         </Tooltip>
     );

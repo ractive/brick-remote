@@ -1,4 +1,5 @@
-import {Button, Card, Col, Icon, Row, Slider, Switch, Tooltip} from "antd";
+import {Button, Card, Col, Row, Slider, Switch, Tooltip} from "antd";
+import {DoubleRightOutlined, DoubleLeftOutlined, CloseOutlined} from '@ant-design/icons';
 import {SliderValue} from "antd/lib/slider";
 import React, {useEffect, useState} from "react";
 import {useButtonActiveIndicator} from "../hooks/useButtonActiveIndicator";
@@ -154,7 +155,7 @@ const TrackControl = (props: ITrackControlProps) => {
                         />
                     </Tooltip>
                     <Tooltip title="Remove">
-                        <Icon className="small-icon" type="close" onClick={() => props.remove(props)}/>
+                        <CloseOutlined className="small-icon" onClick={() => props.remove(props)}/>
                     </Tooltip>
                 </>
             )}
@@ -166,8 +167,8 @@ const TrackControl = (props: ITrackControlProps) => {
                     <Tooltip title="Invert the rotation of left motor">
                         <Switch
                             size="small"
-                            checkedChildren={<Icon type="double-right" rotate={90} />}
-                            unCheckedChildren={<Icon type="double-left" rotate={90} />}
+                            checkedChildren={<DoubleRightOutlined rotate={90} />}
+                            unCheckedChildren={<DoubleLeftOutlined rotate={90} />}
                             checked={invertedLeft}
                             onChange={(checked) => setInvertedLeft(checked)}
                         />
@@ -176,8 +177,8 @@ const TrackControl = (props: ITrackControlProps) => {
                     <Tooltip title="Invert the rotation of right motor">
                         <Switch
                             size="small"
-                            checkedChildren={<Icon type="double-right" rotate={90} />}
-                            unCheckedChildren={<Icon type="double-left" rotate={90} />}
+                            checkedChildren={<DoubleRightOutlined rotate={90} />}
+                            unCheckedChildren={<DoubleLeftOutlined rotate={90} />}
                             checked={invertedRight}
                             onChange={(checked) => setInvertedRight(checked)}
                         />

@@ -1,4 +1,5 @@
-import {Button, Card, Col, Icon, Row, Slider, Switch, Tooltip} from "antd";
+import {Button, Card, Col, Row, Slider, Switch, Tooltip} from "antd";
+import {DoubleRightOutlined, DoubleLeftOutlined, CloseOutlined} from '@ant-design/icons';
 import { SliderValue } from "antd/lib/slider";
 import React, {useEffect, useState} from "react";
 import {useButtonActiveIndicator} from "../hooks/useButtonActiveIndicator";
@@ -97,7 +98,7 @@ const MotorControl = (props: IMotorControlProps) => {
                         />
                     </Tooltip>
                     <Tooltip title="Remove">
-                        <Icon className="small-icon" type="close" onClick={() => props.remove(props)}/>
+                        <CloseOutlined className="small-icon" onClick={() => props.remove(props)}/>
                     </Tooltip>
                 </>
             )}
@@ -109,8 +110,8 @@ const MotorControl = (props: IMotorControlProps) => {
                     <Tooltip title="Invert the rotation of the motor">
                         <Switch
                             size="small"
-                            checkedChildren={<Icon type="double-right" rotate={90} />}
-                            unCheckedChildren={<Icon type="double-left" rotate={90} />}
+                            checkedChildren={<DoubleRightOutlined rotate={90} />}
+                            unCheckedChildren={<DoubleLeftOutlined rotate={90} />}
                             checked={inverted}
                             onChange={(checked) => setInverted(checked)}
                         />

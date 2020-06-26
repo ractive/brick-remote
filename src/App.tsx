@@ -1,6 +1,5 @@
 import {Button, Layout, Modal, Spin} from "antd";
 import {Hub} from "node-poweredup";
-import {LPF2Hub} from "node-poweredup/dist/node/lpf2hub";
 import qs from "qs";
 import React, {useEffect, useReducer, useState} from "react";
 import Help from "./components/Help";
@@ -48,10 +47,6 @@ const App: React.FC = () => {
             return newHubHolder;
         }
 
-        function canSetName(h: Hub): h is LPF2Hub {
-            return "setName" in h;
-        }
-
         function modifiedHubHolder(modifyFn: (hubHolder: HubHolder) => void) {
             const i = hubHolders.findIndex((hubHolder) => hubHolder.getUuid() === hubUuid);
             if (i >= 0) {
@@ -81,15 +76,15 @@ const App: React.FC = () => {
             case ActionType.RENAME: {
                 return modifiedHubHolder((hubHolder) => {
                     if (action.payload.name) {
-                        if (!action.payload.processed && hub && canSetName(hub)) {
-                            (hub as LPF2Hub).setName(action.payload.name)
+                        if (!action.payload.processed && hub) {
+                            hub.setName(action.payload.name)
                                 .then(() => {
                                     console.log("Hub name set");
                                     // prevent setting the name a 2nd time as reducers can be called twice for
                                     // whatever reason: https://github.com/facebook/react/issues/16295
                                     action.payload.processed = true;
                                 })
-                                .catch((e) => {
+                                .catch((e: any) => {
                                     console.log("Error setting hub name", e);
                                 });
                         }
@@ -207,7 +202,7 @@ const App: React.FC = () => {
         if (queryParams.hasOwnProperty("debug")) {
             if (queryParams.debug) {
                 // Calling e.g. with "?debug=*"
-                localStorage.setItem("debug", queryParams.debug);
+                localStorage.setItem("debug", queryParams.debug.toString());
             } else {
                 // Remove when just calling with "?debug"
                 localStorage.removeItem("debug");

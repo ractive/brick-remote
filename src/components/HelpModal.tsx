@@ -1,4 +1,5 @@
-import {Icon, Modal} from "antd";
+import {Modal} from "antd";
+import {QuestionCircleOutlined} from '@ant-design/icons';
 import React, {useState} from "react";
 import Help from "./Help";
 
@@ -11,7 +12,7 @@ const HelpModal = () => {
 
     return (
         <>
-            <Icon type="question-circle" onClick={toggleVisibility} />
+            <QuestionCircleOutlined onClick={toggleVisibility} />
             <Modal
                 width="90%"
                 visible={visible}

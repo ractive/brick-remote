@@ -1,4 +1,5 @@
-import {Icon, Tooltip} from "antd";
+import {Tooltip} from "antd";
+import {VerticalAlignMiddleOutlined} from '@ant-design/icons';
 import React from "react";
 import useTiltEffect from "../hooks/useTiltEffect";
 
@@ -17,7 +18,7 @@ const TiltControl = (props: ITiltControlProps) => {
         <div className="tilt-control">
             <div className="tilt-value">{props.axis === Axis.X ? tiltX : tiltY}&deg;</div>
             <Tooltip title={`${props.axis} axis`}>
-                <Icon type="vertical-align-middle" rotate={tilt} className="tilt-icon" />
+                <VerticalAlignMiddleOutlined rotate={tilt} className="tilt-icon" />
             </Tooltip>
         </div>
     );

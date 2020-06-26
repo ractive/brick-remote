@@ -9,16 +9,16 @@ export class HubHolder {
                 return "UNKNOWN";
             case HubType.WEDO2_SMART_HUB:
                 return "WEDO2_SMART_HUB";
-            case HubType.BOOST_MOVE_HUB:
-                return "BOOST_MOVE_HUB";
-            case HubType.POWERED_UP_HUB:
-                return "POWERED_UP_HUB";
-            case HubType.POWERED_UP_REMOTE:
-                return "POWERED_UP_REMOTE";
-            case HubType.DUPLO_TRAIN_HUB:
-                return "DUPLO_TRAIN_HUB";
-            case HubType.CONTROL_PLUS_HUB:
-                return "CONTROL_PLUS_HUB";
+            case HubType.MOVE_HUB:
+                return "MOVE_HUB";
+            case HubType.HUB:
+                return "HUB";
+            case HubType.REMOTE_CONTROL:
+                return "REMOTE_CONTROL";
+            case HubType.DUPLO_TRAIN_BASE:
+                return "DUPLO_TRAIN_BASE";
+            case HubType.TECHNIC_MEDIUM_HUB:
+                return "TECHNIC_MEDIUM_HUB";
         }
     }
     public hub?: Hub;
@@ -66,6 +66,6 @@ export class HubHolder {
     }
 
     public getHubType(): string {
-        return this.hub ? HubHolder.hubType(this.hub.getHubType()) : "undefined";
+        return this.hub ? HubHolder.hubType(this.hub.type) : "undefined";
     }
 }

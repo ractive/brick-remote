@@ -3,16 +3,15 @@ import {
     Card,
     Descriptions,
     Dropdown,
-    Icon,
     Menu,
     message,
-    Modal,
     Progress,
     Skeleton,
     Spin,
     Tooltip,
     Typography
 } from "antd";
+import {DownOutlined} from '@ant-design/icons';
 import * as Consts from "node-poweredup/dist/node/consts";
 import {DeviceType} from "node-poweredup/dist/node/consts";
 import React, {useEffect, useMemo, useState} from "react";
@@ -58,7 +57,7 @@ const TrackControlMenu = (props: ITrackControlMenuProps) => {
             <Dropdown overlay={menu} trigger={["click"]}>
                 <Button size="small">
                     Add <img className="small-image" src="/icons/icons8-bulldozer-96.png" alt="Track Control" />
-                    <Icon type="down" style={{marginLeft: "3px"}}/>
+                    <DownOutlined style={{marginLeft: "3px"}}/>
                 </Button>
             </Dropdown>
         </Tooltip>
@@ -71,54 +70,74 @@ const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsP
     const motorName = useMemo(() => {
         function portDeviceType(type: Consts.DeviceType): string {
             switch (type) {
-                case DeviceType.VOLTAGE:
-                    return "Voltage";
-                case DeviceType.CURRENT:
-                    return "Current";
-                case DeviceType.PIEZO_TONE:
-                    return "Piezo tone";
-                case DeviceType.RGB_LIGHT:
-                    return "RGB light";
-                case DeviceType.RSSI:
-                    return "RSSI";
-                case DeviceType.CONTROL_PLUS_ACCELEROMETER:
-                    return "Accelerometer";
-                case DeviceType.CONTROL_PLUS_TILT:
-                    return "Tilt sensor";
                 case DeviceType.UNKNOWN:
-                    return "unknown";
-                case DeviceType.BASIC_MOTOR:
-                    return "Basic motor";
+                    return "UNKNOWN";
+                case DeviceType.SIMPLE_MEDIUM_LINEAR_MOTOR:
+                    return "SIMPLE_MEDIUM_LINEAR_MOTOR";
                 case DeviceType.TRAIN_MOTOR:
-                    return "Train motor";
-                case DeviceType.LED_LIGHTS:
-                    return "LED lights";
-                case DeviceType.WEDO2_TILT:
-                    return "Tilt sensor";
-                case DeviceType.WEDO2_DISTANCE:
-                    return "Distance sensor";
-                case DeviceType.BOOST_DISTANCE:
-                    return "Distance sensor";
-                case DeviceType.BOOST_TACHO_MOTOR:
-                    return "Tacho motor";
-                case DeviceType.BOOST_MOVE_HUB_MOTOR:
-                    return "Hub motor";
-                case DeviceType.BOOST_TILT:
-                    return "Tilt sensor";
-                case DeviceType.DUPLO_TRAIN_BASE_MOTOR:
-                    return "Base motor";
-                case DeviceType.DUPLO_TRAIN_BASE_SPEAKER:
-                    return "Speaker";
-                case DeviceType.DUPLO_TRAIN_BASE_COLOR:
-                    return "Color sensor";
-                case DeviceType.DUPLO_TRAIN_BASE_SPEEDOMETER:
-                    return "Speedometer";
-                case DeviceType.CONTROL_PLUS_LARGE_MOTOR:
-                    return "Large motor";
-                case DeviceType.CONTROL_PLUS_XLARGE_MOTOR:
-                    return "X-large motor";
-                case DeviceType.POWERED_UP_REMOTE_BUTTON:
-                    return "PoweredUp remote button";
+                    return "TRAIN_MOTOR";
+                case DeviceType.LIGHT:
+                    return "LIGHT";
+                case DeviceType.VOLTAGE_SENSOR :
+                    return "VOLTAGE_SENSOR";
+                case DeviceType.CURRENT_SENSOR :
+                    return "CURRENT_SENSOR";
+                case DeviceType.PIEZO_BUZZER :
+                    return "PIEZO_BUZZER";
+                case DeviceType.HUB_LED :
+                    return "HUB_LED";
+                case DeviceType.TILT_SENSOR :
+                    return "TILT_SENSOR";
+                case DeviceType.MOTION_SENSOR :
+                    return "MOTION_SENSOR";
+                case DeviceType.COLOR_DISTANCE_SENSOR :
+                    return "COLOR_DISTANCE_SENSOR";
+                case DeviceType.MEDIUM_LINEAR_MOTOR :
+                    return "MEDIUM_LINEAR_MOTOR";
+                case DeviceType.MOVE_HUB_MEDIUM_LINEAR_MOTOR :
+                    return "MOVE_HUB_MEDIUM_LINEAR_MOTOR";
+                case DeviceType.MOVE_HUB_TILT_SENSOR :
+                    return "MOVE_HUB_TILT_SENSOR";
+                case DeviceType.DUPLO_TRAIN_BASE_MOTOR :
+                    return "DUPLO_TRAIN_BASE_MOTOR";
+                case DeviceType.DUPLO_TRAIN_BASE_SPEAKER :
+                    return "DUPLO_TRAIN_BASE_SPEAKER";
+                case DeviceType.DUPLO_TRAIN_BASE_COLOR_SENSOR :
+                    return "DUPLO_TRAIN_BASE_COLOR_SENSOR";
+                case DeviceType.DUPLO_TRAIN_BASE_SPEEDOMETER :
+                    return "DUPLO_TRAIN_BASE_SPEEDOMETER";
+                case DeviceType.TECHNIC_LARGE_LINEAR_MOTOR :
+                    return "TECHNIC_LARGE_LINEAR_MOTOR";
+                case DeviceType.TECHNIC_XLARGE_LINEAR_MOTOR :
+                    return "TECHNIC_XLARGE_LINEAR_MOTOR";
+                case DeviceType.TECHNIC_MEDIUM_ANGULAR_MOTOR :
+                    return "TECHNIC_MEDIUM_ANGULAR_MOTOR";
+                case DeviceType.TECHNIC_LARGE_ANGULAR_MOTOR :
+                    return "TECHNIC_LARGE_ANGULAR_MOTOR";
+                case DeviceType.TECHNIC_MEDIUM_HUB_GEST_SENSOR :
+                    return "TECHNIC_MEDIUM_HUB_GEST_SENSOR";
+                case DeviceType.REMOTE_CONTROL_BUTTON :
+                    return "REMOTE_CONTROL_BUTTON";
+                case DeviceType.REMOTE_CONTROL_RSSI :
+                    return "REMOTE_CONTROL_RSSI";
+                case DeviceType.TECHNIC_MEDIUM_HUB_ACCELEROMETER :
+                    return "TECHNIC_MEDIUM_HUB_ACCELEROMETER";
+                case DeviceType.TECHNIC_MEDIUM_HUB_GYRO_SENSOR :
+                    return "TECHNIC_MEDIUM_HUB_GYRO_SENSOR";
+                case DeviceType.TECHNIC_MEDIUM_HUB_TILT_SENSOR :
+                    return "TECHNIC_MEDIUM_HUB_TILT_SENSOR";
+                case DeviceType.TECHNIC_MEDIUM_HUB_TEMPERATURE_SENSOR :
+                    return "TECHNIC_MEDIUM_HUB_TEMPERATURE_SENSOR";
+                case DeviceType.TECHNIC_COLOR_SENSOR :
+                    return "TECHNIC_COLOR_SENSOR";
+                case DeviceType.TECHNIC_DISTANCE_SENSOR :
+                    return "TECHNIC_DISTANCE_SENSOR";
+                case DeviceType.TECHNIC_FORCE_SENSOR :
+                    return "TECHNIC_FORCE_SENSOR";
+                case DeviceType.TECHNIC_MEDIUM_ANGULAR_MOTOR_GREY :
+                    return "TECHNIC_MEDIUM_ANGULAR_MOTOR_GREY";
+                case DeviceType.TECHNIC_LARGE_ANGULAR_MOTOR_GREY:
+                    return "TECHNIC_LARGE_ANGULAR_MOTOR_GREY";
                 default:
                     return "unknown:" + type;
             }
@@ -127,7 +146,7 @@ const PortDetails = ({port, hubDetails}: {port: string, hubDetails: IHubDetailsP
         function portType() {
             if (hubDetails.hubHolder.ports.has(port)) {
                 return hubDetails.hubHolder.hub
-                    ? portDeviceType(hubDetails.hubHolder.hub.getPortDeviceType(port))
+                    ? portDeviceType(hubDetails.hubHolder.hub.getDeviceAtPort(port)!.type)
                     : "undefined";
             } else {
                 return "not attached";
