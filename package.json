@@ -14,7 +14,7 @@
     "customize-cra": "^0.9.1",
     "hotkeys-js": "^3.7.3",
     "node-poweredup": "^6.7.0",
-    "qs": "^6.9.1",
+    "qs": "^6.9.7",
     "react": "^16.13.0",
     "react-app-rewired": "^2.1.5",
     "react-dom": "^16.13.0",
