@@ -149,6 +149,24 @@ describe("App with a simulated Control+ hub", () => {
     expect(await within(sidebar()).findByText("Bulldozer")).toBeInTheDocument();
   });
 
+  it("keeps the old name when a too long name is rejected", async () => {
+    const user = await renderApp();
+    await user.click(within(sidebar()).getByRole("button", { name: /edit/i }));
+    const input = within(sidebar()).getByRole("textbox");
+    await user.clear(input);
+    await user.type(input, "A much too long hub name");
+    await user.tab();
+
+    expect(
+      await screen.findByText(/must not be longer than 14/),
+    ).toBeInTheDocument();
+    expect(within(sidebar()).getByText("Test Hub")).toBeInTheDocument();
+    expect(
+      within(sidebar()).queryByText("A much too long hub name"),
+    ).not.toBeInTheDocument();
+    expect(device.name).toBe("Test Hub");
+  });
+
   it("removes the hub when it disconnects", async () => {
     const user = await renderApp();
     await user.click(screen.getByLabelText("Add motor control for port A"));

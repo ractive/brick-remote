@@ -191,7 +191,7 @@ const HubDetails = (props: IHubDetailsProps) => {
   function renameHub(value: string) {
     if (value.length > 14) {
       void message.error({
-        content: "The hub name must not be longer then 14 characters",
+        content: "The hub name must not be longer than 14 characters",
         duration: 5,
       });
     } else if (value !== hubHolder.name) {

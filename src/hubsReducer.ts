@@ -10,7 +10,8 @@ export type HubAction =
   | { type: "attach"; hub: BaseHub; port: string; deviceType: number }
   | { type: "detach"; hub: BaseHub; port: string };
 
-// Actions are matched by hub instance, not by uuid: a hub that reconnects is a new instance
+// Actions are matched by hub instance, not by uuid: the library creates a new instance every time
+// a hub is picked in the bluetooth chooser, also for a hub that is already in the list
 export function hubsReducer(
   hubHolders: HubHolder[],
   action: HubAction,
@@ -20,9 +21,13 @@ export function hubsReducer(
 
   switch (action.type) {
     case "discover":
-      return hubHolders.some((h) => h.hub === action.hub)
-        ? hubHolders
-        : [...hubHolders, new HubHolder(action.hub)];
+      // A new instance replaces an older one of the same hub, whose events then match nothing
+      return [
+        ...hubHolders.filter(
+          (h) => h.hub !== action.hub && h.getUuid() !== action.hub.uuid,
+        ),
+        new HubHolder(action.hub),
+      ];
     case "connect":
       return update((h) => h.with({ connected: true }));
     case "disconnect":
@@ -55,7 +60,13 @@ export async function connectHub(
   hub.on("disconnect", () => dispatch({ type: "disconnect", hub }));
 
   console.log("Connecting to hub:", hub.uuid);
-  await hub.connect();
+  try {
+    await hub.connect();
+  } catch (e) {
+    // Don't leave a "Connecting...." card behind that can't be dismissed
+    dispatch({ type: "disconnect", hub });
+    throw e;
+  }
   console.log("Connected ✔");
   dispatch({ type: "connect", hub });
 }

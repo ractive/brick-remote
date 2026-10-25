@@ -25,19 +25,16 @@ export function useHotkeys(
     actionsRef.current = actions;
   });
 
-  const keysString = Object.values(bindings).filter(Boolean).join(",");
-
   useEffect(() => {
-    if (keysString.length === 0) {
-      return;
-    }
-    const handler = (_: KeyboardEvent, { key }: { key: string }) => {
-      const id = Object.keys(bindings).find((id) => bindings[id] === key);
-      if (id) {
-        actionsRef.current[id]?.handle();
-      }
-    };
-    hotkeys(keysString, handler);
-    return () => hotkeys.unbind(keysString, handler);
-  }, [keysString, bindings]);
+    // One handler per action: hotkeys-js normalizes the key definition (strips whitespace,
+    // splits "a,b" into two keys), so the reported key can't be mapped back to the binding.
+    const registered = Object.entries(bindings)
+      .filter(([, keys]) => keys.trim().length > 0)
+      .map(([id, keys]) => {
+        const handler = () => actionsRef.current[id]?.handle();
+        hotkeys(keys, handler);
+        return () => hotkeys.unbind(keys, handler);
+      });
+    return () => registered.forEach((unbind) => unbind());
+  }, [bindings]);
 }

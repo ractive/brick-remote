@@ -1,7 +1,9 @@
 name: brick-remote
 
 on:
+  # Branches are checked through their pull request, master on push (and deployed)
   push:
+    branches: [master]
   pull_request:
 
 jobs:
