@@ -5,14 +5,6 @@ test("controls the simulated hub in the production build", async ({ page }) => {
   page.on("pageerror", (e) => errors.push(e.message));
   page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
 
-  // Keep the analytics script in index.html from reporting test runs
-  await page.route(/getclicky\.com/, (route) =>
-    route.fulfill({
-      body: "",
-      headers: { "access-control-allow-origin": "*" },
-    }),
-  );
-
   await page.goto("/?fakeHub");
   await expect(page.getByText("TECHNIC_MEDIUM_HUB")).toBeVisible();
   await expect(page.getByText("TECHNIC_LARGE_LINEAR_MOTOR")).toHaveCount(2);
