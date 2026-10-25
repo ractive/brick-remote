@@ -5,7 +5,8 @@ export function useButtonActiveIndicator(): [boolean, () => void] {
 
   useEffect(() => {
     if (pressed) {
-      setTimeout(() => setPressed(false), 175);
+      const timeout = setTimeout(() => setPressed(false), 175);
+      return () => clearTimeout(timeout);
     }
   }, [pressed]);
 

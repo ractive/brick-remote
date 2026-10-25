@@ -1,42 +1,47 @@
-import { Button, Input, Modal, Popover, Tooltip } from "antd";
-import { QuestionCircleOutlined, SettingOutlined } from "@ant-design/icons";
-import React, { MouseEvent, useState } from "react";
-import { IHotKeyInfo } from "../hooks/useHotkeyInfo";
-import { useHotkeys } from "../hooks/useHotkeys";
+import { App, Button, Input, Popover, Tooltip } from "antd";
+import {
+  CheckOutlined,
+  CloseOutlined,
+  QuestionCircleOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
+import React, { useState } from "react";
+import {
+  type HotkeyActions,
+  type HotkeyBindings,
+  useHotkeys,
+} from "../hooks/useHotkeys";
 
 export interface IControlConfigProps {
-  hotkeyInfo: IHotKeyInfo;
-  setHotkeys(hotKeys: IHotKeyInfo): void;
+  actions: HotkeyActions;
+  bindings: HotkeyBindings;
+  setBindings(bindings: HotkeyBindings): void;
 }
 
 const ControlConfig: React.FC<IControlConfigProps> = (
-  props: IControlConfigProps
+  props: IControlConfigProps,
 ) => {
-  const [visible, setVisible] = useState(false);
-  const [hotKeys, setHotKeys] = useState<IHotKeyInfo>({ ...props.hotkeyInfo });
+  const { modal } = App.useApp();
+  const [open, setOpen] = useState(false);
+  const [bindings, setBindings] = useState<HotkeyBindings>(props.bindings);
 
-  useHotkeys(["esc"], (_) => setVisible(false), []);
+  useHotkeys(
+    { close: { label: "Close", handle: () => setOpen(false) } },
+    { close: "esc" },
+  );
 
-  function handleSubmit(event: MouseEvent<HTMLElement>) {
-    props.setHotkeys(hotKeys);
-    setVisible(false);
-    event.preventDefault();
+  function show() {
+    setBindings(props.bindings);
+    setOpen(true);
   }
 
-  function handleCancel(event: MouseEvent<HTMLElement>) {
-    setVisible(false);
-    event.preventDefault();
-  }
-
-  function setKey(id: string, key: string) {
-    setHotKeys({
-      ...hotKeys,
-      [id]: { key, label: hotKeys[id].label, handle: hotKeys[id].handle },
-    });
+  function handleSubmit() {
+    props.setBindings(bindings);
+    setOpen(false);
   }
 
   function showHelp() {
-    Modal.info({
+    modal.info({
       content: (
         <div>
           <p>
@@ -62,9 +67,8 @@ const ControlConfig: React.FC<IControlConfigProps> = (
             Modifiers are:{" "}
             <code>shift, option, alt, ctrl, control, command</code>
           </p>
-          <p>
+          <div>
             Examples of hotkey definitions that you can use:
-            <br />
             <ul>
               <li>
                 <code>q</code>
@@ -81,11 +85,8 @@ const ControlConfig: React.FC<IControlConfigProps> = (
               <li>
                 <code>command+f4</code>
               </li>
-              <li>
-                <code>ctrl+a</code>
-              </li>
             </ul>
-          </p>
+          </div>
         </div>
       ),
       icon: <QuestionCircleOutlined />,
@@ -99,26 +100,38 @@ const ControlConfig: React.FC<IControlConfigProps> = (
     <Tooltip title="Keyboard control configuration">
       <Popover
         trigger="click"
-        visible={visible}
+        open={open}
+        onOpenChange={(o) => (o ? show() : setOpen(false))}
         content={
           <>
             <div className="small-form">
-              {Object.entries(props.hotkeyInfo).map(([id, { label }]) => (
+              {Object.entries(props.actions).map(([id, { label }]) => (
                 <React.Fragment key={id}>
                   <label htmlFor={"hotkeyinfo_" + id}>{label}:</label>
                   <Input
                     id={"hotkeyinfo_" + id}
-                    value={hotKeys[id].key}
-                    onChange={(e) => setKey(id, e.target.value)}
+                    value={bindings[id] ?? ""}
+                    onChange={(e) =>
+                      setBindings({ ...bindings, [id]: e.target.value })
+                    }
                   />
                 </React.Fragment>
               ))}
             </div>
             <div style={{ width: "100%", marginTop: "10px" }}>
-              <Button icon="check" onClick={handleSubmit} />
-              <Button icon="close" onClick={handleCancel} />
               <Button
-                icon="question-circle"
+                icon={<CheckOutlined />}
+                aria-label="Save hotkeys"
+                onClick={handleSubmit}
+              />
+              <Button
+                icon={<CloseOutlined />}
+                aria-label="Cancel"
+                onClick={() => setOpen(false)}
+              />
+              <Button
+                icon={<QuestionCircleOutlined />}
+                aria-label="Hotkey help"
                 onClick={showHelp}
                 style={{ float: "right" }}
               />
@@ -128,7 +141,7 @@ const ControlConfig: React.FC<IControlConfigProps> = (
       >
         <SettingOutlined
           className="small-icon"
-          onClick={() => setVisible(true)}
+          aria-label="Configure hotkeys"
         />
       </Popover>
     </Tooltip>
