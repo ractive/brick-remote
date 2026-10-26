@@ -43,8 +43,11 @@ jobs:
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
-          server: ractive.ch
+          # Same hosting account as ractive.ch; the host matches the *.hostfactory.ch certificate
+          server: server03.hostfactory.ch
           username: ractive
           password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          security: strict
           local-dir: build/
           server-dir: /subdomains/brick-remote/httpdocs/
