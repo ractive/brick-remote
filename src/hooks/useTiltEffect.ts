@@ -1,28 +1,27 @@
 import { useContext, useEffect, useState } from "react";
-import { hubByUuid, HubsContext } from "../HubsContext";
+import { findHub, HubsContext } from "../HubsContext";
 
-const useTiltEffect = (hubUuid: string): number[] => {
-  const [tiltX, setTiltX] = useState(0);
-  const [tiltY, setTiltY] = useState(0);
+const useTiltEffect = (hubUuid: string): [number, number] => {
+  const [tilt, setTilt] = useState<[number, number]>([0, 0]);
 
-  const hubs = useContext(HubsContext);
-  const hubHolder = hubByUuid(hubs, hubUuid);
+  const hubHolder = findHub(useContext(HubsContext), hubUuid);
+  const hub = hubHolder?.connected ? hubHolder.hub : undefined;
+  const tiltPort = hubHolder?.tiltPort;
 
   useEffect(() => {
-    function tiltListener(port: string, x: number, y: number) {
-      setTiltX(x);
-      setTiltY(y);
+    const device = hub && tiltPort ? hub.getDeviceAtPort(tiltPort) : undefined;
+    if (!device) {
+      return;
     }
+    const listener = ({ x, y }: { x: number; y: number }) => setTilt([x, y]);
+    // Adding the listener subscribes the sensor to tilt updates
+    device.on("tilt", listener);
+    return () => {
+      device.removeListener("tilt", listener);
+    };
+  }, [hub, tiltPort]);
 
-    if (hubHolder.hub && hubHolder.connected) {
-      hubHolder.hub.on("tilt", tiltListener);
-      return () => {
-        hubHolder.hub?.removeListener("tilt", tiltListener);
-      };
-    }
-  }, [hubHolder]);
-
-  return [tiltX, tiltY];
+  return tilt;
 };
 
 export default useTiltEffect;

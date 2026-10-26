@@ -7,7 +7,7 @@ node library for communication.
 
 I only tested it with the Control+ hubs, but powered up and the boost move hubs should work as well.
 
-:information_source: The app can be found at [brick-remote.ractive.ch](https://brick-remote.ractive.ch) and must be used with Chrome (or Edge insider).
+:information_source: The app can be found at [brick-remote.ractive.ch](https://brick-remote.ractive.ch) and must be used with Chrome or Edge.
 
 ![brick-remote-screenshot](https://user-images.githubusercontent.com/783861/69193780-deee2300-0b27-11ea-9d40-cef99e0f73c4.png)
 
@@ -48,24 +48,35 @@ pressing the "cog" symbol.
 <img alt="brick-remote-keyboard-shortcuts" src="https://user-images.githubusercontent.com/783861/69191586-15756f00-0b23-11ea-8a0f-3b0c28b4cc84.png" width="66%" height="66%" />
 
 # Development
-Start the app locally with `yarn start dev` and open `localhost:3000` in a browser that supports web bluetooth
-(chrome or edge beta).
+Requires Node.js 24. Install the dependencies with `yarn install`, start the app with `yarn start` and open
+`localhost:3000` in a browser that supports web bluetooth (Chrome or Edge).
+
+| Command | |
+|---|---|
+| `yarn start` | Vite dev server on port 3000 |
+| `yarn build` | Type check and production build into `build/` |
+| `yarn check` | Type check (TypeScript 7), lint (oxlint, type-aware), formatting and unit tests |
+| `yarn test` | Unit and component tests (vitest) in watch mode |
+| `yarn e2e` | Builds the app and runs the Playwright smoke test against it in Chrome |
 
 ## Adding a "fake" hub
-To add a "fake" hub directly when starting the app, add a query parameter called `fakeHub`
-to the URL (e.g. `localhost:3000/?fakeHub`). This fake hub allows developing many parts of the UI without having
-to actually pair a real hub.
+To add a simulated hub when starting the app, add a query parameter called `fakeHub` to the URL
+(e.g. `localhost:3000/?fakeHub`). The fake hub is node-poweredup's real `TechnicMediumHub` class on top of a
+simulated bluetooth peripheral (`src/sim/SimulatedHubDevice.ts`) that speaks the LEGO wireless protocol like a
+Control+ hub with motors on the ports A, B and D and a rocking tilt sensor. Everything above the bluetooth layer
+is the real library code, so motor controls, track controls and tilt indicators can be developed and tested without
+a hub. The simulated peripheral is available as `window.simulatedHub` in the dev console, e.g.
+`simulatedHub.power` shows the last power sent to each port and `simulatedHub.detach("B")` unplugs a motor.
+
+The tests use the same simulator.
 
 ## Debug output
 If debugging messages should be enabled, add a query parameter called `debug` with the value `*` (`localhost:3000/?debug=*`). This will add a key with the name `debug`
-to the localStorage in the browser. [The debug package](https://github.com/visionmedia/debug#readme) that is used by
+to the localStorage in the browser. [The debug package](https://github.com/debug-js/debug#readme) that is used by
 node-poweredup will read this "debug" key from localStorage and output debug messages for modules matching this key.
 Setting `debug` to `*` will enable debug output for all modules. You can of course set other values like e.g. `lpf2hub`.
 
-Just call the page with an empty "debug" query parameter when you do not want to have debug messages anymore (`localhost:3000/?fakeHub`).
-
-⚠ You need to reload the page for this to take effect. I could not find a way to set the localStorage to the value in the
-debug param, before the debug library is initialized.
+Just call the page with an empty "debug" query parameter when you do not want to have debug messages anymore (`localhost:3000/?debug`).
 
 ## jsconsole output
 When the app is called with a query parameter called `jsconsole`, the logs are sent to jsconsole. This only works when you

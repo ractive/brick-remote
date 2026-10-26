@@ -1,14 +1,22 @@
 import { Button, Card, Col, Row, Slider, Switch, Tooltip } from "antd";
 import {
-  DoubleRightOutlined,
-  DoubleLeftOutlined,
+  CaretDownOutlined,
+  CaretUpOutlined,
   CloseOutlined,
+  DoubleLeftOutlined,
+  DoubleRightOutlined,
+  StopOutlined,
 } from "@ant-design/icons";
-import { SliderValue } from "antd/lib/slider";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { findHub, HubsContext } from "../HubsContext";
 import { useButtonActiveIndicator } from "../hooks/useButtonActiveIndicator";
-import { IHotKeyInfo, useHotkeyInfo } from "../hooks/useHotkeyInfo";
-import usePoweredup from "../poweredup";
+import {
+  emptyBindings,
+  type HotkeyActions,
+  useHotkeys,
+} from "../hooks/useHotkeys";
+import { setMotorPower } from "../motors";
+import { STEP } from "../tracks";
 import ControlConfig from "./ControlConfig";
 
 export interface IMotorControlDefinition {
@@ -21,46 +29,24 @@ export interface IMotorControlProps extends IMotorControlDefinition {
 }
 
 const MotorControl: React.FC<IMotorControlProps> = (
-  props: IMotorControlProps
+  props: IMotorControlProps,
 ) => {
-  const step = 10;
-
-  // tslint:disable:object-literal-sort-keys
-  const hotKeyInfo: IHotKeyInfo = {
-    inc: {
-      key: "",
-      label: "Hotkey to increase the speed",
-      handle: onInc,
-    },
-    dec: {
-      key: "",
-      label: "Hotkey to decrease the speed",
-      handle: onDec,
-    },
-    stop: {
-      key: "",
-      label: "Hotkey to stop the motor",
-      handle: onStop,
-    },
-  };
-
   const [incIndicator, setIncIndicator] = useButtonActiveIndicator();
   const [decIndicator, setDecIndicator] = useButtonActiveIndicator();
   const [stopIndicator, setStopIndicator] = useButtonActiveIndicator();
 
-  const poweredUP = usePoweredup();
+  const hub = findHub(useContext(HubsContext), props.hubUuid)?.hub;
   const [motorSpeed, setMotorSpeed] = useState(0);
   const [inverted, setInverted] = useState(false);
-  const [hotKeys, setHotKeys] = useState(hotKeyInfo);
 
   function onInc() {
     setIncIndicator();
-    setMotorSpeed((v) => Math.min(v + step, 100));
+    setMotorSpeed((v) => Math.min(v + STEP, 100));
   }
 
   function onDec() {
     setDecIndicator();
-    setMotorSpeed((v) => Math.max(v - step, -100));
+    setMotorSpeed((v) => Math.max(v - STEP, -100));
   }
 
   function onStop() {
@@ -68,30 +54,23 @@ const MotorControl: React.FC<IMotorControlProps> = (
     setMotorSpeed(0);
   }
 
+  const actions: HotkeyActions = {
+    inc: { label: "Hotkey to increase the speed", handle: onInc },
+    dec: { label: "Hotkey to decrease the speed", handle: onDec },
+    stop: { label: "Hotkey to stop the motor", handle: onStop },
+  };
+  const [bindings, setBindings] = useState(() => emptyBindings(actions));
+  useHotkeys(actions, bindings);
+
   useEffect(() => {
-    function driveMotor() {
-      console.log("driveMotor", motorSpeed, inverted);
-      const hub = poweredUP.getConnectedHubByUUID(
-        decodeURIComponent(props.hubUuid)
-      );
-      if (hub) {
-        hub
-          .setMotorSpeed(props.motorPort, inverted ? -motorSpeed : motorSpeed)
-          .catch((err: unknown) =>
-            console.log("Error while setting motorSpeed", err)
-          );
-      }
-    }
+    setMotorPower(hub, props.motorPort, inverted ? -motorSpeed : motorSpeed);
+  }, [hub, props.motorPort, motorSpeed, inverted]);
 
-    driveMotor();
-  }, [motorSpeed, inverted, props.motorPort, props.hubUuid, poweredUP]);
-
-  useHotkeyInfo(hotKeys);
-
-  function onChangeMotorSpeed(value: SliderValue) {
-    const speed = value instanceof Array ? value[0] : value;
-    setMotorSpeed(speed);
-  }
+  // Stop the motor when the control is removed
+  useEffect(
+    () => () => setMotorPower(hub, props.motorPort, 0),
+    [hub, props.motorPort],
+  );
 
   function shortcutButtonClassName(indicator: boolean): string {
     return "shortcut-button " + (indicator ? "shortcut-button-pressed" : "");
@@ -103,11 +82,16 @@ const MotorControl: React.FC<IMotorControlProps> = (
       extra={
         <>
           <Tooltip title="Config">
-            <ControlConfig setHotkeys={setHotKeys} hotkeyInfo={hotKeyInfo} />
+            <ControlConfig
+              actions={actions}
+              bindings={bindings}
+              setBindings={setBindings}
+            />
           </Tooltip>
           <Tooltip title="Remove">
             <CloseOutlined
               className="small-icon"
+              aria-label="Remove control"
               onClick={() => props.remove(props)}
             />
           </Tooltip>
@@ -121,10 +105,11 @@ const MotorControl: React.FC<IMotorControlProps> = (
           <Tooltip title="Invert the rotation of the motor">
             <Switch
               size="small"
+              aria-label="Invert motor"
               checkedChildren={<DoubleRightOutlined rotate={90} />}
               unCheckedChildren={<DoubleLeftOutlined rotate={90} />}
               checked={inverted}
-              onChange={(checked) => setInverted(checked)}
+              onChange={setInverted}
             />
           </Tooltip>
         </div>
@@ -133,14 +118,12 @@ const MotorControl: React.FC<IMotorControlProps> = (
             <Slider
               value={motorSpeed}
               marks={{ 0: "0" }}
-              defaultValue={0}
               style={{ height: "200px" }}
               vertical={true}
               min={-100}
               max={100}
-              step={step}
-              onChange={onChangeMotorSpeed}
-              onAfterChange={onChangeMotorSpeed}
+              step={STEP}
+              onChange={setMotorSpeed}
               included={true}
             />
           </Tooltip>
@@ -148,9 +131,10 @@ const MotorControl: React.FC<IMotorControlProps> = (
         <div>
           <Row>
             <Col span={24}>
-              <Tooltip title={hotKeys.inc.key}>
+              <Tooltip title={bindings.inc}>
                 <Button
-                  icon="caret-up"
+                  icon={<CaretUpOutlined />}
+                  aria-label="Faster"
                   size="small"
                   className={shortcutButtonClassName(incIndicator)}
                   onClick={onInc}
@@ -160,9 +144,10 @@ const MotorControl: React.FC<IMotorControlProps> = (
           </Row>
           <Row>
             <Col span={24}>
-              <Tooltip title={hotKeys.dec.key}>
+              <Tooltip title={bindings.dec}>
                 <Button
-                  icon="caret-down"
+                  icon={<CaretDownOutlined />}
+                  aria-label="Slower"
                   size="small"
                   className={shortcutButtonClassName(decIndicator)}
                   onClick={onDec}
@@ -172,9 +157,10 @@ const MotorControl: React.FC<IMotorControlProps> = (
           </Row>
         </div>
         <div>
-          <Tooltip title={hotKeys.stop.key}>
+          <Tooltip title={bindings.stop}>
             <Button
-              icon="stop"
+              icon={<StopOutlined />}
+              aria-label="Stop"
               size="small"
               className={shortcutButtonClassName(stopIndicator)}
               onClick={onStop}

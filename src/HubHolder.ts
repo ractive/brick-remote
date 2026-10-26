@@ -1,71 +1,78 @@
-import { Hub } from "node-poweredup";
-import { HubType } from "node-poweredup/dist/node/consts";
-import * as Consts from "node-poweredup/dist/node/consts";
+import { type BaseHub, Consts } from "./poweredup";
 
+const TILT_SENSORS = new Set<number>([
+  Consts.DeviceType.TILT_SENSOR,
+  Consts.DeviceType.MOVE_HUB_TILT_SENSOR,
+  Consts.DeviceType.TECHNIC_MEDIUM_HUB_TILT_SENSOR,
+]);
+
+// Immutable snapshot of a hub's state for rendering; the reducer in App replaces it on changes
 export class HubHolder {
-  private static hubType(type: Consts.HubType): string {
-    switch (type) {
-      case HubType.UNKNOWN:
-        return "UNKNOWN";
-      case HubType.WEDO2_SMART_HUB:
-        return "WEDO2_SMART_HUB";
-      case HubType.MOVE_HUB:
-        return "MOVE_HUB";
-      case HubType.HUB:
-        return "HUB";
-      case HubType.REMOTE_CONTROL:
-        return "REMOTE_CONTROL";
-      case HubType.DUPLO_TRAIN_BASE:
-        return "DUPLO_TRAIN_BASE";
-      case HubType.TECHNIC_MEDIUM_HUB:
-        return "TECHNIC_MEDIUM_HUB";
-    }
-  }
-  public hub?: Hub;
-  public name: string;
-  private readonly _ports: Set<string> = new Set<string>();
-  private _connected = false;
+  public readonly hub: BaseHub;
+  public readonly name: string;
+  public readonly connected: boolean;
+  // Device type by port name, e.g. "A" => TECHNIC_LARGE_LINEAR_MOTOR
+  public readonly devices: ReadonlyMap<string, number>;
 
-  constructor(hub?: Hub, name?: string) {
+  constructor(
+    hub: BaseHub,
+    name: string = hub.name,
+    connected = false,
+    devices: ReadonlyMap<string, number> = new Map(),
+  ) {
     this.hub = hub;
-    if (name) {
-      this.name = name;
-    } else if (hub) {
-      this.name = hub.name;
+    this.name = name;
+    this.connected = connected;
+    this.devices = devices;
+  }
+
+  public with(
+    changes: Partial<Pick<HubHolder, "name" | "connected" | "devices">>,
+  ): HubHolder {
+    return new HubHolder(
+      this.hub,
+      changes.name ?? this.name,
+      changes.connected ?? this.connected,
+      changes.devices ?? this.devices,
+    );
+  }
+
+  public withDevice(port: string, deviceType: number | undefined): HubHolder {
+    const devices = new Map(this.devices);
+    if (deviceType === undefined) {
+      devices.delete(port);
     } else {
-      this.name = "undefined";
+      devices.set(port, deviceType);
     }
-  }
-
-  public addPort(port: string): void {
-    this._ports.add(port);
-  }
-
-  public removePort(port: string): void {
-    this._ports.delete(port);
-  }
-
-  public get ports(): Set<string> {
-    return this._ports;
-  }
-
-  public get connected(): boolean {
-    return this._connected;
-  }
-
-  public set connected(connected: boolean) {
-    this._connected = connected;
+    return this.with({ devices });
   }
 
   public getUuid(): string {
-    return this.hub ? this.hub.uuid : this.name;
+    return this.hub.uuid;
   }
 
   public getPrimaryMACAddress(): string {
-    return this.hub ? this.hub.primaryMACAddress : "unknown";
+    return this.hub.primaryMACAddress;
   }
 
   public getHubType(): string {
-    return this.hub ? HubHolder.hubType(this.hub.type) : "undefined";
+    return Consts.HubType[this.hub.type] ?? `unknown:${this.hub.type}`;
+  }
+
+  public deviceTypeName(port: string): string {
+    const type = this.devices.get(port);
+    if (type === undefined) {
+      return "not attached";
+    }
+    return Consts.DeviceType[type] ?? `unknown:${type}`;
+  }
+
+  public get tiltPort(): string | undefined {
+    for (const [port, type] of this.devices) {
+      if (TILT_SENSORS.has(type)) {
+        return port;
+      }
+    }
+    return undefined;
   }
 }

@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "import", "vitest"],
+  "categories": { "correctness": "error", "suspicious": "warn" },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    "react/react-in-jsx-scope": "off",
+    "typescript/no-floating-promises": "error",
+    "import/no-unassigned-import": "off",
+    "typescript/consistent-return": "off",
+    "eslint/no-shadow": "off"
+  },
+  "ignorePatterns": ["build", "node_modules"]
+}

@@ -1,14 +1,31 @@
 import { Button, Card, Col, Row, Slider, Switch, Tooltip } from "antd";
 import {
-  DoubleRightOutlined,
-  DoubleLeftOutlined,
+  CaretDownOutlined,
+  CaretLeftOutlined,
+  CaretRightOutlined,
+  CaretUpOutlined,
   CloseOutlined,
+  DoubleLeftOutlined,
+  DoubleRightOutlined,
+  StopOutlined,
 } from "@ant-design/icons";
-import { SliderValue } from "antd/lib/slider";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { findHub, HubsContext } from "../HubsContext";
 import { useButtonActiveIndicator } from "../hooks/useButtonActiveIndicator";
-import { IHotKeyInfo, useHotkeyInfo } from "../hooks/useHotkeyInfo";
-import usePoweredup from "../poweredup";
+import {
+  emptyBindings,
+  type HotkeyActions,
+  useHotkeys,
+} from "../hooks/useHotkeys";
+import { setMotorPower } from "../motors";
+import {
+  faster,
+  slower,
+  STEP,
+  type TrackSpeeds,
+  turnLeft,
+  turnRight,
+} from "../tracks";
 import ControlConfig from "./ControlConfig";
 
 export interface ITrackControlDefinition {
@@ -22,150 +39,74 @@ export interface ITrackControlProps extends ITrackControlDefinition {
 }
 
 const TrackControl: React.FC<ITrackControlProps> = (
-  props: ITrackControlProps
+  props: ITrackControlProps,
 ) => {
-  const step = 10;
-
-  // tslint:disable:object-literal-sort-keys
-  const hotKeyInfo: IHotKeyInfo = {
-    inc: {
-      key: "",
-      label: "Hotkey to increase the speed",
-      handle: onInc,
-    },
-    dec: {
-      key: "",
-      label: "Hotkey to decrease the speed",
-      handle: onDec,
-    },
-    left: {
-      key: "",
-      label: "Hotkey to increase turning left",
-      handle: onLeft,
-    },
-    right: {
-      key: "",
-      label: "Hotkey to increase turning right",
-      handle: onRight,
-    },
-    stop: {
-      key: "",
-      label: "Hotkey to stop",
-      handle: onStop,
-    },
-  };
-
   const [incIndicator, setIncIndicator] = useButtonActiveIndicator();
   const [decIndicator, setDecIndicator] = useButtonActiveIndicator();
   const [leftIndicator, setLeftIndicator] = useButtonActiveIndicator();
   const [rightIndicator, setRightIndicator] = useButtonActiveIndicator();
   const [stopIndicator, setStopIndicator] = useButtonActiveIndicator();
 
-  const poweredUP = usePoweredup();
-  const [motorSpeedRight, setMotorSpeedRight] = useState(0);
-  const [motorSpeedLeft, setMotorSpeedLeft] = useState(0);
+  const hub = findHub(useContext(HubsContext), props.hubUuid)?.hub;
+  const { motorPortLeft, motorPortRight } = props;
+  const [speeds, setSpeeds] = useState<TrackSpeeds>({ left: 0, right: 0 });
   const [invertedLeft, setInvertedLeft] = useState(false);
   const [invertedRight, setInvertedRight] = useState(false);
-  const [hotKeys, setHotKeys] = useState(hotKeyInfo);
+
+  // The motors face opposite directions, so the right one is inverted by default
+  const powerLeft = invertedLeft ? -speeds.left : speeds.left;
+  const powerRight = invertedRight ? speeds.right : -speeds.right;
 
   useEffect(() => {
-    function driveTracks() {
-      const left = invertedLeft ? -motorSpeedLeft : motorSpeedLeft;
-      const right = invertedRight ? motorSpeedRight : -motorSpeedRight;
+    setMotorPower(hub, motorPortLeft, powerLeft);
+  }, [hub, motorPortLeft, powerLeft]);
 
-      console.log("drive tracks", left, right);
+  useEffect(() => {
+    setMotorPower(hub, motorPortRight, powerRight);
+  }, [hub, motorPortRight, powerRight]);
 
-      const hub = poweredUP.getConnectedHubByUUID(
-        decodeURIComponent(props.hubUuid)
-      );
-      if (hub) {
-        hub
-          .setMotorSpeed(props.motorPortLeft, left)
-          .catch((err: unknown) =>
-            console.log("Error while setting motorSpeedLeft", err)
-          );
-        hub
-          .setMotorSpeed(props.motorPortRight, right)
-          .catch((err: unknown) =>
-            console.log("Error while setting motorSpeedRight", err)
-          );
-      }
-    }
+  // Stop the motors when the control is removed
+  useEffect(
+    () => () => {
+      setMotorPower(hub, motorPortLeft, 0);
+      setMotorPower(hub, motorPortRight, 0);
+    },
+    [hub, motorPortLeft, motorPortRight],
+  );
 
-    driveTracks();
-  }, [
-    motorSpeedRight,
-    motorSpeedLeft,
-    invertedLeft,
-    invertedRight,
-    props.motorPortLeft,
-    props.motorPortRight,
-    props.hubUuid,
-    poweredUP,
-  ]);
-
-  useHotkeyInfo(hotKeys);
-
-  function shortcutButtonClassName(indicator: boolean): string {
-    return "shortcut-button " + (indicator ? "shortcut-button-pressed" : "");
-  }
-
-  function dec(v: number): number {
-    return Math.max(v - step, -100);
-  }
-  function inc(v: number): number {
-    return Math.min(v + step, 100);
-  }
   function onInc() {
     setIncIndicator();
-    setMotorSpeedLeft((v) => inc(v));
-    setMotorSpeedRight((v) => inc(v));
+    setSpeeds(faster);
   }
   function onDec() {
     setDecIndicator();
-    setMotorSpeedLeft((v) => dec(v));
-    setMotorSpeedRight((v) => dec(v));
+    setSpeeds(slower);
   }
   function onLeft() {
     setLeftIndicator();
-    const speedDiff = motorSpeedLeft - motorSpeedRight;
-    if (
-      motorSpeedLeft < 100 ||
-      (motorSpeedLeft === 100 && motorSpeedRight === 100)
-    ) {
-      setMotorSpeedLeft((v) => dec(v));
-    }
-    if (speedDiff !== step || motorSpeedLeft === 100) {
-      setMotorSpeedRight((v) => inc(v));
-    }
+    setSpeeds(turnLeft);
   }
   function onRight() {
     setRightIndicator();
-    const speedDiff = motorSpeedLeft - motorSpeedRight;
-    if (
-      motorSpeedRight < 100 ||
-      (motorSpeedLeft === 100 && motorSpeedRight === 100)
-    ) {
-      setMotorSpeedRight((v) => dec(v));
-    }
-    if (speedDiff !== -step || motorSpeedRight === 100) {
-      setMotorSpeedLeft((v) => inc(v));
-    }
+    setSpeeds(turnRight);
   }
   function onStop() {
     setStopIndicator();
-    setMotorSpeedLeft(0);
-    setMotorSpeedRight(0);
+    setSpeeds({ left: 0, right: 0 });
   }
 
-  function onChangeMotorSpeedRight(value: SliderValue) {
-    const speed = value instanceof Array ? value[0] : value;
-    setMotorSpeedRight(speed);
-  }
+  const actions: HotkeyActions = {
+    inc: { label: "Hotkey to increase the speed", handle: onInc },
+    dec: { label: "Hotkey to decrease the speed", handle: onDec },
+    left: { label: "Hotkey to increase turning left", handle: onLeft },
+    right: { label: "Hotkey to increase turning right", handle: onRight },
+    stop: { label: "Hotkey to stop", handle: onStop },
+  };
+  const [bindings, setBindings] = useState(() => emptyBindings(actions));
+  useHotkeys(actions, bindings);
 
-  function onChangeMotorSpeedLeft(value: SliderValue) {
-    const speed = value instanceof Array ? value[0] : value;
-    setMotorSpeedLeft(speed);
+  function shortcutButtonClassName(indicator: boolean): string {
+    return "shortcut-button " + (indicator ? "shortcut-button-pressed" : "");
   }
 
   return (
@@ -174,11 +115,16 @@ const TrackControl: React.FC<ITrackControlProps> = (
       extra={
         <>
           <Tooltip title="Config">
-            <ControlConfig setHotkeys={setHotKeys} hotkeyInfo={hotKeyInfo} />
+            <ControlConfig
+              actions={actions}
+              bindings={bindings}
+              setBindings={setBindings}
+            />
           </Tooltip>
           <Tooltip title="Remove">
             <CloseOutlined
               className="small-icon"
+              aria-label="Remove control"
               onClick={() => props.remove(props)}
             />
           </Tooltip>
@@ -187,62 +133,61 @@ const TrackControl: React.FC<ITrackControlProps> = (
       className="motor-control-card"
     >
       <div className="motor-control-card-body">
-        <div>{`Ports ${props.motorPortLeft} & ${props.motorPortRight}`}</div>
+        <div>{`Ports ${motorPortLeft} & ${motorPortRight}`}</div>
         <div>
           <Tooltip title="Invert the rotation of left motor">
             <Switch
               size="small"
+              aria-label="Invert left motor"
               checkedChildren={<DoubleRightOutlined rotate={90} />}
               unCheckedChildren={<DoubleLeftOutlined rotate={90} />}
               checked={invertedLeft}
-              onChange={(checked) => setInvertedLeft(checked)}
+              onChange={setInvertedLeft}
             />
           </Tooltip>
           &nbsp;
           <Tooltip title="Invert the rotation of right motor">
             <Switch
               size="small"
+              aria-label="Invert right motor"
               checkedChildren={<DoubleRightOutlined rotate={90} />}
               unCheckedChildren={<DoubleLeftOutlined rotate={90} />}
               checked={invertedRight}
-              onChange={(checked) => setInvertedRight(checked)}
+              onChange={setInvertedRight}
             />
           </Tooltip>
         </div>
         <div className="track-control-container">
           <Slider
-            value={motorSpeedLeft}
+            value={speeds.left}
             marks={{ 0: "0" }}
-            defaultValue={0}
             style={{ height: "200px" }}
             vertical={true}
             min={-100}
             max={100}
-            step={step}
+            step={STEP}
             included={true}
-            onChange={onChangeMotorSpeedLeft}
-            onAfterChange={onChangeMotorSpeedLeft}
+            onChange={(left) => setSpeeds((s) => ({ ...s, left }))}
           />
           <Slider
-            value={motorSpeedRight}
+            value={speeds.right}
             marks={{ 0: "0" }}
-            defaultValue={0}
             style={{ height: "200px" }}
             vertical={true}
             min={-100}
             max={100}
-            step={step}
+            step={STEP}
             included={true}
-            onChange={onChangeMotorSpeedRight}
-            onAfterChange={onChangeMotorSpeedRight}
+            onChange={(right) => setSpeeds((s) => ({ ...s, right }))}
           />
         </div>
         <div>
           <Row>
             <Col span={8} offset={8}>
-              <Tooltip title={hotKeys.inc.key}>
+              <Tooltip title={bindings.inc}>
                 <Button
-                  icon="caret-up"
+                  icon={<CaretUpOutlined />}
+                  aria-label="Faster"
                   size="small"
                   className={shortcutButtonClassName(incIndicator)}
                   onClick={onInc}
@@ -252,9 +197,10 @@ const TrackControl: React.FC<ITrackControlProps> = (
           </Row>
           <Row>
             <Col span={8}>
-              <Tooltip title={hotKeys.left.key}>
+              <Tooltip title={bindings.left}>
                 <Button
-                  icon="caret-left"
+                  icon={<CaretLeftOutlined />}
+                  aria-label="Turn left"
                   size="small"
                   className={shortcutButtonClassName(leftIndicator)}
                   onClick={onLeft}
@@ -262,9 +208,10 @@ const TrackControl: React.FC<ITrackControlProps> = (
               </Tooltip>
             </Col>
             <Col span={8}>
-              <Tooltip title={hotKeys.dec.key}>
+              <Tooltip title={bindings.dec}>
                 <Button
-                  icon="caret-down"
+                  icon={<CaretDownOutlined />}
+                  aria-label="Slower"
                   size="small"
                   className={shortcutButtonClassName(decIndicator)}
                   onClick={onDec}
@@ -272,9 +219,10 @@ const TrackControl: React.FC<ITrackControlProps> = (
               </Tooltip>
             </Col>
             <Col span={8}>
-              <Tooltip title={hotKeys.right.key}>
+              <Tooltip title={bindings.right}>
                 <Button
-                  icon="caret-right"
+                  icon={<CaretRightOutlined />}
+                  aria-label="Turn right"
                   size="small"
                   className={shortcutButtonClassName(rightIndicator)}
                   onClick={onRight}
@@ -284,9 +232,10 @@ const TrackControl: React.FC<ITrackControlProps> = (
           </Row>
         </div>
         <div>
-          <Tooltip title={hotKeys.stop.key}>
+          <Tooltip title={bindings.stop}>
             <Button
-              icon="stop"
+              icon={<StopOutlined />}
+              aria-label="Stop"
               size="small"
               className={shortcutButtonClassName(stopIndicator)}
               onClick={onStop}

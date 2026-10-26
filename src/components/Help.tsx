@@ -1,17 +1,14 @@
-import React from "react";
-
-const Help: React.FC = () => (
-  /* tslint:disable:max-line-length */
+const Help = () => (
   <div>
     <h2 id="about">About</h2>
     <p>
       This is a prototype of a web application that allows controlling Lego ™
-      smarthubs via bluetooth. It&#39;s a{" "}
-      <a href="https://reactjs.org/">react</a> app using the{" "}
+      smarthubs via bluetooth. It&#39;s a <a href="https://react.dev/">react</a>{" "}
+      app using the{" "}
       <a href="https://github.com/nathankellenicki/node-poweredup">
         node-poweredup
-      </a>
-      node library for communication.
+      </a>{" "}
+      library for communication.
     </p>
     <p>
       I only tested it with the Control+ hubs, but powered up and the boost move

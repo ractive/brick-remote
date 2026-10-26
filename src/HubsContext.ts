@@ -1,12 +1,9 @@
 import { createContext } from "react";
-import { HubHolder } from "./HubHolder";
+import type { HubHolder } from "./HubHolder";
 
-export const HubsContext = createContext(new Array<HubHolder>());
-export const hubByUuid = (hubs: HubHolder[], uuid: string): HubHolder => {
-  const hub = hubs.find((h) => h.getUuid() === uuid);
-  if (!hub) {
-    throw new Error("No hub found with uuid " + uuid);
-  }
+export const HubsContext = createContext<HubHolder[]>([]);
 
-  return hub;
-};
+export const findHub = (
+  hubs: HubHolder[],
+  uuid: string,
+): HubHolder | undefined => hubs.find((h) => h.getUuid() === uuid);

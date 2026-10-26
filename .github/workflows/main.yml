@@ -1,34 +1,53 @@
 name: brick-remote
 
-on: [push]
+on:
+  # Branches are checked through their pull request, master on push (and deployed)
+  push:
+    branches: [master]
+  pull_request:
 
 jobs:
-  build:
-
+  check:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup node 12.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: '12.x'
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: yarn
 
-    - name: Build
-      run: |
-        yarn install
-        yarn build
+      - run: yarn install --frozen-lockfile
+      - run: yarn typecheck
+      - run: yarn lint
+      - run: yarn prettier --check src e2e
+      - run: yarn vitest run
+      - run: yarn playwright install --with-deps chromium
+      - run: yarn e2e
 
-    - name: FTP Deploy
-      uses: SamKirkland/FTP-Deploy-Action@2.0.0
-      env:
-        # FTP server name (you may need to specify a port)
-        FTP_SERVER: ractive.ch
-        # FTP account username
-        FTP_USERNAME: ractive
-        # FTP account password
-        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-        LOCAL_DIR: build/
-        # The remote folder to copy to, deafults to root FTP folder (I recommend you configure this on your server side instead of here)
-        REMOTE_DIR: /subdomains/brick-remote/httpdocs/
-        ARGS: --delete
+      - uses: actions/upload-artifact@v7
+        with:
+          name: build
+          path: build/
+
+  deploy:
+    # Only master is deployed; branches and pull requests are just checked
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: build
+          path: build/
+
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          # Same hosting account as ractive.ch; the host matches the *.hostfactory.ch certificate
+          server: server03.hostfactory.ch
+          username: ractive
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          security: strict
+          local-dir: build/
+          server-dir: /subdomains/brick-remote/httpdocs/
